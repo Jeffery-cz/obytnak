@@ -4,126 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expedice Obytňák 2026</title>
-    <!-- Tailwind CSS pro moderní vzhled -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome pro ikonky -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Skrytí posuvníků pro čistší vzhled na mobilech, ale zachování scrollování */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Krásné pozadí na celou obrazovku s fixní pozicí */
+        body {
+            background-image: url('https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 antialiased">
+<body class="text-slate-800 antialiased min-h-screen">
 
-    <!-- Zabezpečovací obrazovka (PIN) -->
-    <div id="pinScreen" class="fixed inset-0 bg-slate-800 z-50 flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="bg-white p-8 rounded-xl shadow-2xl text-center max-w-sm w-full mx-4">
-            <i class="fa-solid fa-camper-van text-5xl text-blue-600 mb-4"></i>
-            <h2 class="text-2xl font-bold mb-2">Expedice 2026</h2>
-            <p class="text-slate-500 mb-6">Zadejte přístupový PIN pro vstup do sdíleného plánovače.</p>
-            <input type="password" id="pinInput" class="w-full text-center text-2xl p-3 border-2 border-slate-200 rounded-lg mb-4 focus:outline-none focus:border-blue-500" placeholder="••••">
-            <button onclick="checkPin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
-                Vstoupit
+    <div id="pinScreen" class="fixed inset-0 bg-slate-900/95 z-50 flex flex-col items-center justify-center transition-opacity duration-500 backdrop-blur-sm">
+        <div class="bg-white/10 p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full mx-4 backdrop-blur-md border border-white/20">
+            <i class="fa-solid fa-camper-van text-5xl text-blue-400 mb-4 drop-shadow-md"></i>
+            <h2 class="text-3xl font-bold mb-2 text-white drop-shadow-md">Expedice 2026</h2>
+            <p class="text-blue-100 mb-6">Zadejte přístupový PIN posádky</p>
+            <input type="password" id="pinInput" class="w-full text-center text-3xl p-4 bg-white/20 border-2 border-white/30 rounded-xl mb-4 focus:outline-none focus:border-blue-400 text-white placeholder-white/50 tracking-[0.5em]" placeholder="••••">
+            <button onclick="checkPin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-4 rounded-xl transition-colors shadow-lg">
+                Odemknout aplikaci
             </button>
-            <p id="pinError" class="text-red-500 mt-4 hidden">Nesprávný PIN!</p>
+            <p id="pinError" class="text-red-400 mt-4 hidden font-medium bg-red-900/50 py-2 rounded-lg">Nesprávný PIN!</p>
         </div>
     </div>
 
-    <!-- Hlavní aplikace (skrytá dokud není zadán PIN) -->
-    <div id="mainApp" class="hidden max-w-6xl mx-auto p-4 md:p-6 pb-20">
+    <!-- Hlavní aplikace s poloprůhledným bílým pozadím (Glassmorphism) -->
+    <div id="mainApp" class="hidden max-w-4xl mx-auto md:my-8 bg-white/90 md:rounded-3xl shadow-2xl min-h-screen md:min-h-[90vh] flex flex-col backdrop-blur-xl border border-white/50 overflow-hidden">
         
-        <!-- Hlavička -->
-        <header class="mb-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-            <div>
-                <h1 class="text-3xl font-extrabold text-slate-800"><i class="fa-solid fa-route text-blue-600 mr-2"></i> Evropa Obytňákem</h1>
-                <p class="text-slate-500 mt-1">Německo <i class="fa-solid fa-arrow-right mx-1 text-xs"></i> Rakousko <i class="fa-solid fa-arrow-right mx-1 text-xs"></i> Itálie</p>
-            </div>
-            <div class="mt-4 md:mt-0 bg-blue-50 px-4 py-2 rounded-lg text-blue-800 font-medium">
-                <i class="fa-regular fa-calendar mr-2"></i> 31. 5. – 7. 6. 2026
+        <!-- Hlavička s odpočtem -->
+        <header class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6 md:rounded-t-3xl relative overflow-hidden">
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl font-extrabold tracking-tight"><i class="fa-solid fa-route text-blue-300 mr-2"></i> Evropa Obytňákem</h1>
+                    <p class="text-blue-200 mt-1 text-sm md:text-base">Německo <i class="fa-solid fa-arrow-right mx-1 text-xs opacity-70"></i> Rakousko <i class="fa-solid fa-arrow-right mx-1 text-xs opacity-70"></i> Itálie</p>
+                </div>
+                
+                <!-- Komponenta Odpočtu -->
+                <div class="bg-black/30 backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/10 text-center">
+                    <p class="text-xs text-blue-200 uppercase tracking-wider font-semibold mb-1">Do odjezdu zbývá</p>
+                    <div id="countdown" class="text-2xl md:text-3xl font-mono font-bold tracking-widest text-yellow-400">
+                        --:--:--:--
+                    </div>
+                </div>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Levý sloupec: Úkoly a věci -->
-            <div class="lg:col-span-1 space-y-6">
-                
-                <!-- Společný Checklist -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h2 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit & s sebou</h2>
-                    
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="taskInput" class="flex-1 p-2 border border-slate-200 rounded-lg focus:outline-none focus:border-green-500" placeholder="Přidat úkol...">
-                        <button onclick="addTask()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition-colors"><i class="fa-solid fa-plus"></i></button>
-                    </div>
+        <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 overflow-x-auto no-scrollbar shadow-sm">
+            <ul class="flex w-full md:justify-center min-w-max p-2 gap-2">
+                <li><button onclick="switchTab('overview')" id="nav-overview" class="nav-btn active px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-blue-700 bg-blue-50"><i class="fa-solid fa-house mr-2"></i>Přehled</button></li>
+                <li><button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-map-location-dot mr-2"></i>Itinerář</button></li>
+                <li><button onclick="switchTab('budget')" id="nav-budget" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-wallet mr-2"></i>Rozpočet</button></li>
+                <li><button onclick="switchTab('checklist')" id="nav-checklist" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-list-check mr-2"></i>Checklist</button></li>
+                <li><button onclick="switchTab('notes')" id="nav-notes" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-regular fa-comments mr-2"></i>Domluva</button></li>
+            </ul>
+        </nav>
 
-                    <ul id="taskList" class="space-y-2 max-h-96 overflow-y-auto pr-2">
-                        <!-- Zde se vykreslí úkoly z Firebase -->
-                    </ul>
+        <!-- Oblast obsahu -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+
+            <div id="tab-overview" class="tab-content block space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-gradient-to-br from-slate-50 to-slate-100 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-lg mb-4 text-slate-800"><i class="fa-solid fa-circle-info text-blue-500 mr-2"></i>Základní informace</h3>
+                        <ul class="space-y-3 text-slate-600">
+                            <li class="flex items-center"><i class="fa-solid fa-calendar-check w-6 text-center text-slate-400"></i> <strong>Termín:</strong> <span class="ml-2">31. 5. – 7. 6. 2026</span></li>
+                            <li class="flex items-center"><i class="fa-solid fa-users w-6 text-center text-slate-400"></i> <strong>Posádka:</strong> <span class="ml-2">Michal, Marek, Táta</span></li>
+                            <li class="flex items-center"><i class="fa-solid fa-truck w-6 text-center text-slate-400"></i> <strong>Vůz:</strong> <span class="ml-2">Obytňák (Upřesníme)</span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-2xl border border-green-200 shadow-sm flex flex-col justify-center items-center text-center">
+                        <h3 class="font-bold text-lg mb-2 text-green-800">Cíl cesty</h3>
+                        <p class="text-green-700 font-medium">Užít si parádní chlapskou jízdu, dát si dobré pivo, projet Alpy a dojet v pořádku tam i zpět! 🍻🚐</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Pravý sloupec: Rozpočet a Poznámky -->
-            <div class="lg:col-span-2 space-y-6">
-                
-                <!-- Sdílený Rozpočet -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h2 class="text-xl font-bold mb-4 flex items-center"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> Sdílené výdaje</h2>
+            <div id="tab-itinerary" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> Plán trasy a zastávky</h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 bg-slate-50 p-4 rounded-lg">
-                        <div class="col-span-1 md:col-span-1">
-                            <select id="payerInput" class="w-full p-2 border border-slate-200 rounded-lg bg-white">
-                                <option value="Michal">Michal</option>
-                                <option value="Marek">Marek</option>
-                                <option value="Táta">Táta</option>
-                            </select>
-                        </div>
-                        <div class="col-span-1 md:col-span-2">
-                            <input type="text" id="expenseDescInput" class="w-full p-2 border border-slate-200 rounded-lg" placeholder="Za co to bylo (nafta, kemp...)">
-                        </div>
-                        <div class="col-span-1 md:col-span-1 flex gap-2">
-                            <input type="number" id="amountInput" class="w-full p-2 border border-slate-200 rounded-lg" placeholder="Kč">
-                            <button onclick="addExpense()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"><i class="fa-solid fa-plus"></i></button>
-                        </div>
+                    <!-- Formulář pro přidání zastávky -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <input type="date" id="itinDate" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-white">
+                        <input type="text" id="itinPlace" class="md:col-span-2 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none" placeholder="Místo / Kemp (např. Lago di Garda)">
+                        <button onclick="addItinerary()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Přidat bod</button>
                     </div>
 
-                    <!-- Statistiky -->
-                    <div class="grid grid-cols-3 gap-4 mb-6 border-b border-slate-100 pb-6 text-center">
-                        <div><p class="text-sm text-slate-500">Michal zaplatil</p><p id="sumMichal" class="text-xl font-bold text-slate-800">0 Kč</p></div>
-                        <div><p class="text-sm text-slate-500">Marek zaplatil</p><p id="sumMarek" class="text-xl font-bold text-slate-800">0 Kč</p></div>
-                        <div><p class="text-sm text-slate-500">Táta zaplatil</p><p id="sumTata" class="text-xl font-bold text-slate-800">0 Kč</p></div>
+                    <!-- Seznam itineráře -->
+                    <div class="relative border-l-2 border-indigo-100 ml-3 pl-6 space-y-6" id="itineraryList">
+                        <!-- Zde se vykreslí itinerář -->
                     </div>
-
-                    <ul id="expenseList" class="space-y-2 max-h-60 overflow-y-auto pr-2">
-                        <!-- Výdaje z Firebase -->
-                    </ul>
                 </div>
+            </div>
 
-                <!-- Poznámky -->
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <h2 class="text-xl font-bold mb-4 flex items-center"><i class="fa-regular fa-comment-dots text-yellow-500 mr-2"></i> Domluva a Nápady</h2>
+            <div id="tab-budget" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> Sdílené výdaje</h2>
                     
-                    <div class="flex gap-2 mb-4">
-                        <select id="noteAuthorInput" class="w-24 p-2 border border-slate-200 rounded-lg bg-slate-50">
+                    <!-- Formulář výdajů -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <select id="payerInput" class="p-3 border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-200 outline-none">
                             <option value="Michal">Michal</option>
                             <option value="Marek">Marek</option>
                             <option value="Táta">Táta</option>
                         </select>
-                        <input type="text" id="noteInput" class="flex-1 p-2 border border-slate-200 rounded-lg focus:outline-none focus:border-yellow-500" placeholder="Napiš zprávu nebo nápad...">
-                        <button onclick="addNote()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg transition-colors"><i class="fa-solid fa-paper-plane"></i></button>
+                        <input type="text" id="expenseDescInput" class="md:col-span-2 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Za co (nafta, kemp, jídlo...)">
+                        <input type="number" id="amountInput" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Částka (Kč)">
+                        <button onclick="addExpense()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Zapsat</button>
                     </div>
 
-                    <div id="noteList" class="space-y-3 max-h-60 overflow-y-auto pr-2 flex flex-col-reverse">
-                        <!-- Poznámky z Firebase -->
+                    <!-- Chytré vyrovnání (Smart Settlement) -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 mb-8 border border-blue-100">
+                        <h3 class="font-bold text-blue-900 mb-4 border-b border-blue-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Chytré vyrovnání</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Shrnutí útrat -->
+                            <div>
+                                <p class="text-sm text-slate-500 mb-2">Kdo kolik už zaplatil:</p>
+                                <ul class="space-y-2">
+                                    <li class="flex justify-between items-center bg-white p-2 rounded shadow-sm"><span class="font-medium">Michal</span><span id="sumMichal" class="font-bold text-blue-700">0 Kč</span></li>
+                                    <li class="flex justify-between items-center bg-white p-2 rounded shadow-sm"><span class="font-medium">Marek</span><span id="sumMarek" class="font-bold text-blue-700">0 Kč</span></li>
+                                    <li class="flex justify-between items-center bg-white p-2 rounded shadow-sm"><span class="font-medium">Táta</span><span id="sumTata" class="font-bold text-blue-700">0 Kč</span></li>
+                                </ul>
+                                <div class="mt-3 text-right">
+                                    <span class="text-sm text-slate-500 mr-2">Útrata celkem:</span>
+                                    <span id="totalSpent" class="text-lg font-black text-slate-800">0 Kč</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Kdo má komu dát -->
+                            <div class="flex flex-col justify-center">
+                                <p class="text-sm text-slate-500 mb-2">Vyrovnání (Cíl na osobu: <span id="avgSpent" class="font-bold">0</span> Kč):</p>
+                                <div id="settlementBox" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 min-h-[100px] flex flex-col justify-center gap-2">
+                                    <!-- Generováno přes JS -->
+                                    <p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historie -->
+                    <h3 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider">Historie transakcí</h3>
+                    <ul id="expenseList" class="space-y-2 max-h-80 overflow-y-auto pr-2">
+                        <!-- Výdaje -->
+                    </ul>
+                </div>
+            </div>
+
+            <div id="tab-checklist" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit a zabalit</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <select id="taskCategory" class="p-3 border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-green-200 outline-none">
+                            <option value="Doklady a Peníze">Doklady a Peníze 🛂</option>
+                            <option value="Vybavení auta">Vybavení auta 🚐</option>
+                            <option value="Jídlo a Pití">Jídlo a Pití 🍻</option>
+                            <option value="Osobní věci">Osobní věci 👕</option>
+                            <option value="Ostatní">Ostatní 📌</option>
+                        </select>
+                        <input type="text" id="taskInput" class="md:col-span-2 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-green-200 outline-none" placeholder="Nová položka...">
+                        <button onclick="addTask()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Přidat</button>
+                    </div>
+
+                    <div id="checklistContainer" class="space-y-6">
+                        <!-- Kategorie se vykreslí dynamicky přes JS -->
                     </div>
                 </div>
-
             </div>
-        </div>
+
+            <div id="tab-notes" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[600px] max-h-[70vh]">
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-regular fa-comments text-yellow-500 mr-2"></i> Domluva a Nápady</h2>
+                    
+                    <!-- Chat oknno -->
+                    <div id="noteList" class="flex-1 space-y-4 overflow-y-auto pr-2 mb-4 p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col-reverse">
+                        <!-- Zprávy z Firebase -->
+                    </div>
+
+                    <!-- Vkládání -->
+                    <div class="flex flex-col md:flex-row gap-3 pt-2">
+                        <select id="noteAuthorInput" class="w-full md:w-32 p-3 border border-slate-200 rounded-lg bg-white shadow-sm outline-none">
+                            <option value="Michal">Michal</option>
+                            <option value="Marek">Marek</option>
+                            <option value="Táta">Táta</option>
+                        </select>
+                        <input type="text" id="noteInput" class="flex-1 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-yellow-400 outline-none shadow-sm" placeholder="Napiš zprávu...">
+                        <button onclick="addNote()" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-md"><i class="fa-solid fa-paper-plane md:mr-2"></i><span class="hidden md:inline">Odeslat</span></button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
-    <!-- Firebase SDK (Modulární verze 10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
-        // TVŮJ KONFIGURAČNÍ KLÍČ (přesně ten, co jsi zkopíroval)
+        // TENTO KLÍČ NEMĚNIT - Je napojen na tvou vytvořenou databázi!
         const firebaseConfig = {
             apiKey: "AIzaSyDe1EZfaMyYRVUgKugZzVixzGReEXBUsb8",
             authDomain: "obytnak-2026.firebaseapp.com",
@@ -133,16 +222,21 @@
             appId: "1:56459323943:web:2b8c065bcf6cfc61d37c02"
         };
 
-        // Inicializace Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Odkazy na kolekce v databázi
         const checklistCol = collection(db, 'checklist');
         const expensesCol = collection(db, 'expenses');
         const notesCol = collection(db, 'notes');
+        const itineraryCol = collection(db, 'itinerary'); // Nová kolekce pro Itinerář
 
-        // Funkce pro PIN (dostupná globálně)
+        const posadkaColors = {
+            'Michal': 'text-blue-600 bg-blue-100',
+            'Marek': 'text-emerald-600 bg-emerald-100',
+            'Táta': 'text-amber-600 bg-amber-100'
+        };
+
+        // --- ZABEZPEČENÍ ---
         window.checkPin = function() {
             const pin = document.getElementById('pinInput').value;
             if (pin === '2026') {
@@ -156,54 +250,104 @@
             }
         };
 
-        // Naslouchání klávese Enter pro PIN
-        document.getElementById('pinInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') window.checkPin();
-        });
+        // --- ZÁLOŽKY (TABS) ---
+        window.switchTab = function(tabId) {
+            // Skryj vše
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Odbarvi tlačítka
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-blue-700', 'bg-blue-50');
+                el.classList.add('text-slate-500', 'hover:bg-slate-100');
+            });
+            
+            // Ukaž vybrané
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            // Obarvi vybrané tlačítko
+            const activeBtn = document.getElementById('nav-' + tabId);
+            activeBtn.classList.remove('text-slate-500', 'hover:bg-slate-100');
+            activeBtn.classList.add('text-blue-700', 'bg-blue-50');
+        };
 
-        // --- 1. CHECKLIST LOGIKA ---
-        onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
-            const list = document.getElementById('taskList');
+        // --- ODPOČET DO 31.5.2026 16:00 ---
+        const targetDate = new Date('2026-05-31T16:00:00').getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById("countdown").innerHTML = "JSME NA CESTĚ! 🚐";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+            document.getElementById("countdown").innerHTML = `${days}d ${hours}:${minutes}:${seconds}`;
+        }, 1000);
+
+
+        // --- ITINERÁŘ LOGIKA ---
+        onSnapshot(query(itineraryCol, orderBy('date', 'asc')), (snapshot) => {
+            const list = document.getElementById('itineraryList');
             list.innerHTML = '';
+            
+            if (snapshot.empty) {
+                list.innerHTML = '<p class="text-slate-400 italic">Zatím nejsou v plánu žádné zastávky. Přidejte první!</p>';
+                return;
+            }
+
             snapshot.forEach(d => {
                 const item = d.data();
                 const id = d.id;
                 
-                const li = document.createElement('li');
-                li.className = "flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-100 hover:bg-slate-100 transition-colors";
-                
-                li.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTask('${id}', this.checked)" class="w-5 h-5 text-green-600 rounded cursor-pointer">
-                        <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-700'} cursor-pointer" onclick="toggleTask('${id}', ${!item.done})">${item.text}</span>
+                // Formátování data (z YYYY-MM-DD na DD. MM. YYYY)
+                let dateStr = item.date;
+                if(item.date) {
+                    const parts = item.date.split('-');
+                    if(parts.length === 3) dateStr = `${parts[2]}. ${parts[1]}. ${parts[0]}`;
+                }
+
+                const div = document.createElement('div');
+                div.className = "relative mb-6";
+                div.innerHTML = `
+                    <div class="absolute -left-[35px] top-1 bg-indigo-500 h-4 w-4 rounded-full border-4 border-white shadow"></div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 shadow-sm flex justify-between items-start group">
+                        <div>
+                            <span class="inline-block px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-bold rounded mb-2">${dateStr}</span>
+                            <h3 class="font-bold text-lg text-slate-800">${item.place}</h3>
+                        </div>
+                        <button onclick="deleteItinerary('${id}')" class="text-slate-300 hover:text-red-500 transition-colors p-2"><i class="fa-solid fa-trash"></i></button>
                     </div>
-                    <button onclick="deleteTask('${id}')" class="text-slate-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>
                 `;
-                list.appendChild(li);
+                list.appendChild(div);
             });
         });
 
-        window.addTask = async function() {
-            const input = document.getElementById('taskInput');
-            if (input.value.trim() === '') return;
-            await addDoc(checklistCol, {
-                text: input.value.trim(),
-                done: false,
+        window.addItinerary = async function() {
+            const date = document.getElementById('itinDate').value;
+            const place = document.getElementById('itinPlace').value;
+            
+            if (!date || place.trim() === '') return;
+            
+            await addDoc(itineraryCol, {
+                date: date,
+                place: place.trim(),
                 createdAt: serverTimestamp()
             });
-            input.value = '';
+            
+            document.getElementById('itinPlace').value = '';
         };
 
-        window.toggleTask = async function(id, isDone) {
-            await updateDoc(doc(db, 'checklist', id), { done: isDone });
+        window.deleteItinerary = async function(id) {
+            if(confirm("Opravdu smazat tuto zastávku?")) {
+                await deleteDoc(doc(db, 'itinerary', id));
+            }
         };
 
-        window.deleteTask = async function(id) {
-            await deleteDoc(doc(db, 'checklist', id));
-        };
 
-
-        // --- 2. ROZPOČET LOGIKA ---
+        // --- ROZPOČET LOGIKA S CHYTRÝM VYROVNÁNÍM ---
         onSnapshot(query(expensesCol, orderBy('createdAt', 'desc')), (snapshot) => {
             const list = document.getElementById('expenseList');
             list.innerHTML = '';
@@ -214,31 +358,60 @@
                 const item = d.data();
                 const id = d.id;
                 
-                // Přičtení do statistik
-                if(sums[item.payer] !== undefined) {
-                    sums[item.payer] += Number(item.amount);
-                }
+                if(sums[item.payer] !== undefined) sums[item.payer] += Number(item.amount);
 
-                // Vykreslení řádku
                 const li = document.createElement('li');
-                li.className = "flex justify-between items-center p-3 border-b border-slate-100 last:border-0";
+                li.className = "flex justify-between items-center p-3 bg-white border border-slate-100 rounded-lg hover:shadow-sm transition-all group";
                 li.innerHTML = `
                     <div class="flex flex-col">
                         <span class="font-medium text-slate-800">${item.description}</span>
-                        <span class="text-xs text-slate-500">Platil: ${item.payer}</span>
+                        <span class="text-xs ${posadkaColors[item.payer] || 'text-slate-500'} px-2 py-0.5 rounded-full mt-1 w-max font-medium">${item.payer}</span>
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="font-bold text-slate-700">${item.amount} Kč</span>
-                        <button onclick="deleteExpense('${id}')" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-times"></i></button>
+                        <button onclick="deleteExpense('${id}')" class="text-slate-200 hover:text-red-500 transition-colors bg-slate-50 p-2 rounded-full opacity-50 group-hover:opacity-100"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 list.appendChild(li);
             });
 
-            // Aktualizace nadpisů
-            document.getElementById('sumMichal').innerText = sums['Michal'] + ' Kč';
-            document.getElementById('sumMarek').innerText = sums['Marek'] + ' Kč';
-            document.getElementById('sumTata').innerText = sums['Táta'] + ' Kč';
+            // Aktualizace nadpisů se sumami
+            document.getElementById('sumMichal').innerText = sums['Michal'].toLocaleString() + ' Kč';
+            document.getElementById('sumMarek').innerText = sums['Marek'].toLocaleString() + ' Kč';
+            document.getElementById('sumTata').innerText = sums['Táta'].toLocaleString() + ' Kč';
+
+            // CHYTRÉ VYROVNÁNÍ (Matematika)
+            const total = sums['Michal'] + sums['Marek'] + sums['Táta'];
+            document.getElementById('totalSpent').innerText = total.toLocaleString() + ' Kč';
+            
+            const avg = total / 3;
+            document.getElementById('avgSpent').innerText = Math.round(avg).toLocaleString();
+
+            const settlementBox = document.getElementById('settlementBox');
+            if (total === 0) {
+                settlementBox.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje. Všichni jsou na nule.</p>';
+                return;
+            }
+
+            // Výpočet kdo dluží (-) a kdo má dostat (+)
+            let balances = [
+                { name: 'Michal', balance: sums['Michal'] - avg },
+                { name: 'Marek', balance: sums['Marek'] - avg },
+                { name: 'Táta', balance: sums['Táta'] - avg }
+            ];
+
+            let html = '';
+            balances.forEach(b => {
+                let roundBal = Math.round(b.balance);
+                if (roundBal < -5) { // Dluží do společného
+                    html += `<div class="flex items-center justify-between text-red-600 bg-red-50 p-2 rounded border border-red-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>${b.name} dluží</span> <b>${Math.abs(roundBal).toLocaleString()} Kč</b></div>`;
+                } else if (roundBal > 5) { // Má dostat zpět
+                    html += `<div class="flex items-center justify-between text-green-600 bg-green-50 p-2 rounded border border-green-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>${b.name} dostane</span> <b>${roundBal.toLocaleString()} Kč</b></div>`;
+                } else {
+                    html += `<div class="flex items-center justify-between text-slate-400 bg-slate-50 p-2 rounded border border-slate-100"><span class="font-medium"><i class="fa-solid fa-check mr-2"></i>${b.name}</span> <b>Vyrovnáno</b></div>`;
+                }
+            });
+            settlementBox.innerHTML = html;
         });
 
         window.addExpense = async function() {
@@ -260,23 +433,112 @@
         };
 
         window.deleteExpense = async function(id) {
-            await deleteDoc(doc(db, 'expenses', id));
+            if(confirm("Opravdu smazat tento výdaj? Tím se přepočítá vyrovnání.")) {
+                await deleteDoc(doc(db, 'expenses', id));
+            }
         };
 
 
-        // --- 3. POZNÁMKY LOGIKA ---
+        // --- CHECKLIST S KATEGORIEMI ---
+        onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = '';
+            
+            // Seskupení dat do objektu podle kategorií
+            const grouped = {
+                'Doklady a Peníze': [],
+                'Vybavení auta': [],
+                'Jídlo a Pití': [],
+                'Osobní věci': [],
+                'Ostatní': []
+            };
+
+            snapshot.forEach(d => {
+                const item = d.data();
+                const cat = item.category || 'Ostatní';
+                if(!grouped[cat]) grouped[cat] = [];
+                grouped[cat].push({ id: d.id, ...item });
+            });
+
+            // Vykreslení kategorií
+            for (const [catName, items] of Object.entries(grouped)) {
+                if(items.length === 0) continue; // Nevykreslovat prázdné kategorie
+
+                const catDiv = document.createElement('div');
+                catDiv.className = "mb-4";
+                
+                let listHtml = `<h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-3">${catName}</h3><ul class="space-y-2">`;
+                
+                items.forEach(item => {
+                    listHtml += `
+                        <li class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg group transition-colors">
+                            <label class="flex items-center gap-3 cursor-pointer flex-1">
+                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTask('${item.id}', this.checked)" class="w-5 h-5 text-green-600 rounded cursor-pointer accent-green-600">
+                                <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-700'} transition-all">${item.text}</span>
+                            </label>
+                            <button onclick="deleteTask('${item.id}')" class="text-slate-200 hover:text-red-500 transition-colors p-2 rounded-full opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash"></i></button>
+                        </li>
+                    `;
+                });
+                
+                listHtml += `</ul>`;
+                catDiv.innerHTML = listHtml;
+                container.appendChild(catDiv);
+            }
+        });
+
+        window.addTask = async function() {
+            const input = document.getElementById('taskInput');
+            const cat = document.getElementById('taskCategory').value;
+            if (input.value.trim() === '') return;
+            
+            await addDoc(checklistCol, {
+                text: input.value.trim(),
+                category: cat,
+                done: false,
+                createdAt: serverTimestamp()
+            });
+            input.value = '';
+        };
+
+        window.toggleTask = async function(id, isDone) {
+            await updateDoc(doc(db, 'checklist', id), { done: isDone });
+        };
+
+        window.deleteTask = async function(id) {
+            await deleteDoc(doc(db, 'checklist', id));
+        };
+
+
+        // --- POZNÁMKY (CHAT) LOGIKA ---
         onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
             const list = document.getElementById('noteList');
             list.innerHTML = '';
             snapshot.forEach(d => {
                 const item = d.data();
                 const div = document.createElement('div');
-                div.className = "p-3 bg-slate-50 rounded-lg border border-slate-100";
+                
+                // Formát času (jen čas, např. 14:30)
+                let timeStr = "";
+                if(item.createdAt) {
+                    const date = item.createdAt.toDate();
+                    timeStr = date.toLocaleTimeString('cs-CZ', {hour: '2-digit', minute:'2-digit'});
+                }
+
+                div.className = "p-3 bg-white rounded-xl shadow-sm border border-slate-100 max-w-[85%]";
+                // Rozlišení stran podle toho, kdo píše (pro hezčí vzhled chatu)
+                if(item.author === document.getElementById('noteAuthorInput').value) {
+                    div.className += " self-end bg-yellow-50 border-yellow-100";
+                } else {
+                    div.className += " self-start";
+                }
+
                 div.innerHTML = `
-                    <div class="flex justify-between items-start mb-1">
-                        <span class="text-xs font-bold ${item.author === 'Michal' ? 'text-blue-600' : (item.author === 'Marek' ? 'text-green-600' : 'text-yellow-600')}">${item.author}</span>
+                    <div class="flex justify-between items-baseline mb-1 gap-4">
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-full ${posadkaColors[item.author]}">${item.author}</span>
+                        <span class="text-[10px] text-slate-400">${timeStr}</span>
                     </div>
-                    <p class="text-sm text-slate-700">${item.text}</p>
+                    <p class="text-sm text-slate-700 mt-1 pl-1">${item.text}</p>
                 `;
                 list.appendChild(div);
             });
@@ -298,6 +560,7 @@
         };
 
         // Podpora Enter pro zadávání polí
+        document.getElementById('pinInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.checkPin(); });
         document.getElementById('taskInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addTask(); });
         document.getElementById('amountInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addExpense(); });
         document.getElementById('noteInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addNote(); });
