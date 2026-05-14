@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Nová knihovna pro skutečný Excel (.xlsx) s listy -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -91,6 +93,7 @@
             </div>
 
             <div id="tab-overview" class="tab-content hidden space-y-6">
+                <!-- Info o voze (stejné jako prve) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2 flex items-center"><i class="fa-solid fa-id-card text-blue-500 mr-2"></i> Identifikace vozidla</h3>
@@ -163,11 +166,15 @@
                 </div>
             </div>
 
+            <!-- ITINERÁŘ TABS VČETNĚ TLAČÍTKA NA EXCEL -->
             <div id="tab-itinerary" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h2 class="text-xl font-bold mb-4 flex justify-between items-center">
-                        <span><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> Plán trasy</span>
-                        <span class="text-xs text-slate-400"><i class="fa-solid fa-arrows-up-down mr-1"></i> Lze přesouvat</span>
+                    <h2 class="text-xl font-bold mb-4 flex justify-between items-center flex-wrap gap-2">
+                        <span class="flex items-center"><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> Plán trasy</span>
+                        <div class="flex items-center gap-3">
+                            <button onclick="exportToExcel()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors shadow-sm font-medium"><i class="fa-solid fa-file-excel mr-1 text-green-600"></i> Excel záloha</button>
+                            <span class="text-xs text-slate-400 hidden md:inline"><i class="fa-solid fa-arrows-up-down mr-1"></i> Lze přesouvat</span>
+                        </div>
                     </h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
@@ -185,6 +192,7 @@
                 </div>
             </div>
 
+            <!-- ROZPOČET TABS S TLAČÍTKEM NA EXCEL -->
             <div id="tab-budget" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> Sdílené výdaje</h2>
@@ -218,7 +226,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- VYÚČTOVÁNÍ EUR -->
                     <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 mb-8 border border-emerald-100 shadow-inner">
                         <h3 class="font-bold text-emerald-900 mb-4 border-b border-emerald-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v EUR</h3>
@@ -238,11 +246,15 @@
                         </div>
                     </div>
 
-                    <h3 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wider">Historie transakcí</h3>
+                    <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
+                        <h3 class="font-bold text-slate-700 text-sm uppercase tracking-wider">Historie transakcí</h3>
+                        <button onclick="exportToExcel()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors shadow-sm font-medium"><i class="fa-solid fa-file-excel mr-1 text-green-600"></i> Excel záloha</button>
+                    </div>
                     <ul id="expenseList" class="space-y-2 max-h-80 overflow-y-auto pr-2"></ul>
                 </div>
             </div>
 
+            <!-- CHECKLIST TABS -->
             <div id="tab-checklist" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit a zabalit</h2>
@@ -255,6 +267,7 @@
                 </div>
             </div>
 
+            <!-- CHAT TABS -->
             <div id="tab-notes" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[600px] max-h-[75vh]">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-brands fa-facebook-messenger text-blue-500 mr-2"></i> Chat posádky</h2>
@@ -380,6 +393,7 @@
             document.getElementById("countdown").innerHTML = `${days}d ${hours}:${minutes}:${seconds}`;
         }, 1000);
 
+        // --- ITINERÁŘ LOGIKA ---
         let currentItinItems = [];
         let sortableItin = null;
 
@@ -505,6 +519,7 @@
             closeEditItin();
         };
 
+        // --- ROZPOČET LOGIKA ---
         let currentExpItems = [];
         onSnapshot(query(expensesCol, orderBy('createdAt', 'desc')), (snapshot) => {
             const list = document.getElementById('expenseList');
@@ -647,10 +662,11 @@
             closeEditExp();
         };
 
+        // --- CHECKLIST LOGIKA ---
         onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
             const container = document.getElementById('checklistContainer');
             container.innerHTML = '';
-            const grouped = { 'Doklady a Peníze': [], 'Vybavení auta': [], 'Jídlo a Pití': [], 'Osobní věci': [], 'Ostatní': [] };
+            const grouped = { 'Doklady': [], 'Auto': [], 'Jídlo': [], 'Osobní věci': [], 'Ostatní': [] };
 
             snapshot.forEach(d => {
                 const item = d.data();
@@ -694,6 +710,7 @@
         window.toggleTask = async function(id, isDone) { await updateDoc(doc(db, 'checklist', id), { done: isDone }); };
         window.deleteTask = async function(id) { await deleteDoc(doc(db, 'checklist', id)); };
 
+        // --- CHAT LOGIKA ---
         onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
             const list = document.getElementById('noteList');
             list.innerHTML = '';
@@ -741,7 +758,54 @@
         };
         window.deleteNote = async function(id) { if(confirm("Smazat zprávu?")) await deleteDoc(doc(db, 'notes', id)); };
 
-        // Enter support
+        // --- PROFESIONÁLNÍ EXCEL EXPORT S LISTY ---
+        window.exportToExcel = function() {
+            // Vytvoření nového sešitu
+            const wb = XLSX.utils.book_new();
+
+            // 1. DATA PRO ROZPOČET (LIST 1)
+            let budgetData = [["Datum", "Kdo platil", "Za co to bylo", "Částka", "Měna"]];
+            currentExpItems.forEach(item => {
+                let date = item.date ? item.date.split('-').reverse().join('.') : '';
+                budgetData.push([
+                    date, 
+                    item.payer || '', 
+                    item.description || '', 
+                    item.amount || 0, 
+                    item.currency || 'Kč'
+                ]);
+            });
+            const wsBudget = XLSX.utils.aoa_to_sheet(budgetData);
+            
+            // Nastavení šířky sloupců pro Rozpočet
+            wsBudget['!cols'] = [{wch: 12}, {wch: 15}, {wch: 30}, {wch: 10}, {wch: 8}];
+            XLSX.utils.book_append_sheet(wb, wsBudget, "Rozpočet");
+
+            // 2. DATA PRO ITINERÁŘ (LIST 2)
+            let itinData = [["Den", "Datum", "Místo / Kemp", "Autor", "Poznámka", "Odkaz (Mapa)", "Web"]];
+            currentItinItems.forEach(item => {
+                let date = item.date ? item.date.split('-').reverse().join('.') : '';
+                itinData.push([
+                    item.day || '', 
+                    date, 
+                    item.place || '', 
+                    item.author || '', 
+                    item.note || '', 
+                    item.link || '', 
+                    item.web || ''
+                ]);
+            });
+            const wsItin = XLSX.utils.aoa_to_sheet(itinData);
+            
+            // Nastavení šířky sloupců pro Itinerář
+            wsItin['!cols'] = [{wch: 8}, {wch: 12}, {wch: 25}, {wch: 10}, {wch: 35}, {wch: 30}, {wch: 30}];
+            XLSX.utils.book_append_sheet(wb, wsItin, "Itinerář");
+
+            // Finální stažení do počítače
+            XLSX.writeFile(wb, "EuroTrip_2026_Zaloha.xlsx");
+        };
+
+        // Klávesnice podpora
         document.getElementById('pinInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.checkPin(); });
         document.getElementById('taskInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addTask(); });
         document.getElementById('amountInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addExpense(); });
