@@ -19,37 +19,38 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen">
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
 
     <div id="pinScreen" class="fixed inset-0 bg-slate-900/95 z-50 flex flex-col items-center justify-center transition-opacity duration-500 backdrop-blur-sm">
         <div class="bg-white/10 p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full mx-4 backdrop-blur-md border border-white/20">
             <i class="fa-solid fa-truck-fast text-5xl text-blue-400 mb-4 drop-shadow-md"></i>
             <h2 class="text-3xl font-bold mb-2 text-white drop-shadow-md">EuroTrip 2026</h2>
+            <p class="text-blue-100 mb-6">Zadejte přístupový PIN posádky</p>
             <input type="password" id="pinInput" class="w-full text-center text-3xl p-4 bg-white/20 border-2 border-white/30 rounded-xl mb-4 focus:outline-none focus:border-blue-400 text-white placeholder-white/50 tracking-[0.5em]" placeholder="••••">
-            <button onclick="checkPin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-4 rounded-xl transition-colors shadow-lg">Odemknout</button>
-            <p id="pinError" class="text-red-400 mt-4 hidden font-medium">Nesprávný PIN!</p>
+            <button onclick="checkPin()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-4 rounded-xl transition-colors shadow-lg">Odemknout aplikaci</button>
+            <p id="pinError" class="text-red-400 mt-4 hidden font-medium bg-red-900/50 py-2 rounded-lg">Nesprávný PIN!</p>
         </div>
     </div>
 
-    <div id="mainApp" class="hidden max-w-4xl mx-auto md:my-8 bg-white/95 md:rounded-3xl shadow-2xl min-h-screen md:min-h-[90vh] flex flex-col backdrop-blur-xl border border-white/50 overflow-hidden relative">
+    <div id="mainApp" class="hidden max-w-4xl mx-auto md:my-8 bg-white/95 md:rounded-3xl shadow-2xl min-h-screen md:min-h-[90vh] flex flex-col backdrop-blur-xl border border-white/50 relative">
         
-        <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white p-6 md:rounded-t-3xl relative z-10">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white p-6 md:rounded-t-3xl relative overflow-hidden">
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="text-center md:text-left">
-                    <h1 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight">EuroTrip 2026</h1>
-                    <p class="text-blue-200 mt-1 text-sm tracking-widest">Michal ⚡ Mára ⚡ Fanda</p>
+                    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight uppercase"><i class="fa-solid fa-route text-blue-300 mr-2"></i> EuroTrip 2026</h1>
+                    <p class="text-blue-200 mt-2 text-sm md:text-base tracking-widest font-medium">Michal <i class="fa-solid fa-bolt mx-2 text-yellow-400 text-xs"></i> Mára <i class="fa-solid fa-bolt mx-2 text-yellow-400 text-xs"></i> Fanda</p>
                 </div>
                 <div class="bg-black/40 backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/10 text-center">
-                    <p class="text-xs text-blue-200 uppercase mb-1">Do odjezdu zbývá</p>
-                    <div id="countdown" class="text-2xl font-mono font-bold text-yellow-400 tracking-widest">--:--:--:--</div>
+                    <p class="text-xs text-blue-200 uppercase tracking-wider font-semibold mb-1">Do odjezdu zbývá</p>
+                    <div id="countdown" class="text-2xl md:text-3xl font-mono font-bold tracking-widest text-yellow-400 drop-shadow-md">--:--:--:--</div>
                 </div>
             </div>
         </header>
 
         <nav class="bg-white border-b border-slate-200 sticky top-0 z-40 overflow-x-auto no-scrollbar shadow-sm">
-            <ul class="flex w-full md:justify-center min-w-max p-2 gap-1">
+            <ul class="flex w-full md:justify-center min-w-max p-2 gap-2">
                 <li><button onclick="switchTab('home')" id="nav-home" class="nav-btn active px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-blue-700 bg-blue-50"><i class="fa-solid fa-house mr-2"></i>Domů</button></li>
-                <li><button onclick="switchTab('overview')" id="nav-overview" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-van-shuttle mr-2"></i>Vůz</button></li>
+                <li><button onclick="switchTab('overview')" id="nav-overview" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-van-shuttle mr-2"></i>Vůz a Info</button></li>
                 <li><button onclick="switchTab('itinerary')" id="nav-itinerary" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-map-location-dot mr-2"></i>Itinerář</button></li>
                 <li><button onclick="switchTab('budget')" id="nav-budget" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-wallet mr-2"></i>Rozpočet</button></li>
                 <li><button onclick="switchTab('checklist')" id="nav-checklist" class="nav-btn px-4 py-2.5 rounded-xl font-semibold text-sm transition-all text-slate-500 hover:bg-slate-100"><i class="fa-solid fa-list-check mr-2"></i>Checklist</button></li>
@@ -57,30 +58,87 @@
             </ul>
         </nav>
 
-        <main class="flex-1 p-4 md:p-8 overflow-y-auto no-scrollbar">
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
 
             <div id="tab-home" class="tab-content block">
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <button onclick="switchTab('overview')" class="bg-white/90 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center hover:bg-blue-50 transition-all aspect-square group shadow-sm">
-                        <i class="fa-solid fa-van-shuttle text-4xl text-blue-600 mb-4 group-hover:scale-110 transition-transform"></i>
-                        <span class="font-bold text-slate-700">Vůz a Info</span>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                    <button onclick="switchTab('overview')" class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center hover:bg-blue-50 hover:border-blue-200 transition-all group aspect-square">
+                        <i class="fa-solid fa-van-shuttle text-4xl md:text-5xl text-blue-600 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-slate-800 text-sm md:text-base mt-2">Vůz a Info</span>
                     </button>
-                    <button onclick="switchTab('itinerary')" class="bg-white/90 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center hover:bg-indigo-50 transition-all aspect-square group shadow-sm">
-                        <i class="fa-solid fa-map-location-dot text-4xl text-indigo-600 mb-4 group-hover:scale-110 transition-transform"></i>
-                        <span class="font-bold text-slate-700">Itinerář</span>
+                    <button onclick="switchTab('itinerary')" class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center hover:bg-indigo-50 hover:border-indigo-200 transition-all group aspect-square">
+                        <i class="fa-solid fa-map-location-dot text-4xl md:text-5xl text-indigo-600 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-slate-800 text-sm md:text-base mt-2">Itinerář</span>
                     </button>
-                    <button onclick="switchTab('budget')" class="bg-white/90 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center hover:bg-emerald-50 transition-all aspect-square group shadow-sm">
-                        <i class="fa-solid fa-wallet text-4xl text-emerald-600 mb-4 group-hover:scale-110 transition-transform"></i>
-                        <span class="font-bold text-slate-700">Rozpočet</span>
+                    <button onclick="switchTab('budget')" class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center hover:bg-emerald-50 hover:border-emerald-200 transition-all group aspect-square">
+                        <i class="fa-solid fa-wallet text-4xl md:text-5xl text-emerald-600 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-slate-800 text-sm md:text-base mt-2">Rozpočet</span>
                     </button>
-                    <button onclick="switchTab('checklist')" class="bg-white/90 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center hover:bg-green-50 transition-all aspect-square group shadow-sm">
-                        <i class="fa-solid fa-list-check text-4xl text-green-600 mb-4 group-hover:scale-110 transition-transform"></i>
-                        <span class="font-bold text-slate-700">Checklist</span>
+                    <button onclick="switchTab('checklist')" class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center hover:bg-green-50 hover:border-green-200 transition-all group aspect-square">
+                        <i class="fa-solid fa-list-check text-4xl md:text-5xl text-green-600 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-slate-800 text-sm md:text-base mt-2">Checklist</span>
                     </button>
-                    <button onclick="switchTab('notes')" class="bg-white/90 p-6 rounded-2xl border border-slate-200 flex flex-col items-center justify-center hover:bg-yellow-50 transition-all aspect-square group shadow-sm md:col-start-2">
-                        <i class="fa-brands fa-facebook-messenger text-4xl text-yellow-500 mb-4 group-hover:scale-110 transition-transform"></i>
-                        <span class="font-bold text-slate-700">Chat posádky</span>
+                    <button onclick="switchTab('notes')" class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center hover:bg-yellow-50 hover:border-yellow-200 transition-all group aspect-square md:col-start-2">
+                        <i class="fa-brands fa-facebook-messenger text-4xl md:text-5xl text-yellow-500 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <span class="font-bold text-slate-800 text-sm md:text-base mt-2">Chat posádky</span>
                     </button>
+                </div>
+            </div>
+
+            <div id="tab-overview" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2 flex items-center"><i class="fa-solid fa-id-card text-blue-500 mr-2"></i> Identifikace vozidla</h3>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>Tovární značka:</span> <strong class="text-right">Elnagh</strong></li>
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>Rok výroby:</span> <strong class="text-right">2022</strong></li>
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>Registrační značka:</span> <strong class="text-right tracking-wider">8H05501</strong></li>
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>VIN:</span> <strong class="text-right text-xs">ZFA25000002T33600</strong></li>
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>Barva:</span> <strong class="text-right">Bílá</strong></li>
+                            <li class="flex justify-between pt-1 text-xs"><span>Doložnost:</span> <strong class="text-right text-red-600">Max 590 kg <br>(vč. posádky, vody a nákladu)</strong></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2 flex items-center"><i class="fa-regular fa-calendar-check text-indigo-500 mr-2"></i> Termíny a místo</h3>
+                        <ul class="space-y-3 text-sm text-slate-700">
+                            <li><strong class="block text-slate-500 text-xs">Oficiální doba nájmu:</strong> 1. 6. 2026 – 7. 6. 2026</li>
+                            <li><strong class="block text-slate-500 text-xs">Vyzvednutí:</strong> 31. 5. 2026, cca v 16:00</li>
+                            <li><strong class="block text-slate-500 text-xs">Vrácení:</strong> 7. 6. 2026, cca po 16:00</li>
+                            <li><strong class="block text-slate-500 text-xs">Místo předání:</strong> Osice 44, nebo HK - Plačice</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2 flex items-center"><i class="fa-solid fa-coins text-emerald-500 mr-2"></i> Finance a limity</h3>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>Denní nájemné:</span> <strong>3 200 Kč</strong></li>
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>Kauce:</span> <strong>25 000 Kč</strong></li>
+                            <li class="flex justify-between border-b border-slate-50 pb-1"><span>Spoluúčast:</span> <strong>10 % (min 10k)</strong></li>
+                            <li class="flex justify-between text-green-600 font-bold mt-2 pt-1"><span>Nájezd kilometrů:</span> <span>Neomezený!</span></li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                        <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2 flex items-center"><i class="fa-solid fa-address-book text-orange-500 mr-2"></i> Kontakty</h3>
+                        <ul class="space-y-2 text-sm text-slate-700">
+                            <li><strong class="block text-slate-500 text-xs">Pronajímatel:</strong> KARAVANY-HRADEC</li>
+                            <li><strong class="block text-slate-500 text-xs">Zástupce:</strong> Jaroslav Pecha</li>
+                            <li class="mt-2"><i class="fa-solid fa-phone w-5 text-slate-400"></i> <a href="tel:+420607026388" class="text-blue-600">+420 607 026 388</a></li>
+                        </ul>
+                    </div>
+                    <div class="bg-red-50 p-6 rounded-2xl border border-red-200 shadow-sm md:col-span-2">
+                        <h3 class="font-bold text-xl mb-4 text-red-800 border-b border-red-200 pb-2"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Důležitá pravidla a Sankce</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <ul class="list-disc pl-5 space-y-2 text-sm text-red-900">
+                                <li><strong>Zákaz kouření</strong> a manipulace s otevřeným ohněm.</li>
+                                <li><strong>Zákaz přepravy kol</strong> uvnitř.</li>
+                                <li><strong>Přísný zákaz</strong> vlhčených ubrousků do WC.</li>
+                            </ul>
+                            <ul class="space-y-2 text-sm text-red-900 bg-white/60 p-4 rounded-xl">
+                                <li class="flex justify-between"><span>Nevyčištěné WC:</span> <strong>2 500 Kč</strong></li>
+                                <li class="flex justify-between"><span>Ztráta dokladu/klíče:</span> <strong>2 500 Kč</strong></li>
+                                <li class="flex justify-between"><span>Neohlášení nehody:</span> <strong>10 000 Kč</strong></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -88,63 +146,129 @@
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4 flex justify-between items-center">
                         <span><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> Plán trasy</span>
-                        <span class="text-[10px] text-slate-400 font-normal">PROHAZOVÁNÍ TAŽENÍM <i class="fa-solid fa-arrows-up-down ml-1"></i></span>
+                        <span class="text-xs text-slate-400"><i class="fa-solid fa-arrows-up-down mr-1"></i> Lze přesouvat</span>
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-6 gap-2 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <select id="itinAuthor" class="p-2 border border-slate-200 rounded-lg text-sm"><option>Michal</option><option>Mára</option><option>Fanda</option></select>
-                        <select id="itinDay" class="p-2 border border-slate-200 rounded-lg text-sm text-indigo-600 font-bold"><option value="">Den ?</option><option>Den 1</option><option>Den 2</option><option>Den 3</option><option>Den 4</option><option>Den 5</option><option>Den 6</option><option>Den 7</option><option>Záloha</option></select>
-                        <input type="date" id="itinDate" class="p-2 border border-slate-200 rounded-lg text-sm">
-                        <input type="text" id="itinPlace" class="md:col-span-3 p-2 border border-slate-200 rounded-lg font-bold" placeholder="Místo / Kemp">
-                        <input type="text" id="itinNote" class="md:col-span-3 p-2 border border-slate-200 rounded-lg text-sm" placeholder="Poznámka k místu...">
-                        <input type="text" id="itinLink" class="md:col-span-1 p-2 border border-slate-200 rounded-lg text-xs" placeholder="Mapy.cz / GPS">
-                        <input type="text" id="itinWeb" class="md:col-span-1 p-2 border border-slate-200 rounded-lg text-xs" placeholder="Web (URL)">
-                        <button onclick="addItinerary()" class="bg-indigo-600 text-white font-bold p-2 rounded-lg text-sm shadow-md">Přidat</button>
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <select id="itinAuthor" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-1"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
+                        <select id="itinDay" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-1 text-indigo-700 font-medium"><option value="">Den ?</option><option>Den 1</option><option>Den 2</option><option>Den 3</option><option>Den 4</option><option>Den 5</option><option>Den 6</option><option>Den 7</option><option>Plán B</option></select>
+                        <input type="date" id="itinDate" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-1 text-sm">
+                        <input type="text" id="itinPlace" class="md:col-span-3 p-3 border border-slate-200 rounded-lg font-bold" placeholder="Místo / Kemp">
+                        <input type="text" id="itinNote" class="md:col-span-2 p-3 border border-slate-200 rounded-lg text-sm" placeholder="Poznámka...">
+                        <input type="text" id="itinLink" class="md:col-span-2 p-3 border border-slate-200 rounded-lg text-sm" placeholder="Mapy.cz/GPS">
+                        <input type="text" id="itinWeb" class="md:col-span-1 p-3 border border-slate-200 rounded-lg text-sm" placeholder="Web (URL)">
+                        <button onclick="addItinerary()" class="bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg md:col-span-1 shadow-md">Přidat</button>
                     </div>
-
-                    <div class="space-y-3" id="itineraryList"></div>
+                    <div class="space-y-4 mt-8" id="itineraryList"></div>
                 </div>
             </div>
 
-            <div id="tab-overview" class="tab-content hidden">
+            <div id="tab-budget" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-lg mb-4 border-b pb-2"><i class="fa-solid fa-van-shuttle text-blue-500 mr-2"></i> Detaily vozu Elnagh</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div class="space-y-2">
-                            <p class="flex justify-between"><span>RZ:</span> <strong>8H05501</strong></p>
-                            <p class="flex justify-between"><span>Rok:</span> <strong>2022</strong></p>
-                            <p class="flex justify-between"><span>VIN:</span> <strong class="text-[10px]">ZFA25000002T33600</strong></p>
-                            <p class="flex justify-between text-red-600"><span>Doložnost:</span> <strong>590 kg</strong></p>
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> Sdílené výdaje</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <input type="date" id="expenseDateInput" class="p-3 border border-slate-200 rounded-lg bg-white text-sm md:col-span-1">
+                        <select id="payerInput" class="p-3 border border-slate-200 rounded-lg bg-white font-medium md:col-span-1"><option value="Michal">Michal platil</option><option value="Mára">Mára platil</option><option value="Fanda">Fanda platil</option></select>
+                        <input type="text" id="expenseDescInput" class="p-3 border border-slate-200 rounded-lg md:col-span-2" placeholder="Za co to bylo">
+                        <div class="flex gap-2 md:col-span-1">
+                            <input type="number" id="amountInput" class="w-full p-3 border border-slate-200 rounded-lg" placeholder="Částka">
+                            <select id="currencyInput" class="p-3 border border-slate-200 rounded-lg bg-white font-bold"><option value="Kč">Kč</option><option value="€">€</option></select>
                         </div>
-                        <div class="bg-blue-50 p-3 rounded-xl border border-blue-100">
-                            <p class="font-bold mb-1">Vyzvednutí:</p>
-                            <p>31. 5. 2026 cca v 16:00</p>
-                            <p class="mt-2 font-bold mb-1 text-orange-700">Pronajímatel:</p>
-                            <p>Jaroslav Pecha (+420 607 026 388)</p>
+                        <button onclick="addExpense()" class="bg-blue-600 text-white font-bold py-3 px-4 rounded-lg md:col-span-1 shadow-md">Zapsat</button>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 mb-8 border border-blue-100 shadow-inner">
+                        <h3 class="font-bold text-blue-900 mb-4 border-b border-blue-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v CZK (Kurz: 1€ = 25 Kč)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <ul class="space-y-2">
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Michal</span><span id="sumMichal" class="font-bold text-blue-700">0 Kč</span></li>
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Mára</span><span id="sumMára" class="font-bold text-blue-700">0 Kč</span></li>
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Fanda</span><span id="sumFanda" class="font-bold text-blue-700">0 Kč</span></li>
+                                </ul>
+                                <div class="mt-3 text-right"><span class="text-sm text-slate-500">Celkem party: </span><span id="totalSpent" class="text-lg font-black">0 Kč</span></div>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <p class="text-sm text-slate-500 mb-2">Jeden platí průměrně <span id="avgSpent" class="font-bold">0</span> Kč:</p>
+                                <div id="settlementBox" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center gap-2"></div>
+                            </div>
                         </div>
+                    </div>
+
+                    <h3 class="font-bold text-slate-700 mb-3 text-sm uppercase">Historie transakcí</h3>
+                    <ul id="expenseList" class="space-y-2 max-h-80 overflow-y-auto pr-2"></ul>
+                </div>
+            </div>
+
+            <div id="tab-checklist" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit a zabalit</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <select id="taskCategory" class="p-3 border border-slate-200 rounded-lg bg-white"><option value="Doklady">Doklady 🛂</option><option value="Auto">Auto 🚐</option><option value="Jídlo">Jídlo 🍻</option><option value="Ostatní">Ostatní 📌</option></select>
+                        <input type="text" id="taskInput" class="md:col-span-2 p-3 border border-slate-200 rounded-lg" placeholder="Nová položka...">
+                        <button onclick="addTask()" class="bg-green-500 text-white font-bold py-3 rounded-lg shadow-md">Přidat</button>
+                    </div>
+                    <div id="checklistContainer" class="space-y-6"></div>
+                </div>
+            </div>
+
+            <div id="tab-notes" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[600px] max-h-[75vh]">
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-brands fa-facebook-messenger text-blue-500 mr-2"></i> Chat posádky</h2>
+                    <div id="noteList" class="flex-1 space-y-4 overflow-y-auto pr-2 mb-4 p-4 bg-slate-50/50 rounded-xl border border-slate-100 flex flex-col-reverse relative"></div>
+                    <div class="flex flex-col md:flex-row gap-3 pt-2">
+                        <select id="noteAuthorInput" class="w-full md:w-32 p-3 border border-slate-200 rounded-xl bg-white"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
+                        <input type="text" id="noteInput" class="flex-1 p-3 border border-slate-200 rounded-xl" placeholder="Napiš zprávu...">
+                        <button onclick="addNote()" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-md"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
 
-            </main>
+        </main>
 
-        <div id="editItinModal" class="fixed inset-0 bg-slate-900/60 z-[100] hidden items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-2xl">
-                <h3 class="font-bold text-xl mb-4 border-b pb-2">Upravit zastávku</h3>
+        <!-- Modal: Itinerář -->
+        <div id="editItinModal" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+                <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-indigo-500 mr-2"></i>Upravit zastávku</h3>
                 <input type="hidden" id="editItinId">
                 <div class="space-y-3">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="editItinDay" class="p-2 border border-slate-200 rounded-lg text-sm font-bold text-indigo-600" placeholder="Den">
-                        <input type="date" id="editItinDate" class="p-2 border border-slate-200 rounded-lg text-sm">
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="editItinAuthor" class="p-2 border border-slate-200 rounded-lg"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
+                        <select id="editItinDay" class="p-2 border border-slate-200 rounded-lg text-indigo-700 font-medium"><option value="">Bez přiřazení</option><option value="Den 1">Den 1</option><option value="Den 2">Den 2</option><option value="Den 3">Den 3</option><option value="Den 4">Den 4</option><option value="Den 5">Den 5</option><option value="Den 6">Den 6</option><option value="Den 7">Den 7</option><option value="Plán B">Plán B</option></select>
                     </div>
-                    <input type="text" id="editItinPlace" class="w-full p-2 border border-slate-200 rounded-lg font-bold" placeholder="Místo">
-                    <textarea id="editItinNote" rows="2" class="w-full p-2 border border-slate-200 rounded-lg text-sm" placeholder="Poznámka"></textarea>
-                    <input type="text" id="editItinLink" class="w-full p-2 border border-slate-200 rounded-lg text-xs" placeholder="Mapy.cz odkaz">
-                    <input type="text" id="editItinWeb" class="w-full p-2 border border-slate-200 rounded-lg text-xs" placeholder="Webová stránka URL">
+                    <div class="grid grid-cols-3 gap-3">
+                        <input type="date" id="editItinDate" class="col-span-1 p-2 border border-slate-200 rounded-lg">
+                        <input type="text" id="editItinPlace" class="col-span-2 p-2 border border-slate-200 rounded-lg font-bold" placeholder="Místo">
+                    </div>
+                    <input type="text" id="editItinNote" class="w-full p-2 border border-slate-200 rounded-lg" placeholder="Poznámka">
+                    <input type="text" id="editItinLink" class="w-full p-2 border border-slate-200 rounded-lg" placeholder="Odkaz (Mapy.cz/GPS)">
+                    <input type="text" id="editItinWeb" class="w-full p-2 border border-slate-200 rounded-lg" placeholder="Webová stránka URL (např. kempu)">
                 </div>
-                <div class="flex justify-end gap-2 mt-6">
+                <div class="flex justify-end gap-3 mt-6">
                     <button onclick="closeEditItin()" class="px-4 py-2 bg-slate-100 rounded-lg">Zrušit</button>
-                    <button onclick="saveEditItinerary()" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg shadow-md">Uložit</button>
+                    <button onclick="saveEditItinerary()" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg">Uložit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Rozpočet -->
+        <div id="editExpModal" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+                <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-blue-500 mr-2"></i>Upravit výdaj</h3>
+                <input type="hidden" id="editExpId">
+                <div class="space-y-3">
+                    <input type="date" id="editExpDate" class="w-full p-2 border border-slate-200 rounded-lg">
+                    <select id="editExpPayer" class="w-full p-2 border border-slate-200 rounded-lg font-medium"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
+                    <input type="text" id="editExpDesc" class="w-full p-2 border border-slate-200 rounded-lg" placeholder="Za co">
+                    <div class="flex gap-2">
+                        <input type="number" id="editExpAmount" class="flex-1 p-2 border border-slate-200 rounded-lg" placeholder="Částka">
+                        <select id="editExpCurrency" class="w-24 p-2 border border-slate-200 rounded-lg font-bold"><option value="Kč">Kč</option><option value="€">€</option></select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeEditExp()" class="px-4 py-2 bg-slate-100 rounded-lg">Zrušit</button>
+                    <button onclick="saveEditExpense()" class="px-6 py-2 bg-blue-600 text-white font-bold rounded-lg">Uložit</button>
                 </div>
             </div>
         </div>
@@ -165,90 +289,284 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        const checklistCol = collection(db, 'checklist');
+        const expensesCol = collection(db, 'expenses');
+        const notesCol = collection(db, 'notes');
         const itineraryCol = collection(db, 'itinerary');
 
-        window.checkPin = () => {
-            if(document.getElementById('pinInput').value === '2026') {
-                document.getElementById('pinScreen').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
+        const posadkaColors = { 'Michal': 'text-blue-700 bg-blue-100', 'Mára': 'text-emerald-700 bg-emerald-100', 'Fanda': 'text-amber-700 bg-amber-100' };
+
+        window.checkPin = function() {
+            const pin = document.getElementById('pinInput').value;
+            if (pin === '2026') {
+                document.getElementById('pinScreen').classList.add('opacity-0');
+                setTimeout(() => { document.getElementById('pinScreen').classList.add('hidden'); document.getElementById('mainApp').classList.remove('hidden'); }, 500);
             } else document.getElementById('pinError').classList.remove('hidden');
         };
 
-        window.switchTab = (id) => {
+        window.switchTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('text-blue-700', 'bg-blue-50'));
-            document.getElementById('tab-'+id).classList.remove('hidden');
-            document.getElementById('nav-'+id).classList.add('text-blue-700', 'bg-blue-50');
+            document.querySelectorAll('.nav-btn').forEach(el => { el.classList.remove('text-blue-700', 'bg-blue-50'); el.classList.add('text-slate-500', 'hover:bg-slate-100'); });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('nav-' + tabId);
+            activeBtn.classList.remove('text-slate-500', 'hover:bg-slate-100'); activeBtn.classList.add('text-blue-700', 'bg-blue-50');
         };
 
-        // Itinerary logic with NEW WEB LINK
-        onSnapshot(itineraryCol, (snapshot) => {
+        // Pomocná funkce pro bezpečné smazání bez vyskakovacího okna "alert/confirm"
+        window.executeDelete = async function(col, id) { await deleteDoc(doc(db, col, id)); };
+
+        // --- ITINERÁŘ ---
+        let currentItineraryItems = [];
+        let sortableItin = null;
+
+        onSnapshot(collection(db, 'itinerary'), (snapshot) => {
             const list = document.getElementById('itineraryList');
             list.innerHTML = '';
-            let items = [];
-            snapshot.forEach(d => items.push({id: d.id, ...d.data()}));
-            items.sort((a,b) => (a.order||0) - (b.order||0));
+            currentItineraryItems = [];
+            
+            if (snapshot.empty) { list.innerHTML = '<p class="text-slate-400 italic bg-white p-4 rounded-xl">Zatím nejsou zastávky.</p>'; return; }
 
-            items.forEach(item => {
+            snapshot.forEach(d => currentItineraryItems.push({ id: d.id, ...d.data() }));
+            currentItineraryItems.sort((a, b) => (a.order !== undefined ? a.order : 999999) - (b.order !== undefined ? b.order : 999999));
+
+            currentItineraryItems.forEach((item) => {
+                let dateStr = item.date || '';
+                if(item.date && item.date.includes('-')) dateStr = item.date.split('-').reverse().join('. ');
+
+                let linksHtml = '';
+                if (item.link) linksHtml += `<a href="${item.link.startsWith('http')?item.link:'https://mapy.cz/zakladni?q='+encodeURIComponent(item.link)}" target="_blank" class="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md mr-2"><i class="fa-solid fa-location-arrow mr-1"></i> Mapa</a>`;
+                if (item.web) linksHtml += `<a href="${item.web.startsWith('http')?item.web:'https://'+item.web}" target="_blank" class="mt-2 inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md"><i class="fa-solid fa-globe mr-1"></i> Web</a>`;
+
                 const div = document.createElement('div');
-                div.className = "bg-white p-4 rounded-xl border border-slate-200 flex items-start gap-3 group relative shadow-sm";
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-3 group relative";
                 div.setAttribute('data-id', item.id);
                 
-                let linksHtml = '';
-                if(item.link) linksHtml += `<a href="${item.link.startsWith('http')?item.link:'https://mapy.cz/zakladni?q='+item.link}" target="_blank" class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-md mr-1"><i class="fa-solid fa-location-dot"></i> MAPA</a>`;
-                if(item.web) linksHtml += `<a href="${item.web.startsWith('http')?item.web:'https://'+item.web}" target="_blank" class="px-3 py-1 bg-blue-100 text-blue-700 text-[10px] font-bold rounded-md"><i class="fa-solid fa-globe"></i> WEB</a>`;
-
                 div.innerHTML = `
-                    <div class="cursor-move text-slate-300 mt-1"><i class="fa-solid fa-grip-vertical"></i></div>
-                    <div class="flex-1">
-                        <div class="flex gap-2 mb-1">
-                            ${item.day?`<span class="px-2 py-0.5 bg-indigo-50 text-indigo-600 text-[10px] font-bold rounded">${item.day}</span>`:''}
-                            <span class="text-[10px] text-slate-400 font-bold ml-auto uppercase tracking-tighter">${item.author || 'Míra'}</span>
+                    <div class="cursor-move text-slate-300 hover:text-indigo-500 mt-2 px-1"><i class="fa-solid fa-grip-vertical text-xl"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            ${item.day ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded">${item.day}</span>` : ''}
+                            ${dateStr ? `<span class="text-xs text-slate-500 font-medium">${dateStr}</span>` : ''}
+                            ${item.author ? `<span class="text-[10px] ${posadkaColors[item.author]} px-2 py-0.5 rounded-full font-bold ml-auto">${item.author}</span>` : ''}
                         </div>
-                        <h4 class="font-bold text-slate-800 leading-tight">${item.place}</h4>
-                        <p class="text-xs text-slate-500 mt-1">${item.note || ''}</p>
-                        <div class="mt-2 flex flex-wrap gap-1">${linksHtml}</div>
+                        <h3 class="font-bold text-lg text-slate-800 leading-tight">${item.place}</h3>
+                        ${item.note ? `<p class="text-sm text-slate-600 mt-1 italic">${item.note}</p>` : ''}
+                        ${linksHtml}
                     </div>
-                    <div class="flex flex-col gap-1 ml-auto opacity-100 md:opacity-0 group-hover:opacity-100">
-                        <button onclick="openEditItin('${item.id}')" class="text-slate-300 hover:text-blue-500 p-1"><i class="fa-solid fa-pen text-xs"></i></button>
-                        <button onclick="deleteItinerary('${item.id}')" class="text-slate-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash text-xs"></i></button>
+                    <div class="flex flex-col gap-2 ml-2 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                        <button onclick="openEditItin('${item.id}')" class="text-slate-300 hover:text-blue-500 p-2 bg-slate-50 rounded-lg"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="this.innerHTML='Opr?'; this.classList.add('text-red-600','font-bold','text-xs'); this.setAttribute('onclick', 'executeDelete(\\'itinerary\\', \\'${item.id}\\')');" class="text-slate-300 hover:text-red-500 p-2 bg-slate-50 rounded-lg w-10 h-10 overflow-hidden"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 list.appendChild(div);
             });
 
-            new Sortable(list, {
-                animation: 150, handle: '.cursor-move',
-                onEnd: async () => {
-                    const batch = writeBatch(db);
-                    [...list.children].forEach((el, i) => batch.update(doc(db, 'itinerary', el.dataset.id), {order: i}));
-                    await batch.commit();
-                }
-            });
+            if (!sortableItin) {
+                sortableItin = new Sortable(document.getElementById('itineraryList'), {
+                    animation: 200, handle: '.cursor-move',
+                    onEnd: async function () {
+                        const domItems = document.getElementById('itineraryList').children;
+                        const batch = writeBatch(db);
+                        for(let i=0; i<domItems.length; i++) {
+                            const id = domItems[i].getAttribute('data-id');
+                            if(id) batch.update(doc(db, 'itinerary', id), { order: i });
+                        }
+                        await batch.commit();
+                    }
+                });
+            }
         });
 
-        window.addItinerary = async () => {
-            const p = document.getElementById('itinPlace');
-            if(!p.value) return;
+        window.addItinerary = async function() {
+            const place = document.getElementById('itinPlace').value;
+            if (!place.trim()) return;
             await addDoc(itineraryCol, {
-                place: p.value, day: document.getElementById('itinDay').value,
-                date: document.getElementById('itinDate').value,
-                link: document.getElementById('itinLink').value,
-                web: document.getElementById('itinWeb').value,
-                note: document.getElementById('itinNote').value,
-                author: document.getElementById('itinAuthor').value,
-                order: Date.now()
+                date: document.getElementById('itinDate').value, place: place.trim(),
+                link: document.getElementById('itinLink').value.trim(), web: document.getElementById('itinWeb').value.trim(),
+                day: document.getElementById('itinDay').value, author: document.getElementById('itinAuthor').value,
+                note: document.getElementById('itinNote').value.trim(), order: Date.now(), createdAt: serverTimestamp()
             });
-            ['itinPlace', 'itinLink', 'itinWeb', 'itinNote'].forEach(id => document.getElementById(id).value = '');
+            ['itinPlace','itinLink','itinWeb','itinNote','itinDay'].forEach(id => document.getElementById(id).value = '');
         };
 
-        window.openEditItin = async (id) => {
-            // Logika pro načtení do modálu (podobná jako dříve)
-            document.getElementById('editItinModal').classList.remove('hidden');
-            document.getElementById('editItinModal').classList.add('flex');
-            // ... (zde by bylo naplnění hodnot z pole items)
+        window.openEditItin = function(id) {
+            const item = currentItineraryItems.find(i => i.id === id);
+            if(!item) return;
+            document.getElementById('editItinId').value = item.id;
+            ['Place','Date','Link','Web','Day','Author','Note'].forEach(k => document.getElementById('editItin'+k).value = item[k.toLowerCase()] || '');
+            document.getElementById('editItinModal').classList.remove('hidden'); document.getElementById('editItinModal').classList.add('flex');
         };
-        // Ostatní pomocné funkce...
+        window.closeEditItin = () => { document.getElementById('editItinModal').classList.add('hidden'); document.getElementById('editItinModal').classList.remove('flex'); };
+        
+        window.saveEditItinerary = async function() {
+            const id = document.getElementById('editItinId').value;
+            await updateDoc(doc(db, 'itinerary', id), {
+                place: document.getElementById('editItinPlace').value, date: document.getElementById('editItinDate').value,
+                link: document.getElementById('editItinLink').value, web: document.getElementById('editItinWeb').value,
+                day: document.getElementById('editItinDay').value, author: document.getElementById('editItinAuthor').value,
+                note: document.getElementById('editItinNote').value
+            });
+            closeEditItin();
+        };
+
+        // --- ROZPOČET ---
+        let currentExpenses = [];
+        onSnapshot(query(expensesCol, orderBy('date', 'desc')), (snapshot) => {
+            const list = document.getElementById('expenseList');
+            list.innerHTML = '';
+            currentExpenses = [];
+            let sums = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+
+            snapshot.forEach(d => {
+                const item = { id: d.id, ...d.data() };
+                currentExpenses.push(item);
+                
+                // Přepočet EUR na CZK pro statistiky (1 EUR = 25 CZK)
+                let czkAmount = Number(item.amount);
+                if (item.currency === '€') czkAmount = czkAmount * 25;
+                
+                if(sums[item.payer] !== undefined) sums[item.payer] += czkAmount;
+
+                let dateStr = item.date ? item.date.split('-').reverse().join('. ') : '';
+                
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center p-3 bg-white border border-slate-100 rounded-lg group";
+                li.innerHTML = `
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-slate-800">${item.description}</span>
+                            <span class="text-[10px] text-slate-400">${dateStr}</span>
+                        </div>
+                        <span class="text-xs ${posadkaColors[item.payer]} px-2 py-0.5 rounded-full mt-1 w-max">${item.payer}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="text-right">
+                            <span class="font-bold text-slate-700">${item.amount} ${item.currency || 'Kč'}</span>
+                            ${item.currency === '€' ? `<div class="text-[10px] text-slate-400">~${czkAmount} Kč</div>` : ''}
+                        </div>
+                        <div class="flex flex-col gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100">
+                            <button onclick="openEditExp('${item.id}')" class="text-slate-300 hover:text-blue-500"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="this.innerHTML='<i class=\\'fa-solid fa-check\\'></i>'; this.classList.add('text-red-600'); this.setAttribute('onclick', 'executeDelete(\\'expenses\\', \\'${item.id}\\')');" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+
+            // Vyúčtování
+            ['Michal','Mára','Fanda'].forEach(n => document.getElementById('sum'+n).innerText = sums[n].toLocaleString() + ' Kč');
+            const total = sums['Michal'] + sums['Mára'] + sums['Fanda'];
+            document.getElementById('totalSpent').innerText = total.toLocaleString() + ' Kč';
+            const avg = total / 3;
+            document.getElementById('avgSpent').innerText = Math.round(avg).toLocaleString();
+
+            const box = document.getElementById('settlementBox');
+            if (total === 0) { box.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Všichni jsou na nule.</p>'; return; }
+
+            let html = '';
+            [{n:'Michal',b:sums['Michal']-avg}, {n:'Mára',b:sums['Mára']-avg}, {n:'Fanda',b:sums['Fanda']-avg}].forEach(x => {
+                let r = Math.round(x.b);
+                if(r < -5) html += `<div class="flex justify-between text-red-700 bg-red-50 p-2 rounded"><span>${x.n} doplácí</span><b>${Math.abs(r).toLocaleString()} Kč</b></div>`;
+                else if(r > 5) html += `<div class="flex justify-between text-emerald-700 bg-emerald-50 p-2 rounded"><span>${x.n} dostane</span><b>${r.toLocaleString()} Kč</b></div>`;
+                else html += `<div class="flex justify-between text-slate-500 bg-slate-50 p-2 rounded"><span>${x.n}</span><b>Vyrovnáno</b></div>`;
+            });
+            box.innerHTML = html;
+        });
+
+        window.addExpense = async function() {
+            const desc = document.getElementById('expenseDescInput').value;
+            const amount = document.getElementById('amountInput').value;
+            let date = document.getElementById('expenseDateInput').value;
+            
+            if (!desc.trim() || !amount.trim()) return;
+            if (!date) date = new Date().toISOString().split('T')[0]; // Dnešní datum pokud chybí
+
+            await addDoc(expensesCol, {
+                date: date, payer: document.getElementById('payerInput').value,
+                description: desc.trim(), amount: Number(amount),
+                currency: document.getElementById('currencyInput').value, createdAt: serverTimestamp()
+            });
+            document.getElementById('expenseDescInput').value = ''; document.getElementById('amountInput').value = '';
+        };
+
+        window.openEditExp = function(id) {
+            const item = currentExpenses.find(i => i.id === id);
+            if(!item) return;
+            document.getElementById('editExpId').value = item.id;
+            document.getElementById('editExpDate').value = item.date || '';
+            document.getElementById('editExpPayer').value = item.payer || 'Michal';
+            document.getElementById('editExpDesc').value = item.description || '';
+            document.getElementById('editExpAmount').value = item.amount || '';
+            document.getElementById('editExpCurrency').value = item.currency || 'Kč';
+            document.getElementById('editExpModal').classList.remove('hidden'); document.getElementById('editExpModal').classList.add('flex');
+        };
+        window.closeEditExp = () => { document.getElementById('editExpModal').classList.add('hidden'); document.getElementById('editExpModal').classList.remove('flex'); };
+        window.saveEditExpense = async function() {
+            await updateDoc(doc(db, 'expenses', document.getElementById('editExpId').value), {
+                date: document.getElementById('editExpDate').value, payer: document.getElementById('editExpPayer').value,
+                description: document.getElementById('editExpDesc').value, amount: Number(document.getElementById('editExpAmount').value),
+                currency: document.getElementById('editExpCurrency').value
+            });
+            closeEditExp();
+        };
+
+
+        // --- CHECKLIST ---
+        onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = '';
+            const grouped = { 'Doklady': [], 'Auto': [], 'Jídlo': [], 'Ostatní': [] };
+            snapshot.forEach(d => { const item = d.data(); const cat = item.category || 'Ostatní'; if(!grouped[cat]) grouped[cat]=[]; grouped[cat].push({ id: d.id, ...item }); });
+
+            for (const [catName, items] of Object.entries(grouped)) {
+                if(items.length === 0) continue; 
+                const catDiv = document.createElement('div');
+                let listHtml = `<h3 class="font-bold text-slate-700 border-b pb-2 mb-3">${catName}</h3><ul class="space-y-2">`;
+                items.forEach(item => {
+                    listHtml += `<li class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg group"><label class="flex gap-3 flex-1 cursor-pointer"><input type="checkbox" ${item.done ? 'checked' : ''} onchange="updateDoc(doc(db, 'checklist', '${item.id}'), {done: this.checked})" class="w-5 h-5 accent-green-600"><span class="${item.done ? 'line-through text-slate-400' : ''}">${item.text}</span></label><button onclick="this.innerHTML='Opr?'; this.classList.add('text-red-600','text-xs'); this.setAttribute('onclick', 'executeDelete(\\'checklist\\', \\'${item.id}\\')');" class="text-slate-200 hover:text-red-500 opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash"></i></button></li>`;
+                });
+                catDiv.innerHTML = listHtml + `</ul>`;
+                container.appendChild(catDiv);
+            }
+        });
+        window.addTask = async function() {
+            const inp = document.getElementById('taskInput');
+            if (!inp.value.trim()) return;
+            await addDoc(checklistCol, { text: inp.value.trim(), category: document.getElementById('taskCategory').value, done: false, createdAt: serverTimestamp() });
+            inp.value = '';
+        };
+
+        // --- CHAT ---
+        onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
+            const list = document.getElementById('noteList');
+            list.innerHTML = '';
+            snapshot.forEach(d => {
+                const item = d.data();
+                const div = document.createElement('div');
+                let time = item.createdAt ? item.createdAt.toDate().toLocaleTimeString('cs-CZ', {hour:'2-digit', minute:'2-digit'}) : '';
+                div.className = "p-3 rounded-2xl shadow-sm max-w-[85%] group " + (item.author === document.getElementById('noteAuthorInput').value ? "self-end bg-blue-600 text-white rounded-br-none" : "self-start bg-white border border-slate-200 rounded-bl-none");
+                
+                let trashBtn = `<button onclick="this.innerHTML='Opr?'; this.classList.add('text-red-400','font-bold'); this.setAttribute('onclick', 'executeDelete(\\'notes\\', \\'${d.id}\\')');" class="opacity-0 group-hover:opacity-100 text-xs px-2 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>`;
+                
+                div.innerHTML = `<div class="flex justify-between items-baseline mb-1 gap-2"><span class="text-[10px] opacity-70">${time}</span><div class="flex items-center">${item.author===document.getElementById('noteAuthorInput').value ? trashBtn : ''}<span class="text-xs font-bold px-2 rounded-full border border-white/20 ${item.author===document.getElementById('noteAuthorInput').value ? 'bg-blue-500' : posadkaColors[item.author]}">${item.author}</span>${item.author!==document.getElementById('noteAuthorInput').value ? trashBtn : ''}</div></div><p class="text-sm mt-1">${item.text}</p>`;
+                list.appendChild(div);
+            });
+        });
+        window.addNote = async function() {
+            const inp = document.getElementById('noteInput');
+            if (!inp.value.trim()) return;
+            await addDoc(notesCol, { author: document.getElementById('noteAuthorInput').value, text: inp.value.trim(), createdAt: serverTimestamp() });
+            inp.value = '';
+        };
+
+        // Klávesa Enter
+        ['pinInput','taskInput','amountInput','noteInput','itinLink'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('keypress', e => { if(e.key==='Enter') {
+                if(id==='pinInput') window.checkPin(); else if(id==='taskInput') window.addTask(); else if(id==='amountInput') window.addExpense(); else if(id==='noteInput') window.addNote(); else if(id==='itinLink') window.addItinerary();
+            }});
+        });
     </script>
 </body>
 </html>
