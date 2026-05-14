@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- SortableJS pro Drag & Drop prohazování dlaždic -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <style>
         /* Skrytí posuvníků pro čistší vzhled na mobilech, ale zachování scrollování */
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -38,7 +40,7 @@
     </div>
 
     <!-- Hlavní aplikace s poloprůhledným bílým pozadím (Glassmorphism) -->
-    <div id="mainApp" class="hidden max-w-4xl mx-auto md:my-8 bg-white/95 md:rounded-3xl shadow-2xl min-h-screen md:min-h-[90vh] flex flex-col backdrop-blur-xl border border-white/50 overflow-hidden">
+    <div id="mainApp" class="hidden max-w-4xl mx-auto md:my-8 bg-white/95 md:rounded-3xl shadow-2xl min-h-screen md:min-h-[90vh] flex flex-col backdrop-blur-xl border border-white/50 overflow-hidden relative">
         
         <!-- Hlavička s odpočtem -->
         <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white p-6 md:rounded-t-3xl relative overflow-hidden">
@@ -149,7 +151,7 @@
                         </ul>
                     </div>
 
-                    <!-- Zásadní pravidla a zákazy (přes obě dvěma sloupce na PC) -->
+                    <!-- Zásadní pravidla a zákazy -->
                     <div class="bg-red-50 p-6 rounded-2xl border border-red-200 shadow-sm md:col-span-2">
                         <h3 class="font-bold text-xl mb-4 text-red-800 border-b border-red-200 pb-2 flex items-center"><i class="fa-solid fa-triangle-exclamation text-red-600 mr-3 text-2xl"></i> Důležitá pravidla a Sankce!</h3>
                         
@@ -184,21 +186,48 @@
             <!-- ZÁLOŽKA ITINERÁŘ -->
             <div id="tab-itinerary" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> Plán trasy a zastávky</h2>
+                    <h2 class="text-xl font-bold mb-4 flex justify-between items-center">
+                        <span><i class="fa-solid fa-map-location-dot text-indigo-500 mr-2"></i> Plán trasy a zastávky</span>
+                        <span class="text-xs text-slate-400 font-normal"><i class="fa-solid fa-arrows-up-down mr-1"></i> Lze libovolně přesouvat</span>
+                    </h2>
                     
                     <!-- Formulář pro přidání zastávky -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <input type="date" id="itinDate" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-white">
-                        <input type="text" id="itinPlace" class="md:col-span-3 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none" placeholder="Místo / Kemp (např. Lago di Garda)">
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <!-- Výběr autora -->
+                        <select id="itinAuthor" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 bg-white md:col-span-1">
+                            <option value="Michal">Michal</option>
+                            <option value="Mára">Mára</option>
+                            <option value="Fanda">Fanda</option>
+                        </select>
                         
-                        <div class="md:col-span-3">
-                            <input type="text" id="itinLink" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none text-sm" placeholder="Odkaz z Mapy.cz nebo GPS souřadnice (nepovinné)">
-                        </div>
-                        <button onclick="addItinerary()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md h-full">Přidat bod</button>
+                        <!-- Výběr Dne -->
+                        <select id="itinDay" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 bg-white md:col-span-1 text-indigo-700 font-medium">
+                            <option value="">Den ?</option>
+                            <option value="Den 1">Den 1</option>
+                            <option value="Den 2">Den 2</option>
+                            <option value="Den 3">Den 3</option>
+                            <option value="Den 4">Den 4</option>
+                            <option value="Den 5">Den 5</option>
+                            <option value="Den 6">Den 6</option>
+                            <option value="Den 7">Den 7</option>
+                            <option value="Den 8">Den 8</option>
+                            <option value="Záloha">Plán B</option>
+                        </select>
+
+                        <!-- Místo a Datum -->
+                        <input type="date" id="itinDate" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-white md:col-span-1 text-sm">
+                        <input type="text" id="itinPlace" class="md:col-span-3 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none font-bold" placeholder="Název Místa / Kemp (např. Lago di Garda)">
+                        
+                        <!-- Poznámka a Odkaz -->
+                        <input type="text" id="itinNote" class="md:col-span-3 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none text-sm" placeholder="Krátká poznámka k místu (otevírací doba, co vidět...)">
+                        <input type="text" id="itinLink" class="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:outline-none text-sm md:col-span-2" placeholder="Odkaz z Mapy.cz nebo GPS">
+                        
+                        <!-- Tlačítko -->
+                        <button onclick="addItinerary()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md md:col-span-1">Přidat</button>
                     </div>
 
-                    <!-- Seznam itineráře -->
-                    <div class="relative border-l-2 border-indigo-100 ml-3 pl-6 space-y-6 mt-8" id="itineraryList">
+                    <!-- Seznam itineráře (Bude drag & drop) -->
+                    <div class="space-y-4 mt-8" id="itineraryList">
                         <!-- Zde se vykreslí itinerář -->
                     </div>
                 </div>
@@ -210,15 +239,16 @@
                     <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> Sdílené výdaje</h2>
                     
                     <!-- Formulář výdajů -->
-                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <select id="payerInput" class="p-3 border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-200 outline-none font-medium">
+                    <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <select id="payerInput" class="p-3 border border-slate-200 rounded-lg bg-white focus:ring-2 focus:ring-blue-200 outline-none font-medium md:col-span-1">
                             <option value="Michal">Michal platil</option>
                             <option value="Mára">Mára platil</option>
                             <option value="Fanda">Fanda platil</option>
                         </select>
+                        <input type="date" id="expenseDateInput" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-200 outline-none md:col-span-1 text-sm text-slate-500" title="Datum (nech prázdné pro dnešek)">
                         <input type="text" id="expenseDescInput" class="md:col-span-2 p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Za co (nafta, kemp, jídlo...)">
-                        <input type="number" id="amountInput" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-200 outline-none" placeholder="Částka (Kč)">
-                        <button onclick="addExpense()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md">Zapsat</button>
+                        <input type="number" id="amountInput" class="p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-200 outline-none md:col-span-1" placeholder="Částka (Kč)">
+                        <button onclick="addExpense()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md md:col-span-1">Zapsat</button>
                     </div>
 
                     <!-- Chytré vyrovnání (Smart Settlement) -->
@@ -306,13 +336,116 @@
             </div>
 
         </main>
+        
+        <!-- MODÁLNÍ OKNO PRO ÚPRAVU ITINERÁŘE -->
+        <div id="editItinModal" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+                <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-indigo-500 mr-2"></i>Upravit zastávku</h3>
+                
+                <input type="hidden" id="editItinId">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs text-slate-500 font-bold uppercase">Autor</label>
+                            <select id="editItinAuthor" class="w-full p-2 border border-slate-200 rounded-lg bg-slate-50">
+                                <option value="Michal">Michal</option>
+                                <option value="Mára">Mára</option>
+                                <option value="Fanda">Fanda</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500 font-bold uppercase">Den</label>
+                            <select id="editItinDay" class="w-full p-2 border border-slate-200 rounded-lg bg-slate-50 text-indigo-700 font-medium">
+                                <option value="">Bez přiřazení</option>
+                                <option value="Den 1">Den 1</option>
+                                <option value="Den 2">Den 2</option>
+                                <option value="Den 3">Den 3</option>
+                                <option value="Den 4">Den 4</option>
+                                <option value="Den 5">Den 5</option>
+                                <option value="Den 6">Den 6</option>
+                                <option value="Den 7">Den 7</option>
+                                <option value="Den 8">Den 8</option>
+                                <option value="Záloha">Plán B</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="col-span-1">
+                            <label class="text-xs text-slate-500 font-bold uppercase">Datum</label>
+                            <input type="date" id="editItinDate" class="w-full p-2 border border-slate-200 rounded-lg">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-xs text-slate-500 font-bold uppercase">Místo</label>
+                            <input type="text" id="editItinPlace" class="w-full p-2 border border-slate-200 rounded-lg font-bold">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs text-slate-500 font-bold uppercase">Poznámka k místu</label>
+                        <textarea id="editItinNote" rows="2" class="w-full p-2 border border-slate-200 rounded-lg text-sm"></textarea>
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs text-slate-500 font-bold uppercase">Odkaz (Mapy.cz/GPS)</label>
+                        <input type="text" id="editItinLink" class="w-full p-2 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeEditItin()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">Zrušit</button>
+                    <button onclick="saveEditItinerary()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg transition-colors shadow-md">Uložit změny</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODÁLNÍ OKNO PRO ÚPRAVU VÝDAJE -->
+        <div id="editExpenseModal" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-md shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+                <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-blue-500 mr-2"></i>Upravit výdaj</h3>
+                
+                <input type="hidden" id="editExpenseId">
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs text-slate-500 font-bold uppercase">Platil</label>
+                            <select id="editExpensePayer" class="w-full p-2 border border-slate-200 rounded-lg bg-slate-50 font-medium">
+                                <option value="Michal">Michal</option>
+                                <option value="Mára">Mára</option>
+                                <option value="Fanda">Fanda</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-500 font-bold uppercase">Datum</label>
+                            <input type="date" id="editExpenseDate" class="w-full p-2 border border-slate-200 rounded-lg">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs text-slate-500 font-bold uppercase">Za co</label>
+                        <input type="text" id="editExpenseDesc" class="w-full p-2 border border-slate-200 rounded-lg font-medium">
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs text-slate-500 font-bold uppercase">Částka (Kč)</label>
+                        <input type="number" id="editExpenseAmount" class="w-full p-2 border border-slate-200 rounded-lg font-bold text-blue-700 text-lg">
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeEditExpense()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors">Zrušit</button>
+                    <button onclick="saveEditExpense()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors shadow-md">Uložit změny</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
 
-        // TENTO KLÍČ NEMĚNIT - Zůstal přesně napojený na tvůj účet!
+        // TENTO KLÍČ NEMĚNIT
         const firebaseConfig = {
             apiKey: "AIzaSyDe1EZfaMyYRVUgKugZzVixzGReEXBUsb8",
             authDomain: "obytnak-2026.firebaseapp.com",
@@ -383,73 +516,127 @@
         }, 1000);
 
 
-        // --- ITINERÁŘ S MAPY.CZ ---
-        onSnapshot(query(itineraryCol, orderBy('date', 'asc')), (snapshot) => {
+        // --- ITINERÁŘ S DRAG & DROP A EDITACÍ ---
+        let currentItineraryItems = []; // Globální pole pro ukládání dat pro editaci
+        let currentExpenseItems = []; // Globální pole pro ukládání výdajů pro editaci
+        let sortableItin = null; // Instance pro drag and drop
+
+        // Načteme všechno z itineráře a setřídíme až u nás (aby nechyběly staré záznamy bez pole "order")
+        onSnapshot(collection(db, 'itinerary'), (snapshot) => {
             const list = document.getElementById('itineraryList');
             list.innerHTML = '';
+            currentItineraryItems = [];
             
             if (snapshot.empty) {
-                list.innerHTML = '<p class="text-slate-400 italic">Zatím nejsou v plánu žádné zastávky. Přidejte první!</p>';
+                list.innerHTML = '<p class="text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200">Zatím nejsou v plánu žádné zastávky. Přidejte první!</p>';
                 return;
             }
 
+            // Převedení na pole a chytré setřídění
             snapshot.forEach(d => {
-                const item = d.data();
-                const id = d.id;
-                
-                let dateStr = item.date;
+                currentItineraryItems.push({ id: d.id, ...d.data() });
+            });
+
+            currentItineraryItems.sort((a, b) => {
+                const orderA = a.order !== undefined ? a.order : 999999;
+                const orderB = b.order !== undefined ? b.order : 999999;
+                if (orderA !== orderB) return orderA - orderB;
+                return (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0);
+            });
+
+            currentItineraryItems.forEach((item) => {
+                let dateStr = item.date || '';
                 if(item.date) {
                     const parts = item.date.split('-');
                     if(parts.length === 3) dateStr = `${parts[2]}. ${parts[1]}. ${parts[0]}`;
                 }
 
-                // Generování tlačítka pro Mapy.cz
                 let mapBtnHtml = '';
                 if (item.link) {
                     let href = item.link;
-                    // Pokud uživatel zadal jen GPS souřadnice, vytvoříme z toho odkaz
-                    if (!href.startsWith('http')) {
-                        href = 'https://mapy.cz/zakladni?q=' + encodeURIComponent(href);
-                    }
+                    if (!href.startsWith('http')) href = 'https://mapy.cz/zakladni?q=' + encodeURIComponent(href);
                     mapBtnHtml = `
-                        <a href="${href}" target="_blank" class="mt-3 inline-block px-4 py-1.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-lg hover:bg-emerald-200 transition-colors shadow-sm">
-                            <i class="fa-solid fa-location-arrow mr-1"></i> Otevřít v navigaci (Mapy.cz)
+                        <a href="${href}" target="_blank" class="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md hover:bg-emerald-200 transition-colors">
+                            <i class="fa-solid fa-location-arrow mr-1"></i> Mapa
                         </a>`;
                 }
 
                 const div = document.createElement('div');
-                div.className = "relative mb-8";
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-3 group relative hover:border-indigo-300 transition-colors";
+                div.setAttribute('data-id', item.id); // Důležité pro uložení pořadí
+                
                 div.innerHTML = `
-                    <div class="absolute -left-[35px] top-1 bg-indigo-500 h-4 w-4 rounded-full border-4 border-white shadow"></div>
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex justify-between items-start group hover:border-indigo-200 transition-colors">
-                        <div class="flex-1">
-                            <span class="inline-block px-2 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 text-xs font-bold rounded mb-2">${dateStr}</span>
-                            <h3 class="font-bold text-lg text-slate-800">${item.place}</h3>
-                            ${mapBtnHtml}
+                    <div class="cursor-move text-slate-300 hover:text-indigo-500 mt-2 px-1 touch-manipulation">
+                        <i class="fa-solid fa-grip-vertical text-xl"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            ${item.day ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded">${item.day}</span>` : ''}
+                            ${dateStr ? `<span class="text-xs text-slate-500 font-medium"><i class="fa-regular fa-calendar mr-1"></i>${dateStr}</span>` : ''}
+                            ${item.author ? `<span class="text-[10px] ${posadkaColors[item.author] || 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-bold ml-auto border border-white/30"><i class="fa-solid fa-user-pen mr-1"></i>${item.author}</span>` : ''}
                         </div>
-                        <button onclick="deleteItinerary('${id}')" class="text-slate-200 hover:text-red-500 transition-colors p-2 rounded-full hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
+                        
+                        <h3 class="font-bold text-lg text-slate-800 leading-tight">${item.place}</h3>
+                        ${item.note ? `<p class="text-sm text-slate-600 mt-1 italic"><i class="fa-solid fa-circle-info text-slate-400 mr-1 text-xs"></i>${item.note}</p>` : ''}
+                        ${mapBtnHtml}
+                    </div>
+                    
+                    <div class="flex flex-col gap-2 ml-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                        <button onclick="openEditItin('${item.id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-lg bg-slate-50 hover:bg-blue-50 transition-colors" title="Upravit"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteItinerary('${item.id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-lg bg-slate-50 hover:bg-red-50 transition-colors" title="Smazat"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 `;
                 list.appendChild(div);
             });
+
+            // Inicializace drag & drop (pokud ještě není)
+            if (!sortableItin) {
+                sortableItin = new Sortable(document.getElementById('itineraryList'), {
+                    animation: 200,
+                    handle: '.cursor-move',
+                    ghostClass: 'opacity-50', // Průhlednost karty během tažení
+                    onEnd: async function () {
+                        // Uživateli se karta vizuálně přesunula, teď musíme pořadí zapsat do databáze
+                        const domItems = document.getElementById('itineraryList').children;
+                        const batch = writeBatch(db);
+                        for(let i = 0; i < domItems.length; i++) {
+                            const id = domItems[i].getAttribute('data-id');
+                            if(id) {
+                                batch.update(doc(db, 'itinerary', id), { order: i });
+                            }
+                        }
+                        await batch.commit(); // Pošle všechny změny pořadí najednou
+                    }
+                });
+            }
         });
 
         window.addItinerary = async function() {
             const date = document.getElementById('itinDate').value;
             const place = document.getElementById('itinPlace').value;
             const link = document.getElementById('itinLink').value;
+            const day = document.getElementById('itinDay').value;
+            const author = document.getElementById('itinAuthor').value;
+            const note = document.getElementById('itinNote').value;
             
-            if (!date || place.trim() === '') return;
+            if (place.trim() === '') return;
             
             await addDoc(itineraryCol, {
                 date: date,
                 place: place.trim(),
                 link: link.trim(),
+                day: day,
+                author: author,
+                note: note.trim(),
+                order: Date.now(), // Nová položka se automaticky zařadí nakonec
                 createdAt: serverTimestamp()
             });
             
+            // Vymazání políček (kromě jména autora)
             document.getElementById('itinPlace').value = '';
             document.getElementById('itinLink').value = '';
+            document.getElementById('itinNote').value = '';
+            document.getElementById('itinDay').value = '';
         };
 
         window.deleteItinerary = async function(id) {
@@ -458,30 +645,94 @@
             }
         };
 
+        // --- Logika editačního okna Itineráře ---
+        window.openEditItin = function(id) {
+            // Najdeme data konkrétní kartičky
+            const item = currentItineraryItems.find(i => i.id === id);
+            if(!item) return;
 
-        // --- ROZPOČET S CHYTRÝM VYROVNÁNÍM (MICHAL, MÁRA, FANDA) ---
+            // Naplníme skryté okno
+            document.getElementById('editItinId').value = item.id;
+            document.getElementById('editItinPlace').value = item.place || '';
+            document.getElementById('editItinDate').value = item.date || '';
+            document.getElementById('editItinLink').value = item.link || '';
+            document.getElementById('editItinDay').value = item.day || '';
+            document.getElementById('editItinAuthor').value = item.author || 'Michal';
+            document.getElementById('editItinNote').value = item.note || '';
+
+            // Zobrazíme okno
+            document.getElementById('editItinModal').classList.remove('hidden');
+            document.getElementById('editItinModal').classList.add('flex');
+        };
+
+        window.closeEditItin = function() {
+            document.getElementById('editItinModal').classList.add('hidden');
+            document.getElementById('editItinModal').classList.remove('flex');
+        };
+
+        window.saveEditItinerary = async function() {
+            const id = document.getElementById('editItinId').value;
+            const place = document.getElementById('editItinPlace').value;
+            const date = document.getElementById('editItinDate').value;
+            const link = document.getElementById('editItinLink').value;
+            const day = document.getElementById('editItinDay').value;
+            const author = document.getElementById('editItinAuthor').value;
+            const note = document.getElementById('editItinNote').value;
+
+            if(place.trim() === '') return;
+
+            // Uložíme jen to, co se dalo změnit
+            await updateDoc(doc(db, 'itinerary', id), {
+                place: place.trim(),
+                date: date,
+                link: link.trim(),
+                day: day,
+                author: author,
+                note: note.trim()
+            });
+            
+            closeEditItin(); // Zavřít okno po úspěchu
+        };
+
+
+        // --- ROZPOČET S CHYTRÝM VYROVNÁNÍM A EDITACÍ ---
         onSnapshot(query(expensesCol, orderBy('createdAt', 'desc')), (snapshot) => {
             const list = document.getElementById('expenseList');
             list.innerHTML = '';
             
             let sums = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+            currentExpenseItems = []; // Reset pole pro editaci
 
             snapshot.forEach(d => {
                 const item = d.data();
                 const id = d.id;
                 
+                currentExpenseItems.push({ id, ...item });
+
                 if(sums[item.payer] !== undefined) sums[item.payer] += Number(item.amount);
+                
+                let displayDate = "";
+                if (item.date) {
+                    const parts = item.date.split('-');
+                    if(parts.length === 3) displayDate = `${parts[2]}. ${parts[1]}. ${parts[0]}`;
+                }
 
                 const li = document.createElement('li');
                 li.className = "flex justify-between items-center p-3 bg-white border border-slate-100 rounded-lg hover:shadow-sm transition-all group";
                 li.innerHTML = `
                     <div class="flex flex-col">
-                        <span class="font-medium text-slate-800">${item.description}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-slate-800">${item.description}</span>
+                            ${displayDate ? `<span class="text-[10px] text-slate-400 font-normal"><i class="fa-regular fa-calendar mr-1"></i>${displayDate}</span>` : ''}
+                        </div>
                         <span class="text-xs ${posadkaColors[item.payer] || 'text-slate-500'} px-2 py-0.5 rounded-full mt-1 w-max font-medium border border-white/20">${item.payer}</span>
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
                         <span class="font-bold text-slate-700">${item.amount} Kč</span>
-                        <button onclick="deleteExpense('${id}')" class="text-slate-200 hover:text-red-500 transition-colors bg-slate-50 p-2 rounded-full opacity-50 group-hover:opacity-100 hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
+                        <div class="flex flex-col gap-1 md:flex-row md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                            <button onclick="openEditExpense('${id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-lg bg-slate-50 hover:bg-blue-50 transition-colors" title="Upravit"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteExpense('${id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-lg bg-slate-50 hover:bg-red-50 transition-colors" title="Smazat"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
                 `;
                 list.appendChild(li);
@@ -530,24 +781,75 @@
             const payer = document.getElementById('payerInput').value;
             const desc = document.getElementById('expenseDescInput').value;
             const amount = document.getElementById('amountInput').value;
+            let dateVal = document.getElementById('expenseDateInput').value;
             
             if (desc.trim() === '' || amount.trim() === '') return;
+
+            // Pokud není vyplněno datum, dosadíme dnešní
+            if (!dateVal) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                dateVal = `${yyyy}-${mm}-${dd}`;
+            }
 
             await addDoc(expensesCol, {
                 payer: payer,
                 description: desc.trim(),
                 amount: Number(amount),
+                date: dateVal,
                 createdAt: serverTimestamp()
             });
             
             document.getElementById('expenseDescInput').value = '';
             document.getElementById('amountInput').value = '';
+            document.getElementById('expenseDateInput').value = '';
         };
 
         window.deleteExpense = async function(id) {
             if(confirm("Opravdu smazat tento výdaj? Tím se přepočítá vyrovnání všem.")) {
                 await deleteDoc(doc(db, 'expenses', id));
             }
+        };
+
+        // --- Logika editačního okna Výdajů ---
+        window.openEditExpense = function(id) {
+            const item = currentExpenseItems.find(i => i.id === id);
+            if(!item) return;
+
+            document.getElementById('editExpenseId').value = item.id;
+            document.getElementById('editExpensePayer').value = item.payer || 'Michal';
+            document.getElementById('editExpenseDate').value = item.date || '';
+            document.getElementById('editExpenseDesc').value = item.description || '';
+            document.getElementById('editExpenseAmount').value = item.amount || '';
+
+            document.getElementById('editExpenseModal').classList.remove('hidden');
+            document.getElementById('editExpenseModal').classList.add('flex');
+        };
+
+        window.closeEditExpense = function() {
+            document.getElementById('editExpenseModal').classList.add('hidden');
+            document.getElementById('editExpenseModal').classList.remove('flex');
+        };
+
+        window.saveEditExpense = async function() {
+            const id = document.getElementById('editExpenseId').value;
+            const payer = document.getElementById('editExpensePayer').value;
+            const date = document.getElementById('editExpenseDate').value;
+            const desc = document.getElementById('editExpenseDesc').value;
+            const amount = document.getElementById('editExpenseAmount').value;
+
+            if(desc.trim() === '' || amount.trim() === '') return;
+
+            await updateDoc(doc(db, 'expenses', id), {
+                payer: payer,
+                date: date,
+                description: desc.trim(),
+                amount: Number(amount)
+            });
+            
+            closeEditExpense();
         };
 
 
