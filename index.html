@@ -178,20 +178,40 @@
                         <button onclick="addExpense()" class="bg-blue-600 text-white font-bold py-3 px-4 rounded-lg md:col-span-1 shadow-md">Zapsat</button>
                     </div>
 
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 mb-8 border border-blue-100 shadow-inner">
-                        <h3 class="font-bold text-blue-900 mb-4 border-b border-blue-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v CZK (Kurz: 1€ = 25 Kč)</h3>
+                    <!-- VYÚČTOVÁNÍ CZK -->
+                    <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 mb-6 border border-blue-100 shadow-inner">
+                        <h3 class="font-bold text-blue-900 mb-4 border-b border-blue-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v CZK</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <ul class="space-y-2">
-                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Michal</span><span id="sumMichal" class="font-bold text-blue-700">0 Kč</span></li>
-                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Mára</span><span id="sumMára" class="font-bold text-blue-700">0 Kč</span></li>
-                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Fanda</span><span id="sumFanda" class="font-bold text-blue-700">0 Kč</span></li>
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Michal</span><span id="sumMichalCZK" class="font-bold text-blue-700">0 Kč</span></li>
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Mára</span><span id="sumMáraCZK" class="font-bold text-blue-700">0 Kč</span></li>
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Fanda</span><span id="sumFandaCZK" class="font-bold text-blue-700">0 Kč</span></li>
                                 </ul>
-                                <div class="mt-3 text-right"><span class="text-sm text-slate-500">Celkem party: </span><span id="totalSpent" class="text-lg font-black">0 Kč</span></div>
+                                <div class="mt-3 text-right"><span class="text-sm text-slate-500">Celkem party: </span><span id="totalSpentCZK" class="text-lg font-black">0 Kč</span></div>
                             </div>
                             <div class="flex flex-col justify-center">
-                                <p class="text-sm text-slate-500 mb-2">Jeden platí průměrně <span id="avgSpent" class="font-bold">0</span> Kč:</p>
-                                <div id="settlementBox" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center gap-2"></div>
+                                <p class="text-sm text-slate-500 mb-2">Jeden platí průměrně <span id="avgSpentCZK" class="font-bold">0</span> Kč:</p>
+                                <div id="settlementBoxCZK" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center gap-2"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VYÚČTOVÁNÍ EUR -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 mb-8 border border-emerald-100 shadow-inner">
+                        <h3 class="font-bold text-emerald-900 mb-4 border-b border-emerald-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v EUR</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <ul class="space-y-2">
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Michal</span><span id="sumMichalEUR" class="font-bold text-emerald-700">0 €</span></li>
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Mára</span><span id="sumMáraEUR" class="font-bold text-emerald-700">0 €</span></li>
+                                    <li class="flex justify-between bg-white p-2 rounded shadow-sm"><span class="font-medium">Fanda</span><span id="sumFandaEUR" class="font-bold text-emerald-700">0 €</span></li>
+                                </ul>
+                                <div class="mt-3 text-right"><span class="text-sm text-slate-500">Celkem party: </span><span id="totalSpentEUR" class="text-lg font-black">0 €</span></div>
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <p class="text-sm text-slate-500 mb-2">Jeden platí průměrně <span id="avgSpentEUR" class="font-bold">0</span> €:</p>
+                                <div id="settlementBoxEUR" class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center gap-2"></div>
                             </div>
                         </div>
                     </div>
@@ -316,6 +336,27 @@
         // Pomocná funkce pro bezpečné smazání bez vyskakovacího okna "alert/confirm"
         window.executeDelete = async function(col, id) { await deleteDoc(doc(db, col, id)); };
 
+        // --- ODPOČET DO ODJEZDU ---
+        const targetDate = new Date('2026-05-31T16:00:00').getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            const el = document.getElementById("countdown");
+            if (!el) return;
+            
+            if (distance < 0) {
+                el.innerHTML = "JSME NA CESTĚ! 🚐";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+            el.innerHTML = `${days}d ${hours}:${minutes}:${seconds}`;
+        }, 1000);
+
         // --- ITINERÁŘ ---
         let currentItineraryItems = [];
         let sortableItin = null;
@@ -416,17 +457,20 @@
             const list = document.getElementById('expenseList');
             list.innerHTML = '';
             currentExpenses = [];
-            let sums = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+            
+            let sumsCZK = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+            let sumsEUR = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
 
             snapshot.forEach(d => {
                 const item = { id: d.id, ...d.data() };
                 currentExpenses.push(item);
                 
-                // Přepočet EUR na CZK pro statistiky (1 EUR = 25 CZK)
-                let czkAmount = Number(item.amount);
-                if (item.currency === '€') czkAmount = czkAmount * 25;
-                
-                if(sums[item.payer] !== undefined) sums[item.payer] += czkAmount;
+                let amount = Number(item.amount);
+                if (item.currency === '€') {
+                    if(sumsEUR[item.payer] !== undefined) sumsEUR[item.payer] += amount;
+                } else {
+                    if(sumsCZK[item.payer] !== undefined) sumsCZK[item.payer] += amount;
+                }
 
                 let dateStr = item.date ? item.date.split('-').reverse().join('. ') : '';
                 
@@ -443,7 +487,6 @@
                     <div class="flex items-center gap-3">
                         <div class="text-right">
                             <span class="font-bold text-slate-700">${item.amount} ${item.currency || 'Kč'}</span>
-                            ${item.currency === '€' ? `<div class="text-[10px] text-slate-400">~${czkAmount} Kč</div>` : ''}
                         </div>
                         <div class="flex flex-col gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100">
                             <button onclick="openEditExp('${item.id}')" class="text-slate-300 hover:text-blue-500"><i class="fa-solid fa-pen"></i></button>
@@ -454,24 +497,45 @@
                 list.appendChild(li);
             });
 
-            // Vyúčtování
-            ['Michal','Mára','Fanda'].forEach(n => document.getElementById('sum'+n).innerText = sums[n].toLocaleString() + ' Kč');
-            const total = sums['Michal'] + sums['Mára'] + sums['Fanda'];
-            document.getElementById('totalSpent').innerText = total.toLocaleString() + ' Kč';
-            const avg = total / 3;
-            document.getElementById('avgSpent').innerText = Math.round(avg).toLocaleString();
+            // Vyúčtování CZK
+            ['Michal','Mára','Fanda'].forEach(n => document.getElementById('sum'+n+'CZK').innerText = sumsCZK[n].toLocaleString() + ' Kč');
+            const totalCZK = sumsCZK['Michal'] + sumsCZK['Mára'] + sumsCZK['Fanda'];
+            document.getElementById('totalSpentCZK').innerText = totalCZK.toLocaleString() + ' Kč';
+            const avgCZK = totalCZK / 3;
+            document.getElementById('avgSpentCZK').innerText = Math.round(avgCZK).toLocaleString();
 
-            const box = document.getElementById('settlementBox');
-            if (total === 0) { box.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Všichni jsou na nule.</p>'; return; }
+            const boxCZK = document.getElementById('settlementBoxCZK');
+            if (totalCZK === 0) { boxCZK.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Všichni jsou na nule.</p>'; }
+            else {
+                let html = '';
+                [{n:'Michal',b:sumsCZK['Michal']-avgCZK}, {n:'Mára',b:sumsCZK['Mára']-avgCZK}, {n:'Fanda',b:sumsCZK['Fanda']-avgCZK}].forEach(x => {
+                    let r = Math.round(x.b);
+                    if(r < -5) html += `<div class="flex justify-between text-red-700 bg-red-50 p-2 rounded"><span>${x.n} doplácí</span><b>${Math.abs(r).toLocaleString()} Kč</b></div>`;
+                    else if(r > 5) html += `<div class="flex justify-between text-emerald-700 bg-emerald-50 p-2 rounded"><span>${x.n} dostane</span><b>${r.toLocaleString()} Kč</b></div>`;
+                    else html += `<div class="flex justify-between text-slate-500 bg-slate-50 p-2 rounded"><span>${x.n}</span><b>Vyrovnáno</b></div>`;
+                });
+                boxCZK.innerHTML = html;
+            }
 
-            let html = '';
-            [{n:'Michal',b:sums['Michal']-avg}, {n:'Mára',b:sums['Mára']-avg}, {n:'Fanda',b:sums['Fanda']-avg}].forEach(x => {
-                let r = Math.round(x.b);
-                if(r < -5) html += `<div class="flex justify-between text-red-700 bg-red-50 p-2 rounded"><span>${x.n} doplácí</span><b>${Math.abs(r).toLocaleString()} Kč</b></div>`;
-                else if(r > 5) html += `<div class="flex justify-between text-emerald-700 bg-emerald-50 p-2 rounded"><span>${x.n} dostane</span><b>${r.toLocaleString()} Kč</b></div>`;
-                else html += `<div class="flex justify-between text-slate-500 bg-slate-50 p-2 rounded"><span>${x.n}</span><b>Vyrovnáno</b></div>`;
-            });
-            box.innerHTML = html;
+            // Vyúčtování EUR
+            ['Michal','Mára','Fanda'].forEach(n => document.getElementById('sum'+n+'EUR').innerText = sumsEUR[n].toLocaleString() + ' €');
+            const totalEUR = sumsEUR['Michal'] + sumsEUR['Mára'] + sumsEUR['Fanda'];
+            document.getElementById('totalSpentEUR').innerText = totalEUR.toLocaleString() + ' €';
+            const avgEUR = totalEUR / 3;
+            document.getElementById('avgSpentEUR').innerText = Number(avgEUR.toFixed(2)).toLocaleString();
+
+            const boxEUR = document.getElementById('settlementBoxEUR');
+            if (totalEUR === 0) { boxEUR.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Všichni jsou na nule.</p>'; }
+            else {
+                let html = '';
+                [{n:'Michal',b:sumsEUR['Michal']-avgEUR}, {n:'Mára',b:sumsEUR['Mára']-avgEUR}, {n:'Fanda',b:sumsEUR['Fanda']-avgEUR}].forEach(x => {
+                    let r = Number(x.b.toFixed(2));
+                    if(r < -0.1) html += `<div class="flex justify-between text-red-700 bg-red-50 p-2 rounded"><span>${x.n} doplácí</span><b>${Math.abs(r).toLocaleString()} €</b></div>`;
+                    else if(r > 0.1) html += `<div class="flex justify-between text-emerald-700 bg-emerald-50 p-2 rounded"><span>${x.n} dostane</span><b>${r.toLocaleString()} €</b></div>`;
+                    else html += `<div class="flex justify-between text-slate-500 bg-slate-50 p-2 rounded"><span>${x.n}</span><b>Vyrovnáno</b></div>`;
+                });
+                boxEUR.innerHTML = html;
+            }
         });
 
         window.addExpense = async function() {
