@@ -250,26 +250,10 @@
 
             <div id="tab-checklist" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
-                    <h2 class="text-xl font-bold mb-4 flex justify-between items-center flex-wrap gap-2">
-                        <span class="flex items-center"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit a zabalit</span>
-                        <button onclick="exportToExcel()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg border border-emerald-200 transition-colors shadow-sm font-medium"><i class="fa-solid fa-file-excel mr-1 text-green-600"></i> Excel záloha</button>
-                    </h2>
+                    <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit a zabalit</h2>
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <select id="taskCategory" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-2 w-full">
-                            <option value="Doklady">Doklady 🛂</option>
-                            <option value="Auto">Auto 🚐</option>
-                            <option value="Jídlo">Jídlo 🍻</option>
-                            <option value="Osobní věci">Osobní věci 🎒</option>
-                            <option value="Ostatní">Ostatní 📌</option>
-                        </select>
-                        <select id="taskAssignee" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-2 w-full text-slate-600">
-                            <option value="">Kdo to vezme?</option>
-                            <option value="Michal">Michal</option>
-                            <option value="Mára">Mára</option>
-                            <option value="Fanda">Fanda</option>
-                            <option value="Společné">Společné</option>
-                        </select>
-                        <input type="text" id="taskInput" class="md:col-span-6 p-3 border border-slate-200 rounded-lg w-full" placeholder="Nová položka...">
+                        <select id="taskCategory" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-3 w-full"><option value="Doklady">Doklady 🛂</option><option value="Auto">Auto 🚐</option><option value="Jídlo">Jídlo 🍻</option><option value="Ostatní">Ostatní 📌</option></select>
+                        <input type="text" id="taskInput" class="md:col-span-7 p-3 border border-slate-200 rounded-lg w-full" placeholder="Nová položka...">
                         <button onclick="addTask()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg shadow-md md:col-span-2 w-full transition-colors">Přidat</button>
                     </div>
                     <div id="checklistContainer" class="space-y-6"></div>
@@ -325,4 +309,524 @@
                     <select id="editExpPayer" class="w-full p-2 border border-slate-200 rounded-lg font-medium"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
                     <input type="text" id="editExpDesc" class="w-full p-2 border border-slate-200 rounded-lg" placeholder="Za co">
                     <div class="flex gap-2">
-                        <input type="number" id="editExpAmount" class="flex-1 p-2 border border-slate-200 rounded-
+                        <input type="number" id="editExpAmount" class="flex-1 p-2 border border-slate-200 rounded-lg min-w-0" placeholder="Částka">
+                        <select id="editExpCurrency" class="w-24 p-2 border border-slate-200 rounded-lg font-bold shrink-0"><option value="Kč">Kč</option><option value="€">€</option></select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeEditExp()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Zrušit</button>
+                    <button onclick="saveEditExpense()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-colors">Uložit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDe1EZfaMyYRVUgKugZzVixzGReEXBUsb8",
+            authDomain: "obytnak-2026.firebaseapp.com",
+            projectId: "obytnak-2026",
+            storageBucket: "obytnak-2026.firebasestorage.app",
+            messagingSenderId: "56459323943",
+            appId: "1:56459323943:web:2b8c065bcf6cfc61d37c02"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const checklistCol = collection(db, 'checklist');
+        const expensesCol = collection(db, 'expenses');
+        const notesCol = collection(db, 'notes');
+        const itineraryCol = collection(db, 'itinerary');
+
+        const posadkaColors = { 'Michal': 'text-blue-700 bg-blue-100', 'Mára': 'text-emerald-700 bg-emerald-100', 'Fanda': 'text-amber-700 bg-amber-100' };
+
+        // --- GLOBAL & MEMORY LOGIC ---
+        // Získání nebo nastavení výchozího uživatele pro plynulejší UX
+        let currentUser = localStorage.getItem('euroTripUser') || 'Michal';
+        
+        document.querySelectorAll('.author-select').forEach(select => {
+            select.value = currentUser;
+            select.addEventListener('change', (e) => {
+                currentUser = e.target.value;
+                localStorage.setItem('euroTripUser', currentUser);
+                // Synchronizovat ostatní roletky
+                document.querySelectorAll('.author-select').forEach(s => s.value = currentUser);
+                // Překreslit chat s novým "Já"
+                renderNotes(); 
+            });
+        });
+
+        // Zavírání modalů kliknutím ven
+        window.closeModalOnOutsideClick = function(event, modalId, closeFunction) {
+            if (event.target.id === modalId) {
+                closeFunction();
+            }
+        };
+
+        window.checkPin = function() {
+            if (document.getElementById('pinInput').value === '2026') {
+                document.getElementById('pinScreen').classList.add('opacity-0');
+                setTimeout(() => {
+                    document.getElementById('pinScreen').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                }, 500);
+            } else {
+                document.getElementById('pinError').classList.remove('hidden');
+            }
+        };
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-blue-700', 'bg-blue-50');
+                el.classList.add('text-slate-500', 'hover:bg-slate-100');
+            });
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('nav-' + tabId);
+            activeBtn.classList.remove('text-slate-500', 'hover:bg-slate-100');
+            activeBtn.classList.add('text-blue-700', 'bg-blue-50');
+        };
+
+        const targetDate = new Date('2026-05-31T16:00:00').getTime();
+        setInterval(() => {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            if (distance < 0) {
+                document.getElementById("countdown").innerHTML = "JSME NA CESTĚ! 🚐";
+                return;
+            }
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            document.getElementById("countdown").innerHTML = `${days}d ${hours}:${minutes}:${seconds}`;
+        }, 1000);
+
+        // --- ITINERÁŘ LOGIKA ---
+        let currentItinItems = [];
+        let sortableItin = null;
+
+        onSnapshot(collection(db, 'itinerary'), (snapshot) => {
+            const list = document.getElementById('itineraryList');
+            list.innerHTML = '';
+            currentItinItems = [];
+            
+            if (snapshot.empty) {
+                list.innerHTML = '<p class="text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200">Zatím žádné zastávky.</p>';
+                return;
+            }
+
+            snapshot.forEach(d => currentItinItems.push({ id: d.id, ...d.data() }));
+            currentItinItems.sort((a, b) => (a.order !== undefined ? a.order : 999999) - (b.order !== undefined ? b.order : 999999));
+
+            currentItinItems.forEach((item) => {
+                let dateStr = item.date ? item.date.split('-').reverse().join('. ') + '.' : '';
+                
+                let linksHtml = '';
+                if (item.link) {
+                    let href = item.link.startsWith('http') ? item.link : 'https://mapy.cz/zakladni?q=' + encodeURIComponent(item.link);
+                    linksHtml += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md hover:bg-emerald-200 transition-colors mr-2"><i class="fa-solid fa-location-arrow mr-1"></i> Mapa</a>`;
+                }
+                if (item.web) {
+                    let hrefW = item.web.startsWith('http') ? item.web : 'https://' + item.web;
+                    linksHtml += `<a href="${hrefW}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md hover:bg-blue-200 transition-colors"><i class="fa-solid fa-globe mr-1"></i> Web</a>`;
+                }
+
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-3 group relative hover:border-indigo-300 transition-colors";
+                div.setAttribute('data-id', item.id);
+                div.innerHTML = `
+                    <div class="cursor-move text-slate-300 hover:text-indigo-500 mt-2 px-1 touch-manipulation"><i class="fa-solid fa-grip-vertical text-xl"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            ${item.day ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded">${item.day}</span>` : ''}
+                            ${dateStr ? `<span class="text-xs text-slate-500 font-medium"><i class="fa-regular fa-calendar mr-1"></i>${dateStr}</span>` : ''}
+                            ${item.author ? `<span class="text-[10px] ${posadkaColors[item.author] || 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-bold ml-auto border border-white/30"><i class="fa-solid fa-user-pen mr-1"></i>${item.author}</span>` : ''}
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-800 leading-tight">${item.place}</h3>
+                        ${item.note ? `<p class="text-sm text-slate-600 mt-1 italic"><i class="fa-solid fa-circle-info text-slate-400 mr-1 text-xs"></i>${item.note}</p>` : ''}
+                        <div>${linksHtml}</div>
+                    </div>
+                    <div class="flex flex-col gap-2 ml-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                        <button onclick="openEditItin('${item.id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-lg bg-slate-50 hover:bg-blue-50 transition-colors"><i class="fa-solid fa-pen"></i></button>
+                        <button onclick="deleteItinerary('${item.id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-lg bg-slate-50 hover:bg-red-50 transition-colors"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+
+            if (!sortableItin) {
+                sortableItin = new Sortable(document.getElementById('itineraryList'), {
+                    animation: 200, handle: '.cursor-move', ghostClass: 'opacity-50',
+                    onEnd: async function () {
+                        const domItems = document.getElementById('itineraryList').children;
+                        const batch = writeBatch(db);
+                        for(let i = 0; i < domItems.length; i++) {
+                            const id = domItems[i].getAttribute('data-id');
+                            if(id) batch.update(doc(db, 'itinerary', id), { order: i });
+                        }
+                        await batch.commit();
+                    }
+                });
+            }
+        });
+
+        window.addItinerary = async function() {
+            const place = document.getElementById('itinPlace').value;
+            if (place.trim() === '') return;
+            await addDoc(itineraryCol, {
+                date: document.getElementById('itinDate').value,
+                place: place.trim(),
+                link: document.getElementById('itinLink').value.trim(),
+                web: document.getElementById('itinWeb').value.trim(),
+                day: document.getElementById('itinDay').value,
+                author: document.getElementById('itinAuthor').value,
+                note: document.getElementById('itinNote').value.trim(),
+                order: Date.now(),
+                createdAt: serverTimestamp()
+            });
+            ['itinPlace', 'itinLink', 'itinWeb', 'itinNote', 'itinDay'].forEach(id => document.getElementById(id).value = '');
+        };
+
+        window.deleteItinerary = async function(id) {
+            if(confirm("Opravdu smazat zastávku?")) await deleteDoc(doc(db, 'itinerary', id));
+        };
+
+        window.openEditItin = function(id) {
+            const item = currentItinItems.find(i => i.id === id);
+            if(!item) return;
+            document.getElementById('editItinId').value = item.id;
+            document.getElementById('editItinPlace').value = item.place || '';
+            document.getElementById('editItinDate').value = item.date || '';
+            document.getElementById('editItinLink').value = item.link || '';
+            document.getElementById('editItinWeb').value = item.web || '';
+            document.getElementById('editItinDay').value = item.day || '';
+            document.getElementById('editItinAuthor').value = item.author || currentUser;
+            document.getElementById('editItinNote').value = item.note || '';
+            document.getElementById('editItinModal').classList.remove('hidden');
+            document.getElementById('editItinModal').classList.add('flex');
+        };
+
+        window.closeEditItin = function() {
+            document.getElementById('editItinModal').classList.add('hidden');
+            document.getElementById('editItinModal').classList.remove('flex');
+        };
+
+        window.saveEditItinerary = async function() {
+            const id = document.getElementById('editItinId').value;
+            const place = document.getElementById('editItinPlace').value;
+            if(place.trim() === '') return;
+            await updateDoc(doc(db, 'itinerary', id), {
+                place: place.trim(),
+                date: document.getElementById('editItinDate').value,
+                link: document.getElementById('editItinLink').value.trim(),
+                web: document.getElementById('editItinWeb').value.trim(),
+                day: document.getElementById('editItinDay').value,
+                author: document.getElementById('editItinAuthor').value,
+                note: document.getElementById('editItinNote').value.trim()
+            });
+            closeEditItin();
+        };
+
+        // --- ROZPOČET LOGIKA ---
+        let currentExpItems = [];
+        onSnapshot(query(expensesCol, orderBy('createdAt', 'desc')), (snapshot) => {
+            const list = document.getElementById('expenseList');
+            list.innerHTML = '';
+            currentExpItems = [];
+            
+            let sumsCzk = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+            let sumsEur = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+
+            snapshot.forEach(d => {
+                const item = d.data();
+                currentExpItems.push({ id: d.id, ...item });
+                
+                let dateStr = item.date ? item.date.split('-').reverse().join('. ') + '.' : '';
+                let isEur = item.currency === '€';
+                
+                if (isEur && sumsEur[item.payer] !== undefined) sumsEur[item.payer] += Number(item.amount);
+                else if (!isEur && sumsCzk[item.payer] !== undefined) sumsCzk[item.payer] += Number(item.amount);
+
+                const li = document.createElement('li');
+                li.className = "flex justify-between items-center p-3 bg-white border border-slate-100 rounded-lg hover:shadow-sm transition-all group";
+                li.innerHTML = `
+                    <div class="flex flex-col">
+                        <div class="flex items-center gap-2">
+                            <span class="font-medium text-slate-800">${item.description}</span>
+                            ${dateStr ? `<span class="text-[10px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${dateStr}</span>` : ''}
+                        </div>
+                        <span class="text-xs ${posadkaColors[item.payer] || 'text-slate-500'} px-2 py-0.5 rounded-full mt-1 w-max font-medium border border-white/20">${item.payer}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold ${isEur ? 'text-emerald-600' : 'text-blue-700'}">${item.amount} ${item.currency || 'Kč'}</span>
+                        <div class="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                            <button onclick="openEditExp('${d.id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-full hover:bg-blue-50"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="deleteExpense('${d.id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-full hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(li);
+            });
+
+            // CZK Vyúčtování
+            document.getElementById('sumCzkMichal').innerText = sumsCzk['Michal'].toLocaleString() + ' Kč';
+            document.getElementById('sumCzkMára').innerText = sumsCzk['Mára'].toLocaleString() + ' Kč';
+            document.getElementById('sumCzkFanda').innerText = sumsCzk['Fanda'].toLocaleString() + ' Kč';
+            const totalCzk = sumsCzk['Michal'] + sumsCzk['Mára'] + sumsCzk['Fanda'];
+            document.getElementById('totalCzkSpent').innerText = totalCzk.toLocaleString() + ' Kč';
+            
+            const avgCzk = totalCzk / 3;
+            const boxCzk = document.getElementById('settlementBoxCzk');
+            if (totalCzk === 0) boxCzk.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje v CZK.</p>';
+            else {
+                let html = '';
+                ['Michal', 'Mára', 'Fanda'].forEach(name => {
+                    let bal = Math.round(sumsCzk[name] - avgCzk);
+                    if (bal < -5) html += `<div class="flex items-center justify-between text-red-700 bg-red-50 p-2 rounded border border-red-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>${name} doplatí</span> <b>${Math.abs(bal).toLocaleString()} Kč</b></div>`;
+                    else if (bal > 5) html += `<div class="flex items-center justify-between text-blue-700 bg-blue-50 p-2 rounded border border-blue-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>${name} dostane</span> <b>${bal.toLocaleString()} Kč</b></div>`;
+                    else html += `<div class="flex items-center justify-between text-slate-500 bg-slate-50 p-2 rounded border border-slate-100"><span class="font-medium"><i class="fa-solid fa-check mr-2 text-green-500"></i>${name}</span> <b>Vyrovnáno</b></div>`;
+                });
+                boxCzk.innerHTML = html;
+            }
+
+            // EUR Vyúčtování
+            document.getElementById('sumEurMichal').innerText = sumsEur['Michal'].toLocaleString() + ' €';
+            document.getElementById('sumEurMára').innerText = sumsEur['Mára'].toLocaleString() + ' €';
+            document.getElementById('sumEurFanda').innerText = sumsEur['Fanda'].toLocaleString() + ' €';
+            const totalEur = sumsEur['Michal'] + sumsEur['Mára'] + sumsEur['Fanda'];
+            document.getElementById('totalEurSpent').innerText = totalEur.toLocaleString() + ' €';
+            
+            const avgEur = totalEur / 3;
+            const boxEur = document.getElementById('settlementBoxEur');
+            if (totalEur === 0) boxEur.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje v EUR.</p>';
+            else {
+                let html = '';
+                ['Michal', 'Mára', 'Fanda'].forEach(name => {
+                    let bal = Math.round((sumsEur[name] - avgEur) * 10) / 10;
+                    if (bal < -0.5) html += `<div class="flex items-center justify-between text-red-700 bg-red-50 p-2 rounded border border-red-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>${name} doplatí</span> <b>${Math.abs(bal).toLocaleString()} €</b></div>`;
+                    else if (bal > 0.5) html += `<div class="flex items-center justify-between text-emerald-700 bg-emerald-50 p-2 rounded border border-emerald-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>${name} dostane</span> <b>${bal.toLocaleString()} €</b></div>`;
+                    else html += `<div class="flex items-center justify-between text-slate-500 bg-slate-50 p-2 rounded border border-slate-100"><span class="font-medium"><i class="fa-solid fa-check mr-2 text-green-500"></i>${name}</span> <b>Vyrovnáno</b></div>`;
+                });
+                boxEur.innerHTML = html;
+            }
+        });
+
+        window.addExpense = async function() {
+            const desc = document.getElementById('expenseDescInput').value;
+            const amount = document.getElementById('amountInput').value;
+            let date = document.getElementById('expenseDateInput').value;
+            if (!date) date = new Date().toISOString().split('T')[0];
+            
+            if (desc.trim() === '' || amount.trim() === '') return;
+
+            await addDoc(expensesCol, {
+                payer: document.getElementById('payerInput').value,
+                description: desc.trim(),
+                amount: Number(amount),
+                currency: document.getElementById('currencyInput').value,
+                date: date,
+                createdAt: serverTimestamp()
+            });
+            
+            document.getElementById('expenseDescInput').value = '';
+            document.getElementById('amountInput').value = '';
+        };
+
+        window.deleteExpense = async function(id) {
+            if(confirm("Smazat výdaj?")) await deleteDoc(doc(db, 'expenses', id));
+        };
+
+        window.openEditExp = function(id) {
+            const item = currentExpItems.find(i => i.id === id);
+            if(!item) return;
+            document.getElementById('editExpId').value = item.id;
+            document.getElementById('editExpDate').value = item.date || '';
+            document.getElementById('editExpPayer').value = item.payer;
+            document.getElementById('editExpDesc').value = item.description;
+            document.getElementById('editExpAmount').value = item.amount;
+            document.getElementById('editExpCurrency').value = item.currency || 'Kč';
+            document.getElementById('editExpModal').classList.remove('hidden');
+            document.getElementById('editExpModal').classList.add('flex');
+        };
+
+        window.closeEditExp = function() {
+            document.getElementById('editExpModal').classList.add('hidden');
+            document.getElementById('editExpModal').classList.remove('flex');
+        };
+
+        window.saveEditExpense = async function() {
+            const id = document.getElementById('editExpId').value;
+            const desc = document.getElementById('editExpDesc').value;
+            const amount = document.getElementById('editExpAmount').value;
+            if(desc.trim() === '' || amount.trim() === '') return;
+
+            await updateDoc(doc(db, 'expenses', id), {
+                date: document.getElementById('editExpDate').value,
+                payer: document.getElementById('editExpPayer').value,
+                description: desc.trim(),
+                amount: Number(amount),
+                currency: document.getElementById('editExpCurrency').value
+            });
+            closeEditExp();
+        };
+
+        // --- CHECKLIST LOGIKA ---
+        onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = '';
+            const grouped = { 'Doklady': [], 'Auto': [], 'Jídlo': [], 'Osobní věci': [], 'Ostatní': [] };
+
+            snapshot.forEach(d => {
+                const item = d.data();
+                const cat = item.category || 'Ostatní';
+                if(!grouped[cat]) grouped[cat] = [];
+                grouped[cat].push({ id: d.id, ...item });
+            });
+
+            for (const [catName, items] of Object.entries(grouped)) {
+                if(items.length === 0) continue; 
+                const catDiv = document.createElement('div');
+                catDiv.className = "mb-4";
+                let listHtml = `<h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-3">${catName}</h3><ul class="space-y-2">`;
+                items.forEach(item => {
+                    listHtml += `
+                        <li class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg group transition-colors border border-transparent hover:border-slate-100">
+                            <label class="flex items-center gap-3 cursor-pointer flex-1">
+                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTask('${item.id}', this.checked)" class="w-5 h-5 text-green-600 rounded cursor-pointer accent-green-600">
+                                <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-700'} transition-all">${item.text}</span>
+                            </label>
+                            <button onclick="deleteTask('${item.id}')" class="text-slate-200 hover:text-red-500 transition-colors p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
+                        </li>
+                    `;
+                });
+                listHtml += `</ul>`;
+                catDiv.innerHTML = listHtml;
+                container.appendChild(catDiv);
+            }
+        });
+
+        window.addTask = async function() {
+            const input = document.getElementById('taskInput');
+            if (input.value.trim() === '') return;
+            await addDoc(checklistCol, {
+                text: input.value.trim(), category: document.getElementById('taskCategory').value,
+                done: false, createdAt: serverTimestamp()
+            });
+            input.value = '';
+        };
+
+        window.toggleTask = async function(id, isDone) { await updateDoc(doc(db, 'checklist', id), { done: isDone }); };
+        window.deleteTask = async function(id) { await deleteDoc(doc(db, 'checklist', id)); };
+
+        // --- CHAT LOGIKA ---
+        let currentNotes = [];
+        
+        function renderNotes() {
+            const list = document.getElementById('noteList');
+            list.innerHTML = '';
+            currentNotes.forEach(itemWrapper => {
+                const item = itemWrapper.data;
+                const id = itemWrapper.id;
+                const div = document.createElement('div');
+                let timeStr = item.createdAt ? item.createdAt.toDate().toLocaleTimeString('cs-CZ', {hour: '2-digit', minute:'2-digit'}) : "";
+
+                div.className = "p-3 rounded-2xl shadow-sm max-w-[85%] relative group";
+                
+                // Použijeme globální currentUser z paměti místo hodnoty konkrétního selectu
+                if(item.author === currentUser) {
+                    div.className += " self-end bg-blue-600 text-white rounded-br-none";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-baseline mb-1 gap-4">
+                            <span class="text-[10px] text-blue-200">${timeStr}</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="deleteNote('${id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-blue-200 hover:text-red-300"><i class="fa-solid fa-trash text-xs"></i></button>
+                                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-500 border border-blue-400 text-white">Já (${item.author})</span>
+                            </div>
+                        </div>
+                        <p class="text-sm mt-1 px-1">${item.text}</p>
+                    `;
+                } else {
+                    div.className += " self-start bg-white border border-slate-200 rounded-bl-none";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-baseline mb-1 gap-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold px-2 py-0.5 rounded-full ${posadkaColors[item.author]} border border-white/20">${item.author}</span>
+                                <button onclick="deleteNote('${id}')" class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>
+                            </div>
+                            <span class="text-[10px] text-slate-400">${timeStr}</span>
+                        </div>
+                        <p class="text-sm text-slate-700 mt-1 px-1">${item.text}</p>
+                    `;
+                }
+                list.appendChild(div);
+            });
+        }
+
+        onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
+            currentNotes = [];
+            snapshot.forEach(d => currentNotes.push({ id: d.id, data: d.data() }));
+            renderNotes();
+        });
+
+        window.addNote = async function() {
+            const text = document.getElementById('noteInput').value;
+            if (text.trim() === '') return;
+            await addDoc(notesCol, { author: document.getElementById('noteAuthorInput').value, text: text.trim(), createdAt: serverTimestamp() });
+            document.getElementById('noteInput').value = '';
+        };
+        window.deleteNote = async function(id) { if(confirm("Smazat zprávu?")) await deleteDoc(doc(db, 'notes', id)); };
+
+        // --- PROFESIONÁLNÍ EXCEL EXPORT S LISTY ---
+        window.exportToExcel = function() {
+            const wb = XLSX.utils.book_new();
+
+            // 1. DATA PRO ROZPOČET
+            let budgetData = [["Datum", "Kdo platil", "Za co to bylo", "Částka", "Měna"]];
+            currentExpItems.forEach(item => {
+                let date = item.date ? item.date.split('-').reverse().join('.') : '';
+                budgetData.push([
+                    date, 
+                    item.payer || '', 
+                    item.description || '', 
+                    item.amount || 0, 
+                    item.currency || 'Kč'
+                ]);
+            });
+            const wsBudget = XLSX.utils.aoa_to_sheet(budgetData);
+            wsBudget['!cols'] = [{wch: 12}, {wch: 15}, {wch: 30}, {wch: 10}, {wch: 8}];
+            XLSX.utils.book_append_sheet(wb, wsBudget, "Rozpočet");
+
+            // 2. DATA PRO ITINERÁŘ
+            let itinData = [["Den", "Datum", "Místo / Kemp", "Autor", "Poznámka", "Odkaz (Mapa)", "Web"]];
+            currentItinItems.forEach(item => {
+                let date = item.date ? item.date.split('-').reverse().join('.') : '';
+                itinData.push([
+                    item.day || '', 
+                    date, 
+                    item.place || '', 
+                    item.author || '', 
+                    item.note || '', 
+                    item.link || '', 
+                    item.web || ''
+                ]);
+            });
+            const wsItin = XLSX.utils.aoa_to_sheet(itinData);
+            wsItin['!cols'] = [{wch: 8}, {wch: 12}, {wch: 25}, {wch: 10}, {wch: 35}, {wch: 30}, {wch: 30}];
+            XLSX.utils.book_append_sheet(wb, wsItin, "Itinerář");
+
+            XLSX.writeFile(wb, "EuroTrip_2026_Zaloha.xlsx");
+        };
+
+        // Klávesnice podpora
+        document.getElementById('pinInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.checkPin(); });
+        document.getElementById('taskInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addTask(); });
+        document.getElementById('amountInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addExpense(); });
+        document.getElementById('noteInput').addEventListener('keypress', e => { if(e.key === 'Enter') window.addNote(); });
+    </script>
+</body>
+</html>
