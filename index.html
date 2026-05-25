@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <!-- Nová knihovna pro skutečný Excel (.xlsx) s listy -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -93,7 +92,6 @@
             </div>
 
             <div id="tab-overview" class="tab-content hidden space-y-6">
-                <!-- Info o voze (stejné jako prve) -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2 flex items-center"><i class="fa-solid fa-id-card text-blue-500 mr-2"></i> Identifikace vozidla</h3>
@@ -166,7 +164,6 @@
                 </div>
             </div>
 
-            <!-- ITINERÁŘ TABS VČETNĚ TLAČÍTKA NA EXCEL -->
             <div id="tab-itinerary" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4 flex justify-between items-center flex-wrap gap-2">
@@ -178,7 +175,7 @@
                     </h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <select id="itinAuthor" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-2 w-full"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
+                        <select id="itinAuthor" class="author-select p-3 border border-slate-200 rounded-lg bg-white md:col-span-2 w-full"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
                         <select id="itinDay" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-2 text-indigo-700 font-medium w-full"><option value="">Den ?</option><option>Den 1</option><option>Den 2</option><option>Den 3</option><option>Den 4</option><option>Den 5</option><option>Den 6</option><option>Den 7</option><option>Plán B</option></select>
                         <input type="date" id="itinDate" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-3 text-sm w-full">
                         <input type="text" id="itinPlace" class="md:col-span-5 p-3 border border-slate-200 rounded-lg font-bold w-full" placeholder="Místo / Kemp">
@@ -192,14 +189,13 @@
                 </div>
             </div>
 
-            <!-- ROZPOČET TABS S TLAČÍTKEM NA EXCEL -->
             <div id="tab-budget" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> Sdílené výdaje</h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-8 bg-slate-50 p-4 rounded-xl border border-slate-100">
                         <input type="date" id="expenseDateInput" class="p-3 border border-slate-200 rounded-lg bg-white text-sm md:col-span-2 w-full">
-                        <select id="payerInput" class="p-3 border border-slate-200 rounded-lg bg-white font-medium md:col-span-2 w-full"><option value="Michal">Michal platil</option><option value="Mára">Mára platil</option><option value="Fanda">Fanda platil</option></select>
+                        <select id="payerInput" class="author-select p-3 border border-slate-200 rounded-lg bg-white font-medium md:col-span-2 w-full"><option value="Michal">Michal platil</option><option value="Mára">Mára platil</option><option value="Fanda">Fanda platil</option></select>
                         <input type="text" id="expenseDescInput" class="p-3 border border-slate-200 rounded-lg md:col-span-4 w-full" placeholder="Za co to bylo">
                         <div class="flex gap-2 md:col-span-3">
                             <input type="number" id="amountInput" class="w-full p-3 border border-slate-200 rounded-lg min-w-0" placeholder="Částka">
@@ -208,7 +204,6 @@
                         <button onclick="addExpense()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg md:col-span-1 shadow-md w-full transition-colors">Zapsat</button>
                     </div>
 
-                    <!-- VYÚČTOVÁNÍ CZK -->
                     <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 mb-6 border border-blue-100 shadow-inner">
                         <h3 class="font-bold text-blue-900 mb-4 border-b border-blue-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v CZK</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -227,7 +222,6 @@
                         </div>
                     </div>
                     
-                    <!-- VYÚČTOVÁNÍ EUR -->
                     <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 mb-8 border border-emerald-100 shadow-inner">
                         <h3 class="font-bold text-emerald-900 mb-4 border-b border-emerald-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v EUR</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -254,7 +248,6 @@
                 </div>
             </div>
 
-            <!-- CHECKLIST TABS -->
             <div id="tab-checklist" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit a zabalit</h2>
@@ -267,13 +260,12 @@
                 </div>
             </div>
 
-            <!-- CHAT TABS -->
             <div id="tab-notes" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[600px] max-h-[75vh]">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-brands fa-facebook-messenger text-blue-500 mr-2"></i> Chat posádky</h2>
                     <div id="noteList" class="flex-1 space-y-4 overflow-y-auto pr-2 mb-4 p-4 bg-slate-50/50 rounded-xl border border-slate-100 flex flex-col-reverse relative"></div>
                     <div class="flex flex-col md:flex-row gap-3 pt-2">
-                        <select id="noteAuthorInput" class="w-full md:w-40 p-3 border border-slate-200 rounded-xl bg-white font-medium shrink-0"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
+                        <select id="noteAuthorInput" class="author-select w-full md:w-40 p-3 border border-slate-200 rounded-xl bg-white font-medium shrink-0"><option value="Michal">Michal</option><option value="Mára">Mára</option><option value="Fanda">Fanda</option></select>
                         <input type="text" id="noteInput" class="flex-1 w-full p-3 border border-slate-200 rounded-xl min-w-0" placeholder="Napiš zprávu...">
                         <button onclick="addNote()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md shrink-0 transition-colors"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
@@ -282,9 +274,8 @@
 
         </main>
 
-        <!-- Modal: Itinerář -->
-        <div id="editItinModal" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+        <div id="editItinModal" onclick="closeModalOnOutsideClick(event, 'editItinModal', closeEditItin)" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out] cursor-default">
                 <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-indigo-500 mr-2"></i>Upravit zastávku</h3>
                 <input type="hidden" id="editItinId">
                 <div class="space-y-4">
@@ -303,15 +294,14 @@
                     </div>
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
-                    <button onclick="closeEditItin()" class="px-4 py-2 bg-slate-100 rounded-lg">Zrušit</button>
-                    <button onclick="saveEditItinerary()" class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg shadow-md">Uložit</button>
+                    <button onclick="closeEditItin()" class="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">Zrušit</button>
+                    <button onclick="saveEditItinerary()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-md transition-colors">Uložit</button>
                 </div>
             </div>
         </div>
 
-        <!-- Modal: Rozpočet -->
-        <div id="editExpModal" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm">
-            <div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+        <div id="editExpModal" onclick="closeModalOnOutsideClick(event, 'editExpModal', closeEditExp)" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl animate-[fadeIn_0.2s_ease-out] cursor-default">
                 <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-blue-500 mr-2"></i>Upravit výdaj</h3>
                 <input type="hidden" id="editExpId">
                 <div class="space-y-3">
@@ -353,6 +343,29 @@
         const itineraryCol = collection(db, 'itinerary');
 
         const posadkaColors = { 'Michal': 'text-blue-700 bg-blue-100', 'Mára': 'text-emerald-700 bg-emerald-100', 'Fanda': 'text-amber-700 bg-amber-100' };
+
+        // --- GLOBAL & MEMORY LOGIC ---
+        // Získání nebo nastavení výchozího uživatele pro plynulejší UX
+        let currentUser = localStorage.getItem('euroTripUser') || 'Michal';
+        
+        document.querySelectorAll('.author-select').forEach(select => {
+            select.value = currentUser;
+            select.addEventListener('change', (e) => {
+                currentUser = e.target.value;
+                localStorage.setItem('euroTripUser', currentUser);
+                // Synchronizovat ostatní roletky
+                document.querySelectorAll('.author-select').forEach(s => s.value = currentUser);
+                // Překreslit chat s novým "Já"
+                renderNotes(); 
+            });
+        });
+
+        // Zavírání modalů kliknutím ven
+        window.closeModalOnOutsideClick = function(event, modalId, closeFunction) {
+            if (event.target.id === modalId) {
+                closeFunction();
+            }
+        };
 
         window.checkPin = function() {
             if (document.getElementById('pinInput').value === '2026') {
@@ -416,11 +429,11 @@
                 let linksHtml = '';
                 if (item.link) {
                     let href = item.link.startsWith('http') ? item.link : 'https://mapy.cz/zakladni?q=' + encodeURIComponent(item.link);
-                    linksHtml += `<a href="${href}" target="_blank" class="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md hover:bg-emerald-200 transition-colors mr-2"><i class="fa-solid fa-location-arrow mr-1"></i> Mapa</a>`;
+                    linksHtml += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md hover:bg-emerald-200 transition-colors mr-2"><i class="fa-solid fa-location-arrow mr-1"></i> Mapa</a>`;
                 }
                 if (item.web) {
                     let hrefW = item.web.startsWith('http') ? item.web : 'https://' + item.web;
-                    linksHtml += `<a href="${hrefW}" target="_blank" class="mt-2 inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md hover:bg-blue-200 transition-colors"><i class="fa-solid fa-globe mr-1"></i> Web</a>`;
+                    linksHtml += `<a href="${hrefW}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md hover:bg-blue-200 transition-colors"><i class="fa-solid fa-globe mr-1"></i> Web</a>`;
                 }
 
                 const div = document.createElement('div');
@@ -492,7 +505,7 @@
             document.getElementById('editItinLink').value = item.link || '';
             document.getElementById('editItinWeb').value = item.web || '';
             document.getElementById('editItinDay').value = item.day || '';
-            document.getElementById('editItinAuthor').value = item.author || 'Michal';
+            document.getElementById('editItinAuthor').value = item.author || currentUser;
             document.getElementById('editItinNote').value = item.note || '';
             document.getElementById('editItinModal').classList.remove('hidden');
             document.getElementById('editItinModal').classList.add('flex');
@@ -711,17 +724,21 @@
         window.deleteTask = async function(id) { await deleteDoc(doc(db, 'checklist', id)); };
 
         // --- CHAT LOGIKA ---
-        onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
+        let currentNotes = [];
+        
+        function renderNotes() {
             const list = document.getElementById('noteList');
             list.innerHTML = '';
-            snapshot.forEach(d => {
-                const item = d.data();
-                const id = d.id;
+            currentNotes.forEach(itemWrapper => {
+                const item = itemWrapper.data;
+                const id = itemWrapper.id;
                 const div = document.createElement('div');
                 let timeStr = item.createdAt ? item.createdAt.toDate().toLocaleTimeString('cs-CZ', {hour: '2-digit', minute:'2-digit'}) : "";
 
                 div.className = "p-3 rounded-2xl shadow-sm max-w-[85%] relative group";
-                if(item.author === document.getElementById('noteAuthorInput').value) {
+                
+                // Použijeme globální currentUser z paměti místo hodnoty konkrétního selectu
+                if(item.author === currentUser) {
                     div.className += " self-end bg-blue-600 text-white rounded-br-none";
                     div.innerHTML = `
                         <div class="flex justify-between items-baseline mb-1 gap-4">
@@ -748,6 +765,12 @@
                 }
                 list.appendChild(div);
             });
+        }
+
+        onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
+            currentNotes = [];
+            snapshot.forEach(d => currentNotes.push({ id: d.id, data: d.data() }));
+            renderNotes();
         });
 
         window.addNote = async function() {
@@ -760,10 +783,9 @@
 
         // --- PROFESIONÁLNÍ EXCEL EXPORT S LISTY ---
         window.exportToExcel = function() {
-            // Vytvoření nového sešitu
             const wb = XLSX.utils.book_new();
 
-            // 1. DATA PRO ROZPOČET (LIST 1)
+            // 1. DATA PRO ROZPOČET
             let budgetData = [["Datum", "Kdo platil", "Za co to bylo", "Částka", "Měna"]];
             currentExpItems.forEach(item => {
                 let date = item.date ? item.date.split('-').reverse().join('.') : '';
@@ -776,12 +798,10 @@
                 ]);
             });
             const wsBudget = XLSX.utils.aoa_to_sheet(budgetData);
-            
-            // Nastavení šířky sloupců pro Rozpočet
             wsBudget['!cols'] = [{wch: 12}, {wch: 15}, {wch: 30}, {wch: 10}, {wch: 8}];
             XLSX.utils.book_append_sheet(wb, wsBudget, "Rozpočet");
 
-            // 2. DATA PRO ITINERÁŘ (LIST 2)
+            // 2. DATA PRO ITINERÁŘ
             let itinData = [["Den", "Datum", "Místo / Kemp", "Autor", "Poznámka", "Odkaz (Mapa)", "Web"]];
             currentItinItems.forEach(item => {
                 let date = item.date ? item.date.split('-').reverse().join('.') : '';
@@ -796,12 +816,9 @@
                 ]);
             });
             const wsItin = XLSX.utils.aoa_to_sheet(itinData);
-            
-            // Nastavení šířky sloupců pro Itinerář
             wsItin['!cols'] = [{wch: 8}, {wch: 12}, {wch: 25}, {wch: 10}, {wch: 35}, {wch: 30}, {wch: 30}];
             XLSX.utils.book_append_sheet(wb, wsItin, "Itinerář");
 
-            // Finální stažení do počítače
             XLSX.writeFile(wb, "EuroTrip_2026_Zaloha.xlsx");
         };
 
