@@ -22,6 +22,7 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen">
 
+    <!-- PIN Screen -->
     <div id="pinScreen" class="fixed inset-0 bg-slate-900/95 z-50 flex flex-col items-center justify-center transition-opacity duration-500 backdrop-blur-sm">
         <div class="bg-white/10 p-8 rounded-2xl shadow-2xl text-center max-w-sm w-full mx-4 backdrop-blur-md border border-white/20">
             <i class="fa-solid fa-truck-fast text-5xl text-blue-400 mb-4 drop-shadow-md"></i>
@@ -35,6 +36,7 @@
         </div>
     </div>
 
+    <!-- Main App -->
     <div id="mainApp" class="hidden max-w-5xl mx-auto md:my-8 bg-white/95 md:rounded-3xl shadow-2xl min-h-screen md:min-h-[90vh] flex flex-col backdrop-blur-xl border border-white/50 overflow-hidden relative">
         
         <header class="bg-gradient-to-r from-blue-800 to-indigo-900 text-white p-6 md:rounded-t-3xl relative overflow-hidden">
@@ -66,6 +68,7 @@
 
         <main class="flex-1 p-4 md:p-8 overflow-y-auto">
 
+            <!-- DOMŮ -->
             <div id="tab-home" class="tab-content block">
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                     <button onclick="switchTab('overview')" class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col items-center justify-center hover:bg-blue-50 hover:border-blue-200 transition-all group aspect-square">
@@ -91,6 +94,7 @@
                 </div>
             </div>
 
+            <!-- VŮZ A INFO -->
             <div id="tab-overview" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -164,6 +168,7 @@
                 </div>
             </div>
 
+            <!-- ITINERÁŘ -->
             <div id="tab-itinerary" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4 flex justify-between items-center flex-wrap gap-2">
@@ -189,6 +194,7 @@
                 </div>
             </div>
 
+            <!-- ROZPOČET -->
             <div id="tab-budget" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-wallet text-blue-500 mr-2"></i> Sdílené výdaje</h2>
@@ -204,6 +210,7 @@
                         <button onclick="addExpense()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg md:col-span-1 shadow-md w-full transition-colors">Zapsat</button>
                     </div>
 
+                    <!-- VYÚČTOVÁNÍ CZK -->
                     <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 mb-6 border border-blue-100 shadow-inner">
                         <h3 class="font-bold text-blue-900 mb-4 border-b border-blue-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v CZK</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -222,6 +229,7 @@
                         </div>
                     </div>
                     
+                    <!-- VYÚČTOVÁNÍ EUR -->
                     <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-5 mb-8 border border-emerald-100 shadow-inner">
                         <h3 class="font-bold text-emerald-900 mb-4 border-b border-emerald-200 pb-2"><i class="fa-solid fa-scale-balanced mr-2"></i>Vyúčtování v EUR</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -248,18 +256,33 @@
                 </div>
             </div>
 
+            <!-- CHECKLIST -->
             <div id="tab-checklist" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-solid fa-list-check text-green-500 mr-2"></i> Co zařídit a zabalit</h2>
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                        <select id="taskCategory" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-3 w-full"><option value="Doklady">Doklady 🛂</option><option value="Auto">Auto 🚐</option><option value="Jídlo">Jídlo 🍻</option><option value="Ostatní">Ostatní 📌</option></select>
-                        <input type="text" id="taskInput" class="md:col-span-7 p-3 border border-slate-200 rounded-lg w-full" placeholder="Nová položka...">
+                        <select id="taskCategory" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-2 w-full">
+                            <option value="Doklady">Doklady 🛂</option>
+                            <option value="Auto">Auto 🚐</option>
+                            <option value="Jídlo">Jídlo 🍻</option>
+                            <option value="Osobní věci">Osobní věci 🎒</option>
+                            <option value="Ostatní">Ostatní 📌</option>
+                        </select>
+                        <select id="taskAssignee" class="p-3 border border-slate-200 rounded-lg bg-white md:col-span-2 w-full text-slate-600">
+                            <option value="">Kdo to vezme?</option>
+                            <option value="Michal">Michal</option>
+                            <option value="Mára">Mára</option>
+                            <option value="Fanda">Fanda</option>
+                            <option value="Společné">Společné</option>
+                        </select>
+                        <input type="text" id="taskInput" class="md:col-span-6 p-3 border border-slate-200 rounded-lg w-full" placeholder="Nová položka...">
                         <button onclick="addTask()" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg shadow-md md:col-span-2 w-full transition-colors">Přidat</button>
                     </div>
                     <div id="checklistContainer" class="space-y-6"></div>
                 </div>
             </div>
 
+            <!-- CHAT -->
             <div id="tab-notes" class="tab-content hidden space-y-6">
                 <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[600px] max-h-[75vh]">
                     <h2 class="text-xl font-bold mb-4"><i class="fa-brands fa-facebook-messenger text-blue-500 mr-2"></i> Chat posádky</h2>
@@ -274,6 +297,7 @@
 
         </main>
 
+        <!-- Modal: Itinerář -->
         <div id="editItinModal" onclick="closeModalOnOutsideClick(event, 'editItinModal', closeEditItin)" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
             <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out] cursor-default">
                 <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-indigo-500 mr-2"></i>Upravit zastávku</h3>
@@ -300,6 +324,7 @@
             </div>
         </div>
 
+        <!-- Modal: Rozpočet -->
         <div id="editExpModal" onclick="closeModalOnOutsideClick(event, 'editExpModal', closeEditExp)" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
             <div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl animate-[fadeIn_0.2s_ease-out] cursor-default">
                 <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-blue-500 mr-2"></i>Upravit výdaj</h3>
@@ -345,7 +370,6 @@
         const posadkaColors = { 'Michal': 'text-blue-700 bg-blue-100', 'Mára': 'text-emerald-700 bg-emerald-100', 'Fanda': 'text-amber-700 bg-amber-100' };
 
         // --- GLOBAL & MEMORY LOGIC ---
-        // Získání nebo nastavení výchozího uživatele pro plynulejší UX
         let currentUser = localStorage.getItem('euroTripUser') || 'Michal';
         
         document.querySelectorAll('.author-select').forEach(select => {
@@ -353,14 +377,11 @@
             select.addEventListener('change', (e) => {
                 currentUser = e.target.value;
                 localStorage.setItem('euroTripUser', currentUser);
-                // Synchronizovat ostatní roletky
                 document.querySelectorAll('.author-select').forEach(s => s.value = currentUser);
-                // Překreslit chat s novým "Já"
                 renderNotes(); 
             });
         });
 
-        // Zavírání modalů kliknutím ven
         window.closeModalOnOutsideClick = function(event, modalId, closeFunction) {
             if (event.target.id === modalId) {
                 closeFunction();
@@ -676,6 +697,10 @@
         };
 
         // --- CHECKLIST LOGIKA ---
+        window.updateTaskAssignee = async function(id, assignee) {
+            await updateDoc(doc(db, 'checklist', id), { assignee: assignee });
+        };
+
         onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
             const container = document.getElementById('checklistContainer');
             container.innerHTML = '';
@@ -691,16 +716,30 @@
             for (const [catName, items] of Object.entries(grouped)) {
                 if(items.length === 0) continue; 
                 const catDiv = document.createElement('div');
-                catDiv.className = "mb-4";
-                let listHtml = `<h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-3">${catName}</h3><ul class="space-y-2">`;
+                catDiv.className = "mb-6";
+                let listHtml = `<h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-3"><i class="fa-solid fa-tag text-slate-400 mr-2 text-sm"></i>${catName}</h3><ul class="space-y-2">`;
                 items.forEach(item => {
                     listHtml += `
-                        <li class="flex items-center justify-between p-2 hover:bg-slate-50 rounded-lg group transition-colors border border-transparent hover:border-slate-100">
-                            <label class="flex items-center gap-3 cursor-pointer flex-1">
-                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTask('${item.id}', this.checked)" class="w-5 h-5 text-green-600 rounded cursor-pointer accent-green-600">
-                                <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-700'} transition-all">${item.text}</span>
+                        <li class="flex flex-col md:flex-row md:items-center justify-between p-3 hover:bg-slate-50 rounded-xl group transition-all border border-slate-100 md:border-transparent md:hover:border-slate-100 gap-2 mb-2 bg-white md:bg-transparent shadow-sm md:shadow-none">
+                            <label class="flex items-start md:items-center gap-3 cursor-pointer flex-1">
+                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTask('${item.id}', this.checked)" class="mt-1 md:mt-0 w-6 h-6 text-green-600 rounded cursor-pointer accent-green-600 shrink-0">
+                                <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-800 font-medium'} transition-all text-base">${item.text}</span>
                             </label>
-                            <button onclick="deleteTask('${item.id}')" class="text-slate-200 hover:text-red-500 transition-colors p-2 rounded-full opacity-0 group-hover:opacity-100 hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
+                            
+                            <div class="flex items-center justify-between md:justify-end gap-3 ml-9 md:ml-0 mt-2 md:mt-0">
+                                <select onchange="updateTaskAssignee('${item.id}', this.value)" class="text-sm font-medium border border-slate-200 rounded-lg p-2 bg-slate-50 hover:bg-white text-slate-700 focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all ${item.done ? 'opacity-60' : ''}">
+                                    <option value="" ${!item.assignee ? 'selected' : ''}>Kdo to vezme?</option>
+                                    <option value="Michal" ${item.assignee==='Michal'?'selected':''}>🙋‍♂️ Michal</option>
+                                    <option value="Mára" ${item.assignee==='Mára'?'selected':''}>🙋‍♂️ Mára</option>
+                                    <option value="Fanda" ${item.assignee==='Fanda'?'selected':''}>🙋‍♂️ Fanda</option>
+                                    <option value="Společné" ${item.assignee==='Společné'?'selected':''}>🛒 Společné</option>
+                                </select>
+                                
+                                <div class="flex items-center gap-1">
+                                    <span class="text-xs font-bold px-2 py-1.5 rounded-md ${item.done ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'} whitespace-nowrap">${item.done ? '<i class="fa-solid fa-check mr-1"></i>Zabaleno' : 'Chybí'}</span>
+                                    <button onclick="deleteTask('${item.id}')" class="text-slate-300 hover:text-red-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-red-50 ml-1"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
                         </li>
                     `;
                 });
@@ -712,10 +751,14 @@
 
         window.addTask = async function() {
             const input = document.getElementById('taskInput');
+            const assignee = document.getElementById('taskAssignee').value;
             if (input.value.trim() === '') return;
             await addDoc(checklistCol, {
-                text: input.value.trim(), category: document.getElementById('taskCategory').value,
-                done: false, createdAt: serverTimestamp()
+                text: input.value.trim(), 
+                category: document.getElementById('taskCategory').value,
+                assignee: assignee,
+                done: false, 
+                createdAt: serverTimestamp()
             });
             input.value = '';
         };
@@ -737,7 +780,6 @@
 
                 div.className = "p-3 rounded-2xl shadow-sm max-w-[85%] relative group";
                 
-                // Použijeme globální currentUser z paměti místo hodnoty konkrétního selectu
                 if(item.author === currentUser) {
                     div.className += " self-end bg-blue-600 text-white rounded-br-none";
                     div.innerHTML = `
