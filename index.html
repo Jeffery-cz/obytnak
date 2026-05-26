@@ -104,6 +104,33 @@
                             <li class="flex justify-between pt-1 text-xs"><span>Doložnost:</span> <strong class="text-right text-red-600">Max 590 kg <br>(vč. posádky, vody a nákladu)</strong></li>
                         </ul>
                     </div>
+
+                    <div class="bg-amber-50 p-5 rounded-2xl border border-amber-200 shadow-sm">
+                        <h3 class="font-bold text-lg mb-3 text-amber-900 border-b border-amber-200 pb-2 flex items-center"><i class="fa-solid fa-text-height text-amber-600 mr-2"></i> Rozměry vozu</h3>
+                        <ul class="space-y-3 text-sm text-amber-900">
+                            <li class="flex flex-col bg-amber-100 p-3 rounded-lg border border-amber-300 shadow-inner">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="font-bold uppercase tracking-wider text-red-700">Výška:</span>
+                                    <span class="text-2xl font-black text-red-700">3,20 m</span>
+                                </div>
+                                <span class="text-xs font-semibold text-red-600/80 leading-snug"><i class="fa-solid fa-circle-exclamation mr-1"></i>NEJDŮLEŽITĚJŠÍ ÚDAJ! Zapište si na palubku. Pozor na nízké podjezdy, větve v kempech a vjezdy na trajekty.</span>
+                            </li>
+                            <li class="flex justify-between items-center border-b border-amber-200/50 pb-1 pt-1">
+                                <span>Šířka:</span> 
+                                <div class="text-right">
+                                    <strong class="block text-base">2,35 m</strong>
+                                    <span class="text-[10px] text-amber-700">(bez zrcátek)</span>
+                                </div>
+                            </li>
+                            <li class="flex justify-between items-center pb-1">
+                                <span>Délka:</span> 
+                                <div class="text-right">
+                                    <strong class="block text-base">6,99 m</strong>
+                                    <span class="text-[10px] text-amber-700">(nejběžnější, občas 7,34 m)</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                     
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                         <h3 class="font-bold text-lg mb-3 text-slate-800 border-b pb-2 flex items-center"><i class="fa-regular fa-calendar-check text-indigo-500 mr-2"></i> Termíny a místo</h3>
@@ -332,6 +359,36 @@
                 <div class="flex justify-end gap-3 mt-6">
                     <button onclick="closeEditExp()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Zrušit</button>
                     <button onclick="saveEditExpense()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-md transition-colors">Uložit</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="editTaskModal" onclick="closeModalOnOutsideClick(event, 'editTaskModal', closeEditTask)" class="absolute inset-0 bg-slate-900/60 z-[100] hidden flex-col items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out] cursor-default">
+                <h3 class="font-bold text-xl mb-4 border-b pb-2"><i class="fa-solid fa-pen-to-square text-green-500 mr-2"></i>Upravit úkol</h3>
+                <input type="hidden" id="editTaskId">
+                <div class="space-y-4">
+                    <input type="text" id="editTaskText" class="w-full p-3 border border-slate-200 rounded-lg font-medium" placeholder="Název položky">
+                    <div class="grid grid-cols-2 gap-3">
+                        <select id="editTaskCategory" class="w-full p-3 border border-slate-200 rounded-lg">
+                            <option value="Doklady">Doklady 🛂</option>
+                            <option value="Auto">Auto 🚐</option>
+                            <option value="Jídlo">Jídlo 🍻</option>
+                            <option value="Osobní věci">Osobní věci 🎒</option>
+                            <option value="Ostatní">Ostatní 📌</option>
+                        </select>
+                        <select id="editTaskAssignee" class="w-full p-3 border border-slate-200 rounded-lg">
+                            <option value="">Kdo to vezme?</option>
+                            <option value="Michal">Michal</option>
+                            <option value="Mára">Mára</option>
+                            <option value="Fanda">Fanda</option>
+                            <option value="Společné">Společné</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button onclick="closeEditTask()" class="px-4 py-2 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors">Zrušit</button>
+                    <button onclick="saveEditTask()" class="px-6 py-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg shadow-md transition-colors">Uložit</button>
                 </div>
             </div>
         </div>
@@ -702,6 +759,7 @@
 
         // --- CHECKLIST LOGIKA ---
         let currentChecklistItems = [];
+        
         window.updateTaskAssignee = async function(id, assignee) {
             await updateDoc(doc(db, 'checklist', id), { assignee: assignee });
         };
@@ -745,7 +803,8 @@
                                 
                                 <div class="flex items-center gap-1">
                                     <span class="text-xs font-bold px-2 py-1.5 rounded-md ${item.done ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'} whitespace-nowrap">${item.done ? '<i class="fa-solid fa-check mr-1"></i>Zabaleno' : 'Chybí'}</span>
-                                    <button onclick="deleteTask('${item.id}')" class="text-slate-300 hover:text-red-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-red-50 ml-1"><i class="fa-solid fa-trash"></i></button>
+                                    <button onclick="openEditTask('${item.id}')" class="text-slate-300 hover:text-blue-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-blue-50 ml-1"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteTask('${item.id}')" class="text-slate-300 hover:text-red-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
                                 </div>
                             </div>
                         </li>
@@ -773,6 +832,36 @@
 
         window.toggleTask = async function(id, isDone) { await updateDoc(doc(db, 'checklist', id), { done: isDone }); };
         window.deleteTask = async function(id) { await deleteDoc(doc(db, 'checklist', id)); };
+
+        window.openEditTask = function(id) {
+            const item = currentChecklistItems.find(i => i.id === id);
+            if(!item) return;
+            document.getElementById('editTaskId').value = item.id;
+            document.getElementById('editTaskText').value = item.text || '';
+            document.getElementById('editTaskCategory').value = item.category || 'Ostatní';
+            document.getElementById('editTaskAssignee').value = item.assignee || '';
+            
+            document.getElementById('editTaskModal').classList.remove('hidden');
+            document.getElementById('editTaskModal').classList.add('flex');
+        };
+
+        window.closeEditTask = function() {
+            document.getElementById('editTaskModal').classList.add('hidden');
+            document.getElementById('editTaskModal').classList.remove('flex');
+        };
+
+        window.saveEditTask = async function() {
+            const id = document.getElementById('editTaskId').value;
+            const text = document.getElementById('editTaskText').value;
+            if(text.trim() === '') return;
+
+            await updateDoc(doc(db, 'checklist', id), {
+                text: text.trim(),
+                category: document.getElementById('editTaskCategory').value,
+                assignee: document.getElementById('editTaskAssignee').value
+            });
+            closeEditTask();
+        };
 
         // --- CHAT LOGIKA ---
         let currentNotes = [];
