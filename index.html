@@ -160,6 +160,7 @@
                             <li class="mt-2"><i class="fa-solid fa-phone w-5 text-slate-400"></i> <a href="tel:+420607026388" class="text-blue-600 hover:underline">+420 607 026 388</a></li>
                             <li><i class="fa-solid fa-phone w-5 text-slate-400"></i> <a href="tel:+420721039659" class="text-blue-600 hover:underline">+420 721 039 659</a></li>
                             <li class="mt-2"><i class="fa-solid fa-envelope w-5 text-slate-400"></i> <a href="mailto:info@autodetail.cz" class="text-blue-600 hover:underline">info@autodetail.cz</a></li>
+                            <li class="mt-2"><i class="fa-solid fa-globe w-5 text-slate-400"></i> <a href="https://www.karavany-hradec.cz/" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">www.karavany-hradec.cz</a></li>
                         </ul>
                     </div>
 
@@ -397,8 +398,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-firestore.js";
-        // PŘIDÁNO: Knihovna pro Anonymní přihlášení
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.1/firebase-auth.js";
 
         // --- EXPORT KLÍČOVÝCH FUNKCÍ NA ZAČÁTEK ---
         window.checkPin = function() {
@@ -444,12 +444,12 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const auth = getAuth(app); // PŘIDÁNO: Inicializace Auth
+        const auth = getAuth(app); 
 
-        // PŘIDÁNO: Automatické přihlášení (aby tě Firebase pustil k datům)
+        // PŘIDÁNO: Automatické přihlášení
         signInAnonymously(auth).catch((error) => {
             console.error("Chyba při přihlašování do Firebase:", error);
-            alert("Chyba připojení k databázi. Zkontrolujte nastavení Firebase Auth.");
+            alert("Chyba připojení k databázi. Zkontrolujte připojení k internetu.");
         });
 
         const checklistCol = collection(db, 'checklist');
@@ -459,7 +459,7 @@
 
         const posadkaColors = { 'Michal': 'text-blue-700 bg-blue-100', 'Mára': 'text-emerald-700 bg-emerald-100', 'Fanda': 'text-amber-700 bg-amber-100' };
 
-        // --- GLOBAL & MEMORY LOGIC S BEZPEČNOSTNÍ POJISTKOU ---
+        // --- GLOBAL & MEMORY LOGIC ---
         let currentUser = 'Michal';
         try {
             if (localStorage.getItem('euroTripUser')) {
@@ -496,75 +496,227 @@
             document.getElementById("countdown").innerHTML = `${days}d ${hours}:${minutes}:${seconds}`;
         }, 1000);
 
-        // --- ITINERÁŘ LOGIKA ---
-        let currentItinItems = [];
+        // --- HLAVNÍ BLOK: NAČÍTÁNÍ DAT AŽ PO PŘIHLÁŠENÍ ---
         let sortableItin = null;
+        let currentItinItems = [];
+        let currentExpItems = [];
+        let currentChecklistItems = [];
+        let currentNotes = [];
 
-        onSnapshot(collection(db, 'itinerary'), (snapshot) => {
-            const list = document.getElementById('itineraryList');
-            list.innerHTML = '';
-            currentItinItems = [];
-            
-            if (snapshot.empty) {
-                list.innerHTML = '<p class="text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200">Zatím žádné zastávky.</p>';
-                return;
-            }
-
-            snapshot.forEach(d => currentItinItems.push({ id: d.id, ...d.data() }));
-            currentItinItems.sort((a, b) => (a.order !== undefined ? a.order : 999999) - (b.order !== undefined ? b.order : 999999));
-
-            currentItinItems.forEach((item) => {
-                let dateStr = item.date ? item.date.split('-').reverse().join('. ') + '.' : '';
-                
-                let linksHtml = '';
-                if (item.link) {
-                    let href = item.link.startsWith('http') ? item.link : 'https://mapy.cz/zakladni?q=' + encodeURIComponent(item.link);
-                    linksHtml += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md hover:bg-emerald-200 transition-colors mr-2"><i class="fa-solid fa-location-arrow mr-1"></i> Mapa</a>`;
-                }
-                if (item.web) {
-                    let hrefW = item.web.startsWith('http') ? item.web : 'https://' + item.web;
-                    linksHtml += `<a href="${hrefW}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md hover:bg-blue-200 transition-colors"><i class="fa-solid fa-globe mr-1"></i> Web</a>`;
-                }
-
-                const div = document.createElement('div');
-                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-3 group relative hover:border-indigo-300 transition-colors";
-                div.setAttribute('data-id', item.id);
-                div.innerHTML = `
-                    <div class="cursor-move text-slate-300 hover:text-indigo-500 mt-2 px-1 touch-manipulation"><i class="fa-solid fa-grip-vertical text-xl"></i></div>
-                    <div class="flex-1 min-w-0">
-                        <div class="flex flex-wrap items-center gap-2 mb-1">
-                            ${item.day ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded">${item.day}</span>` : ''}
-                            ${dateStr ? `<span class="text-xs text-slate-500 font-medium"><i class="fa-regular fa-calendar mr-1"></i>${dateStr}</span>` : ''}
-                            ${item.author ? `<span class="text-[10px] ${posadkaColors[item.author] || 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-bold ml-auto border border-white/30"><i class="fa-solid fa-user-pen mr-1"></i>${item.author}</span>` : ''}
-                        </div>
-                        <h3 class="font-bold text-lg text-slate-800 leading-tight">${item.place}</h3>
-                        ${item.note ? `<p class="text-sm text-slate-600 mt-1 italic"><i class="fa-solid fa-circle-info text-slate-400 mr-1 text-xs"></i>${item.note}</p>` : ''}
-                        <div>${linksHtml}</div>
-                    </div>
-                    <div class="flex flex-col gap-2 ml-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                        <button onclick="openEditItin('${item.id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-lg bg-slate-50 hover:bg-blue-50 transition-colors"><i class="fa-solid fa-pen"></i></button>
-                        <button onclick="deleteItinerary('${item.id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-lg bg-slate-50 hover:bg-red-50 transition-colors"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-
-            if (!sortableItin) {
-                sortableItin = new Sortable(document.getElementById('itineraryList'), {
-                    animation: 200, handle: '.cursor-move', ghostClass: 'opacity-50',
-                    onEnd: async function () {
-                        const domItems = document.getElementById('itineraryList').children;
-                        const batch = writeBatch(db);
-                        for(let i = 0; i < domItems.length; i++) {
-                            const id = domItems[i].getAttribute('data-id');
-                            if(id) batch.update(doc(db, 'itinerary', id), { order: i });
-                        }
-                        await batch.commit();
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // 1. ITINERÁŘ
+                onSnapshot(collection(db, 'itinerary'), (snapshot) => {
+                    const list = document.getElementById('itineraryList');
+                    list.innerHTML = '';
+                    currentItinItems = [];
+                    
+                    if (snapshot.empty) {
+                        list.innerHTML = '<p class="text-slate-400 italic bg-white p-4 rounded-xl border border-slate-200">Zatím žádné zastávky.</p>';
+                        return;
                     }
+
+                    snapshot.forEach(d => currentItinItems.push({ id: d.id, ...d.data() }));
+                    currentItinItems.sort((a, b) => (a.order !== undefined ? a.order : 999999) - (b.order !== undefined ? b.order : 999999));
+
+                    currentItinItems.forEach((item) => {
+                        let dateStr = item.date ? item.date.split('-').reverse().join('. ') + '.' : '';
+                        
+                        let linksHtml = '';
+                        if (item.link) {
+                            let href = item.link.startsWith('http') ? item.link : 'https://mapy.cz/zakladni?q=' + encodeURIComponent(item.link);
+                            linksHtml += `<a href="${href}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-md hover:bg-emerald-200 transition-colors mr-2"><i class="fa-solid fa-location-arrow mr-1"></i> Mapa</a>`;
+                        }
+                        if (item.web) {
+                            let hrefW = item.web.startsWith('http') ? item.web : 'https://' + item.web;
+                            linksHtml += `<a href="${hrefW}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md hover:bg-blue-200 transition-colors"><i class="fa-solid fa-globe mr-1"></i> Web</a>`;
+                        }
+
+                        const div = document.createElement('div');
+                        div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-start gap-3 group relative hover:border-indigo-300 transition-colors";
+                        div.setAttribute('data-id', item.id);
+                        div.innerHTML = `
+                            <div class="cursor-move text-slate-300 hover:text-indigo-500 mt-2 px-1 touch-manipulation"><i class="fa-solid fa-grip-vertical text-xl"></i></div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2 mb-1">
+                                    ${item.day ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-bold rounded">${item.day}</span>` : ''}
+                                    ${dateStr ? `<span class="text-xs text-slate-500 font-medium"><i class="fa-regular fa-calendar mr-1"></i>${dateStr}</span>` : ''}
+                                    ${item.author ? `<span class="text-[10px] ${posadkaColors[item.author] || 'bg-slate-100 text-slate-500'} px-2 py-0.5 rounded-full font-bold ml-auto border border-white/30"><i class="fa-solid fa-user-pen mr-1"></i>${item.author}</span>` : ''}
+                                </div>
+                                <h3 class="font-bold text-lg text-slate-800 leading-tight">${item.place}</h3>
+                                ${item.note ? `<p class="text-sm text-slate-600 mt-1 italic"><i class="fa-solid fa-circle-info text-slate-400 mr-1 text-xs"></i>${item.note}</p>` : ''}
+                                <div>${linksHtml}</div>
+                            </div>
+                            <div class="flex flex-col gap-2 ml-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                <button onclick="openEditItin('${item.id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-lg bg-slate-50 hover:bg-blue-50 transition-colors"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="deleteItinerary('${item.id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-lg bg-slate-50 hover:bg-red-50 transition-colors"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        `;
+                        list.appendChild(div);
+                    });
+
+                    if (!sortableItin) {
+                        sortableItin = new Sortable(document.getElementById('itineraryList'), {
+                            animation: 200, handle: '.cursor-move', ghostClass: 'opacity-50',
+                            onEnd: async function () {
+                                const domItems = document.getElementById('itineraryList').children;
+                                const batch = writeBatch(db);
+                                for(let i = 0; i < domItems.length; i++) {
+                                    const id = domItems[i].getAttribute('data-id');
+                                    if(id) batch.update(doc(db, 'itinerary', id), { order: i });
+                                }
+                                await batch.commit();
+                            }
+                        });
+                    }
+                });
+
+                // 2. ROZPOČET
+                onSnapshot(query(expensesCol, orderBy('createdAt', 'desc')), (snapshot) => {
+                    const list = document.getElementById('expenseList');
+                    list.innerHTML = '';
+                    currentExpItems = [];
+                    
+                    let sumsCzk = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+                    let sumsEur = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
+
+                    snapshot.forEach(d => {
+                        const item = d.data();
+                        currentExpItems.push({ id: d.id, ...item });
+                        
+                        let dateStr = item.date ? item.date.split('-').reverse().join('. ') + '.' : '';
+                        let isEur = item.currency === '€';
+                        
+                        if (isEur && sumsEur[item.payer] !== undefined) sumsEur[item.payer] += Number(item.amount);
+                        else if (!isEur && sumsCzk[item.payer] !== undefined) sumsCzk[item.payer] += Number(item.amount);
+
+                        const li = document.createElement('li');
+                        li.className = "flex justify-between items-center p-3 bg-white border border-slate-100 rounded-lg hover:shadow-sm transition-all group";
+                        li.innerHTML = `
+                            <div class="flex flex-col">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-medium text-slate-800">${item.description}</span>
+                                    ${dateStr ? `<span class="text-[10px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${dateStr}</span>` : ''}
+                                </div>
+                                <span class="text-xs ${posadkaColors[item.payer] || 'text-slate-500'} px-2 py-0.5 rounded-full mt-1 w-max font-medium border border-white/20">${item.payer}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="font-bold ${isEur ? 'text-emerald-600' : 'text-blue-700'}">${item.amount} ${item.currency || 'Kč'}</span>
+                                <div class="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                    <button onclick="openEditExp('${d.id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-full hover:bg-blue-50"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="deleteExpense('${d.id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-full hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                        `;
+                        list.appendChild(li);
+                    });
+
+                    // CZK Vyúčtování
+                    document.getElementById('sumCzkMichal').innerText = sumsCzk['Michal'].toLocaleString() + ' Kč';
+                    document.getElementById('sumCzkMára').innerText = sumsCzk['Mára'].toLocaleString() + ' Kč';
+                    document.getElementById('sumCzkFanda').innerText = sumsCzk['Fanda'].toLocaleString() + ' Kč';
+                    const totalCzk = sumsCzk['Michal'] + sumsCzk['Mára'] + sumsCzk['Fanda'];
+                    document.getElementById('totalCzkSpent').innerText = totalCzk.toLocaleString() + ' Kč';
+                    
+                    const avgCzk = totalCzk / 3;
+                    const boxCzk = document.getElementById('settlementBoxCzk');
+                    if (totalCzk === 0) boxCzk.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje v CZK.</p>';
+                    else {
+                        let html = '';
+                        ['Michal', 'Mára', 'Fanda'].forEach(name => {
+                            let bal = Math.round(sumsCzk[name] - avgCzk);
+                            if (bal < -5) html += `<div class="flex items-center justify-between text-red-700 bg-red-50 p-2 rounded border border-red-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>${name} doplatí</span> <b>${Math.abs(bal).toLocaleString()} Kč</b></div>`;
+                            else if (bal > 5) html += `<div class="flex items-center justify-between text-blue-700 bg-blue-50 p-2 rounded border border-blue-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>${name} dostane</span> <b>${bal.toLocaleString()} Kč</b></div>`;
+                            else html += `<div class="flex items-center justify-between text-slate-500 bg-slate-50 p-2 rounded border border-slate-100"><span class="font-medium"><i class="fa-solid fa-check mr-2 text-green-500"></i>${name}</span> <b>Vyrovnáno</b></div>`;
+                        });
+                        boxCzk.innerHTML = html;
+                    }
+
+                    // EUR Vyúčtování
+                    document.getElementById('sumEurMichal').innerText = sumsEur['Michal'].toLocaleString() + ' €';
+                    document.getElementById('sumEurMára').innerText = sumsEur['Mára'].toLocaleString() + ' €';
+                    document.getElementById('sumEurFanda').innerText = sumsEur['Fanda'].toLocaleString() + ' €';
+                    const totalEur = sumsEur['Michal'] + sumsEur['Mára'] + sumsEur['Fanda'];
+                    document.getElementById('totalEurSpent').innerText = totalEur.toLocaleString() + ' €';
+                    
+                    const avgEur = totalEur / 3;
+                    const boxEur = document.getElementById('settlementBoxEur');
+                    if (totalEur === 0) boxEur.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje v EUR.</p>';
+                    else {
+                        let html = '';
+                        ['Michal', 'Mára', 'Fanda'].forEach(name => {
+                            let bal = Math.round((sumsEur[name] - avgEur) * 10) / 10;
+                            if (bal < -0.5) html += `<div class="flex items-center justify-between text-red-700 bg-red-50 p-2 rounded border border-red-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>${name} doplatí</span> <b>${Math.abs(bal).toLocaleString()} €</b></div>`;
+                            else if (bal > 0.5) html += `<div class="flex items-center justify-between text-emerald-700 bg-emerald-50 p-2 rounded border border-emerald-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>${name} dostane</span> <b>${bal.toLocaleString()} €</b></div>`;
+                            else html += `<div class="flex items-center justify-between text-slate-500 bg-slate-50 p-2 rounded border border-slate-100"><span class="font-medium"><i class="fa-solid fa-check mr-2 text-green-500"></i>${name}</span> <b>Vyrovnáno</b></div>`;
+                        });
+                        boxEur.innerHTML = html;
+                    }
+                });
+
+                // 3. CHECKLIST
+                onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
+                    const container = document.getElementById('checklistContainer');
+                    container.innerHTML = '';
+                    const grouped = { 'Doklady': [], 'Auto': [], 'Jídlo': [], 'Osobní věci': [], 'Ostatní': [] };
+                    currentChecklistItems = [];
+
+                    snapshot.forEach(d => {
+                        const item = d.data();
+                        const cat = item.category || 'Ostatní';
+                        if(!grouped[cat]) grouped[cat] = [];
+                        const fullItem = { id: d.id, ...item };
+                        grouped[cat].push(fullItem);
+                        currentChecklistItems.push(fullItem);
+                    });
+
+                    for (const [catName, items] of Object.entries(grouped)) {
+                        if(items.length === 0) continue; 
+                        const catDiv = document.createElement('div');
+                        catDiv.className = "mb-6";
+                        let listHtml = `<h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-3"><i class="fa-solid fa-tag text-slate-400 mr-2 text-sm"></i>${catName}</h3><ul class="space-y-2">`;
+                        items.forEach(item => {
+                            listHtml += `
+                                <li class="flex flex-col md:flex-row md:items-center justify-between p-3 hover:bg-slate-50 rounded-xl group transition-all border border-slate-100 md:border-transparent md:hover:border-slate-100 gap-2 mb-2 bg-white md:bg-transparent shadow-sm md:shadow-none">
+                                    <label class="flex items-start md:items-center gap-3 cursor-pointer flex-1">
+                                        <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTask('${item.id}', this.checked)" class="mt-1 md:mt-0 w-6 h-6 text-green-600 rounded cursor-pointer accent-green-600 shrink-0">
+                                        <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-800 font-medium'} transition-all text-base">${item.text}</span>
+                                    </label>
+                                    
+                                    <div class="flex items-center justify-between md:justify-end gap-3 ml-9 md:ml-0 mt-2 md:mt-0">
+                                        <select onchange="updateTaskAssignee('${item.id}', this.value)" class="text-sm font-medium border border-slate-200 rounded-lg p-2 bg-slate-50 hover:bg-white text-slate-700 focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all ${item.done ? 'opacity-60' : ''}">
+                                            <option value="" ${!item.assignee ? 'selected' : ''}>Kdo to vezme?</option>
+                                            <option value="Michal" ${item.assignee==='Michal'?'selected':''}>🙋‍♂️ Michal</option>
+                                            <option value="Mára" ${item.assignee==='Mára'?'selected':''}>🙋‍♂️ Mára</option>
+                                            <option value="Fanda" ${item.assignee==='Fanda'?'selected':''}>🙋‍♂️ Fanda</option>
+                                            <option value="Společné" ${item.assignee==='Společné'?'selected':''}>🛒 Společné</option>
+                                        </select>
+                                        
+                                        <div class="flex items-center gap-1">
+                                            <span class="text-xs font-bold px-2 py-1.5 rounded-md ${item.done ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'} whitespace-nowrap">${item.done ? '<i class="fa-solid fa-check mr-1"></i>Zabaleno' : 'Chybí'}</span>
+                                            <button onclick="openEditTask('${item.id}')" class="text-slate-300 hover:text-blue-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-blue-50 ml-1"><i class="fa-solid fa-pen"></i></button>
+                                            <button onclick="deleteTask('${item.id}')" class="text-slate-300 hover:text-red-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </li>
+                            `;
+                        });
+                        listHtml += `</ul>`;
+                        catDiv.innerHTML = listHtml;
+                        container.appendChild(catDiv);
+                    }
+                });
+
+                // 4. CHAT
+                onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
+                    currentNotes = [];
+                    snapshot.forEach(d => currentNotes.push({ id: d.id, data: d.data() }));
+                    renderNotes();
                 });
             }
         });
 
+        // --- ZBÝVAJÍCÍ FUNKCE (UKLÁDÁNÍ, EDITACE) ---
         window.addItinerary = async function() {
             const place = document.getElementById('itinPlace').value;
             if (place.trim() === '') return;
@@ -621,90 +773,6 @@
             });
             closeEditItin();
         };
-
-        // --- ROZPOČET LOGIKA ---
-        let currentExpItems = [];
-        onSnapshot(query(expensesCol, orderBy('createdAt', 'desc')), (snapshot) => {
-            const list = document.getElementById('expenseList');
-            list.innerHTML = '';
-            currentExpItems = [];
-            
-            let sumsCzk = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
-            let sumsEur = { 'Michal': 0, 'Mára': 0, 'Fanda': 0 };
-
-            snapshot.forEach(d => {
-                const item = d.data();
-                currentExpItems.push({ id: d.id, ...item });
-                
-                let dateStr = item.date ? item.date.split('-').reverse().join('. ') + '.' : '';
-                let isEur = item.currency === '€';
-                
-                if (isEur && sumsEur[item.payer] !== undefined) sumsEur[item.payer] += Number(item.amount);
-                else if (!isEur && sumsCzk[item.payer] !== undefined) sumsCzk[item.payer] += Number(item.amount);
-
-                const li = document.createElement('li');
-                li.className = "flex justify-between items-center p-3 bg-white border border-slate-100 rounded-lg hover:shadow-sm transition-all group";
-                li.innerHTML = `
-                    <div class="flex flex-col">
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium text-slate-800">${item.description}</span>
-                            ${dateStr ? `<span class="text-[10px] text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">${dateStr}</span>` : ''}
-                        </div>
-                        <span class="text-xs ${posadkaColors[item.payer] || 'text-slate-500'} px-2 py-0.5 rounded-full mt-1 w-max font-medium border border-white/20">${item.payer}</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="font-bold ${isEur ? 'text-emerald-600' : 'text-blue-700'}">${item.amount} ${item.currency || 'Kč'}</span>
-                        <div class="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                            <button onclick="openEditExp('${d.id}')" class="text-slate-300 hover:text-blue-500 p-2 rounded-full hover:bg-blue-50"><i class="fa-solid fa-pen"></i></button>
-                            <button onclick="deleteExpense('${d.id}')" class="text-slate-300 hover:text-red-500 p-2 rounded-full hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
-                        </div>
-                    </div>
-                `;
-                list.appendChild(li);
-            });
-
-            // CZK Vyúčtování
-            document.getElementById('sumCzkMichal').innerText = sumsCzk['Michal'].toLocaleString() + ' Kč';
-            document.getElementById('sumCzkMára').innerText = sumsCzk['Mára'].toLocaleString() + ' Kč';
-            document.getElementById('sumCzkFanda').innerText = sumsCzk['Fanda'].toLocaleString() + ' Kč';
-            const totalCzk = sumsCzk['Michal'] + sumsCzk['Mára'] + sumsCzk['Fanda'];
-            document.getElementById('totalCzkSpent').innerText = totalCzk.toLocaleString() + ' Kč';
-            
-            const avgCzk = totalCzk / 3;
-            const boxCzk = document.getElementById('settlementBoxCzk');
-            if (totalCzk === 0) boxCzk.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje v CZK.</p>';
-            else {
-                let html = '';
-                ['Michal', 'Mára', 'Fanda'].forEach(name => {
-                    let bal = Math.round(sumsCzk[name] - avgCzk);
-                    if (bal < -5) html += `<div class="flex items-center justify-between text-red-700 bg-red-50 p-2 rounded border border-red-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>${name} doplatí</span> <b>${Math.abs(bal).toLocaleString()} Kč</b></div>`;
-                    else if (bal > 5) html += `<div class="flex items-center justify-between text-blue-700 bg-blue-50 p-2 rounded border border-blue-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>${name} dostane</span> <b>${bal.toLocaleString()} Kč</b></div>`;
-                    else html += `<div class="flex items-center justify-between text-slate-500 bg-slate-50 p-2 rounded border border-slate-100"><span class="font-medium"><i class="fa-solid fa-check mr-2 text-green-500"></i>${name}</span> <b>Vyrovnáno</b></div>`;
-                });
-                boxCzk.innerHTML = html;
-            }
-
-            // EUR Vyúčtování
-            document.getElementById('sumEurMichal').innerText = sumsEur['Michal'].toLocaleString() + ' €';
-            document.getElementById('sumEurMára').innerText = sumsEur['Mára'].toLocaleString() + ' €';
-            document.getElementById('sumEurFanda').innerText = sumsEur['Fanda'].toLocaleString() + ' €';
-            const totalEur = sumsEur['Michal'] + sumsEur['Mára'] + sumsEur['Fanda'];
-            document.getElementById('totalEurSpent').innerText = totalEur.toLocaleString() + ' €';
-            
-            const avgEur = totalEur / 3;
-            const boxEur = document.getElementById('settlementBoxEur');
-            if (totalEur === 0) boxEur.innerHTML = '<p class="text-center text-slate-400 italic text-sm">Zatím žádné výdaje v EUR.</p>';
-            else {
-                let html = '';
-                ['Michal', 'Mára', 'Fanda'].forEach(name => {
-                    let bal = Math.round((sumsEur[name] - avgEur) * 10) / 10;
-                    if (bal < -0.5) html += `<div class="flex items-center justify-between text-red-700 bg-red-50 p-2 rounded border border-red-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-to-bracket mr-2"></i>${name} doplatí</span> <b>${Math.abs(bal).toLocaleString()} €</b></div>`;
-                    else if (bal > 0.5) html += `<div class="flex items-center justify-between text-emerald-700 bg-emerald-50 p-2 rounded border border-emerald-100"><span class="font-medium"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>${name} dostane</span> <b>${bal.toLocaleString()} €</b></div>`;
-                    else html += `<div class="flex items-center justify-between text-slate-500 bg-slate-50 p-2 rounded border border-slate-100"><span class="font-medium"><i class="fa-solid fa-check mr-2 text-green-500"></i>${name}</span> <b>Vyrovnáno</b></div>`;
-                });
-                boxEur.innerHTML = html;
-            }
-        });
 
         window.addExpense = async function() {
             const desc = document.getElementById('expenseDescInput').value;
@@ -765,64 +833,9 @@
             closeEditExp();
         };
 
-        // --- CHECKLIST LOGIKA ---
-        let currentChecklistItems = [];
-        
         window.updateTaskAssignee = async function(id, assignee) {
             await updateDoc(doc(db, 'checklist', id), { assignee: assignee });
         };
-
-        onSnapshot(query(checklistCol, orderBy('createdAt', 'asc')), (snapshot) => {
-            const container = document.getElementById('checklistContainer');
-            container.innerHTML = '';
-            const grouped = { 'Doklady': [], 'Auto': [], 'Jídlo': [], 'Osobní věci': [], 'Ostatní': [] };
-            currentChecklistItems = [];
-
-            snapshot.forEach(d => {
-                const item = d.data();
-                const cat = item.category || 'Ostatní';
-                if(!grouped[cat]) grouped[cat] = [];
-                const fullItem = { id: d.id, ...item };
-                grouped[cat].push(fullItem);
-                currentChecklistItems.push(fullItem);
-            });
-
-            for (const [catName, items] of Object.entries(grouped)) {
-                if(items.length === 0) continue; 
-                const catDiv = document.createElement('div');
-                catDiv.className = "mb-6";
-                let listHtml = `<h3 class="font-bold text-slate-700 border-b border-slate-200 pb-2 mb-3"><i class="fa-solid fa-tag text-slate-400 mr-2 text-sm"></i>${catName}</h3><ul class="space-y-2">`;
-                items.forEach(item => {
-                    listHtml += `
-                        <li class="flex flex-col md:flex-row md:items-center justify-between p-3 hover:bg-slate-50 rounded-xl group transition-all border border-slate-100 md:border-transparent md:hover:border-slate-100 gap-2 mb-2 bg-white md:bg-transparent shadow-sm md:shadow-none">
-                            <label class="flex items-start md:items-center gap-3 cursor-pointer flex-1">
-                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleTask('${item.id}', this.checked)" class="mt-1 md:mt-0 w-6 h-6 text-green-600 rounded cursor-pointer accent-green-600 shrink-0">
-                                <span class="${item.done ? 'line-through text-slate-400' : 'text-slate-800 font-medium'} transition-all text-base">${item.text}</span>
-                            </label>
-                            
-                            <div class="flex items-center justify-between md:justify-end gap-3 ml-9 md:ml-0 mt-2 md:mt-0">
-                                <select onchange="updateTaskAssignee('${item.id}', this.value)" class="text-sm font-medium border border-slate-200 rounded-lg p-2 bg-slate-50 hover:bg-white text-slate-700 focus:border-green-400 focus:ring-2 focus:ring-green-100 transition-all ${item.done ? 'opacity-60' : ''}">
-                                    <option value="" ${!item.assignee ? 'selected' : ''}>Kdo to vezme?</option>
-                                    <option value="Michal" ${item.assignee==='Michal'?'selected':''}>🙋‍♂️ Michal</option>
-                                    <option value="Mára" ${item.assignee==='Mára'?'selected':''}>🙋‍♂️ Mára</option>
-                                    <option value="Fanda" ${item.assignee==='Fanda'?'selected':''}>🙋‍♂️ Fanda</option>
-                                    <option value="Společné" ${item.assignee==='Společné'?'selected':''}>🛒 Společné</option>
-                                </select>
-                                
-                                <div class="flex items-center gap-1">
-                                    <span class="text-xs font-bold px-2 py-1.5 rounded-md ${item.done ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'} whitespace-nowrap">${item.done ? '<i class="fa-solid fa-check mr-1"></i>Zabaleno' : 'Chybí'}</span>
-                                    <button onclick="openEditTask('${item.id}')" class="text-slate-300 hover:text-blue-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-blue-50 ml-1"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="deleteTask('${item.id}')" class="text-slate-300 hover:text-red-600 transition-colors p-2 rounded-full opacity-100 md:opacity-0 group-hover:opacity-100 hover:bg-red-50"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        </li>
-                    `;
-                });
-                listHtml += `</ul>`;
-                catDiv.innerHTML = listHtml;
-                container.appendChild(catDiv);
-            }
-        });
 
         window.addTask = async function() {
             const input = document.getElementById('taskInput');
@@ -871,9 +884,6 @@
             closeEditTask();
         };
 
-        // --- CHAT LOGIKA ---
-        let currentNotes = [];
-        
         function renderNotes() {
             const list = document.getElementById('noteList');
             list.innerHTML = '';
@@ -913,12 +923,6 @@
                 list.appendChild(div);
             });
         }
-
-        onSnapshot(query(notesCol, orderBy('createdAt', 'desc')), (snapshot) => {
-            currentNotes = [];
-            snapshot.forEach(d => currentNotes.push({ id: d.id, data: d.data() }));
-            renderNotes();
-        });
 
         window.addNote = async function() {
             const text = document.getElementById('noteInput').value;
