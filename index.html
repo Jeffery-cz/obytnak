@@ -4,35 +4,41 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0d12">
-<title>Jarvis · Tréninkový deník v2.5</title>
+<title>Jarvis · Tréninkový deník v3.0 PRO</title>
 <style>
-:root{--bg:#0b0d12;--surface:#141821;--surface2:#1b2030;--line:#262d40;--text:#eef1f7;--muted:#8a93a8;--c:#ff5a5f;--ok:#34d399;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
+:root{--bg:#0b0d12;--surface:#141821;--surface2:#1b2030;--line:#262d40;--text:#eef1f7;--muted:#8a93a8;--c:#ff5a5f;--ok:#34d399;--cyan:#38bdf8;--gold:#fbbf24;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding:calc(var(--safe-t) + 14px) 0 calc(104px + var(--safe-b));line-height:1.45;font-size:15px}
-main{max-width:640px;margin:0 auto;padding:0 16px}
-small{display:block;color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding:calc(var(--safe-t) + 14px) 0 calc(108px + var(--safe-b));line-height:1.45;font-size:15px}
+main{max-width:660px;margin:0 auto;padding:0 16px}
+small{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
 h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:2px 0 6px}
-h3.sec{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;font-weight:700}
+h3.sec{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
 .muted{color:var(--muted);font-size:13px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
-input,textarea{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;outline:none}
+input,textarea,select{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;outline:none}
 input:focus,textarea:focus{border-color:var(--c)}
 textarea{min-height:56px;resize:vertical}
 button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:600;transition:transform .08s,opacity .15s}
 button:active{transform:scale(.97)}
-button.pri{background:var(--c);border-color:var(--c);color:#0b0d12;font-weight:700}
+button.pri{background:var(--c);border-color:var(--c);color:#0b0d12;font-weight:800}
+button.ok{background:var(--ok);border-color:var(--ok);color:#0b0d12;font-weight:800}
 button.ghost{background:none;color:var(--muted);border-color:transparent;padding:6px 8px;font-size:13px}
 button.danger{color:#ff8a8d}
 button.big{width:100%;padding:15px;font-size:16px;margin-top:12px}
-.hero{background:linear-gradient(150deg,#2a1a22,#141821 70%);border:1px solid #3a2530;border-radius:22px;padding:22px 20px;margin:6px 0 4px}
+.hero{background:linear-gradient(150deg,#2a1a22,#141821 70%);border:1px solid #3a2530;border-radius:22px;padding:20px;margin:6px 0 4px}
 .resume{width:100%;margin:14px 0 0;padding:14px;background:linear-gradient(90deg,#ff5a5f,#fbbf24);border:0;color:#0b0d12;font-size:15px;font-weight:800}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.stat-box{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.stat-box .v{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
 .dayc{text-align:left;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:2px}
 .dayc span{font-size:12px;color:var(--c);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 .dayc b{font-size:17px}
-.dayc small{text-transform:none;letter-spacing:0;font-size:12px}
-.wrow{display:grid;grid-template-columns:1fr 1fr 1.2fr auto;gap:8px}
-.row-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.dayc small{text-transform:none;letter-spacing:0;font-size:12px;font-weight:400}
+.wrow{display:grid;grid-template-columns:1fr 1fr 1.25fr auto;gap:8px}
+@media(max-width:440px){.wrow{grid-template-columns:1fr 1fr;}}
+.edit-banner{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);color:var(--gold);padding:8px 12px;border-radius:10px;font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.row-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line);gap:8px}
 .row-item:first-child{border-top:0}
 .nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(11,13,18,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + var(--safe-b));z-index:20}
 .nav button{flex:1;background:none;border:0;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:6px}
@@ -41,20 +47,25 @@ button.big{width:100%;padding:15px;font-size:16px;margin-top:12px}
 .nav button.on span:last-child{color:var(--c);font-weight:700}
 .shead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin:6px 0 10px}
 .shead h2{margin-top:0}
-.pbar-wrap{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.pbar-wrap{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:12px}
 .pbar-fill{height:100%;background:linear-gradient(90deg,var(--c),#fbbf24);width:0%;transition:width .3s}
+.live-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
 .cx{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
 .ch{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
 .idx{flex:0 0 28px;height:28px;border-radius:9px;background:var(--surface2);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--c)}
 .ct{flex:1;min-width:0}
 .ct h3{font-size:16px;font-weight:700;line-height:1.25}
 .ct p{font-size:12px;color:var(--muted)}
-.last-perf{font-size:12px;color:#fbbf24;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.22);border-radius:8px;padding:5px 8px;margin-bottom:10px;display:inline-block}
+.ex-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;align-items:center}
+.last-perf{font-size:12px;color:var(--gold);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.22);border-radius:8px;padding:4px 8px}
+.vol-pill{font-size:12px;color:var(--cyan);background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:4px 8px;font-weight:700}
+.pr-pill{font-size:11px;color:#0b0d12;background:var(--gold);border-radius:6px;padding:2px 6px;font-weight:800}
 .badge{font-size:12px;font-weight:700;padding:5px 9px;border-radius:9px;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--c);white-space:nowrap}
-.srow{display:grid;grid-template-columns:28px 1fr 1fr 48px;gap:8px;align-items:center;margin-bottom:8px}
+.srow{display:grid;grid-template-columns:26px 1fr 1fr 58px 46px;gap:6px;align-items:center;margin-bottom:8px}
 .srow .num{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
-.srow input{padding:10px 8px;text-align:center;font-weight:600}
-.chk{width:48px;height:44px;padding:0;border-radius:12px;font-size:18px;font-weight:800}
+.srow input{padding:10px 6px;text-align:center;font-weight:600}
+.srow .svol{font-size:11px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;line-height:1.15}
+.chk{width:46px;height:42px;padding:0;border-radius:12px;font-size:18px;font-weight:800}
 .chk.on{background:var(--ok);border-color:var(--ok);color:#0b0d12}
 .warn{font-size:13px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fde68a;border-radius:10px;padding:8px 10px;margin:8px 0}
 details{border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
@@ -65,8 +76,11 @@ details p{font-size:13px;color:#b8c0d0;padding:4px 0}
 .sess{cursor:pointer}
 .sess-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .sess-body{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
-.sline{display:flex;justify-content:space-between;font-size:14px;padding:4px 0}
-.spark{width:100%;height:70px;margin-top:10px}
+.sline{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed rgba(255,255,255,.04)}
+.chart-box{width:100%;margin-top:8px}
+.chart-legend{display:flex;gap:14px;font-size:12px;margin-bottom:6px;flex-wrap:wrap}
+.chart-legend span{display:inline-flex;align-items:center;gap:5px;font-weight:600}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
 .pday{border-left:4px solid var(--c);padding-left:12px;margin-bottom:24px}
 .pday .dayhead{display:grid;gap:8px;margin-bottom:14px}
 .pex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;display:grid;gap:8px}
@@ -77,31 +91,30 @@ details p{font-size:13px;color:#b8c0d0;padding:4px 0}
 .prow{display:flex;gap:8px;align-items:center}
 .prow input{font-weight:600}
 
-/* --- VELKÉ VYSKAKOVACÍ OKNO ČASOVAČE (MODAL) --- */
+/* --- MODÁLNÍ OKNA (ČASOVAČ + KALKULAČKA KOTOUČŮ) --- */
 .tmodal-backdrop{position:fixed;inset:0;background:rgba(6,8,12,.86);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
 .tmodal-backdrop.on{display:flex;animation:fadeIn .18s ease-out}
 @keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-.tmodal{width:100%;max-width:400px;background:var(--surface);border:2px solid var(--c);border-radius:28px;padding:26px 22px 22px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.75);position:relative}
+.tmodal{width:100%;max-width:400px;background:var(--surface);border:2px solid var(--c);border-radius:28px;padding:24px 20px 20px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.75);position:relative}
 .tmodal.done{border-color:var(--ok);box-shadow:0 0 50px rgba(52,211,153,.28)}
 .tmodal-tag{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-bottom:4px}
 .tmodal.done .tmodal-tag{color:var(--ok)}
-.tmodal-ex{font-size:15px;color:var(--muted);margin-bottom:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ring-wrap{position:relative;width:220px;height:220px;margin:0 auto 20px;display:grid;place-items:center}
+.tmodal-ex{font-size:14px;color:var(--muted);margin-bottom:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ring-wrap{position:relative;width:210px;height:210px;margin:0 auto 18px;display:grid;place-items:center}
 .ring-svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
 .ring-bg{fill:none;stroke:var(--surface2);stroke-width:10}
 .ring-fg{fill:none;stroke:var(--c);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .25s linear}
 .tmodal.done .ring-fg{stroke:var(--ok)}
-.tmodal-val{font-size:64px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.03em;line-height:1;color:var(--text)}
+.tmodal-val{font-size:60px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.03em;line-height:1;color:var(--text)}
 .tmodal.done .tmodal-val{color:var(--ok)}
 .tmodal-sub{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.1em}
 .tmodal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.tmodal-btns button{padding:14px;font-size:16px;border-radius:14px}
-.tmodal-main{width:100%;padding:16px;font-size:17px;border-radius:16px;background:var(--c);border-color:var(--c);color:#0b0d12;font-weight:800}
+.tmodal-btns button{padding:13px;font-size:16px;border-radius:14px}
+.tmodal-main{width:100%;padding:15px;font-size:16px;border-radius:16px;background:var(--c);border-color:var(--c);color:#0b0d12;font-weight:800}
 .tmodal.done .tmodal-main{background:var(--ok);border-color:var(--ok)}
-.tmodal-min{margin-top:10px;width:100%;background:none;border:0;color:var(--muted);font-size:13px;padding:8px}
+.tmodal-min{margin-top:8px;width:100%;background:none;border:0;color:var(--muted);font-size:13px;padding:6px}
 
-/* --- MINIMALIZOVANÁ LIŠTA ČASOVAČE --- */
-.tbar{position:fixed;left:12px;right:12px;bottom:calc(74px + var(--safe-b));max-width:616px;margin:0 auto;z-index:30;display:none;align-items:center;gap:12px;padding:12px 16px;border-radius:18px;background:rgba(27,32,48,.96);backdrop-filter:blur(14px);border:1.5px solid var(--c);box-shadow:0 12px 40px rgba(0,0,0,.5);cursor:pointer}
+.tbar{position:fixed;left:12px;right:12px;bottom:calc(74px + var(--safe-b));max-width:628px;margin:0 auto;z-index:30;display:none;align-items:center;gap:12px;padding:12px 16px;border-radius:18px;background:rgba(27,32,48,.96);backdrop-filter:blur(14px);border:1.5px solid var(--c);box-shadow:0 12px 40px rgba(0,0,0,.5);cursor:pointer}
 .tbar.on{display:flex}
 .tbar.done{border-color:var(--ok)}
 .tbar .val{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--c);line-height:1}
@@ -110,7 +123,9 @@ details p{font-size:13px;color:#b8c0d0;padding:4px 0}
 .tbar .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .tbar .exn{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-.toast{position:fixed;top:calc(var(--safe-t) + 12px);left:50%;transform:translateX(-50%) translateY(-140%);background:var(--ok);color:#0b0d12;font-weight:700;padding:10px 18px;border-radius:12px;transition:transform .3s;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.plate-pill{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:10px;font-weight:800;font-size:14px;margin:4px;border:1px solid rgba(255,255,255,.15)}
+
+.toast{position:fixed;top:calc(var(--safe-t) + 12px);left:50%;transform:translateX(-50%) translateY(-140%);background:var(--ok);color:#0b0d12;font-weight:800;padding:10px 18px;border-radius:12px;transition:transform .3s;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .toast.on{transform:translateX(-50%) translateY(0)}
 </style>
 </head>
@@ -119,11 +134,11 @@ details p{font-size:13px;color:#b8c0d0;padding:4px 0}
 
 <nav class="nav">
   <button data-go="home"><span class="i">🏠</span><span>Domů</span></button>
-  <button data-go="diary"><span class="i">📓</span><span>Deník</span></button>
-  <button data-go="program"><span class="i">⚙️</span><span>Program</span></button>
+  <button data-go="diary"><span class="i">📊</span><span>Deník & Grafy</span></button>
+  <button data-go="program"><span class="i">⚙️</span><span>Plán & Excel</span></button>
 </nav>
 
-<!-- VELKÉ VYSKAKOVACÍ OKNO (MODAL) -->
+<!-- VELKÉ VYSKAKOVACÍ OKNO ČASOVAČE -->
 <div class="tmodal-backdrop" id="tmodalBackdrop">
   <div class="tmodal" id="tmodal">
     <div class="tmodal-tag" id="tmTag">Pauza mezi sériemi</div>
@@ -147,6 +162,22 @@ details p{font-size:13px;color:#b8c0d0;padding:4px 0}
   </div>
 </div>
 
+<!-- KALKULAČKA KOTOUČŮ NA OSU -->
+<div class="tmodal-backdrop" id="plateModal">
+  <div class="tmodal" style="border-color:var(--cyan);text-align:left">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div><small style="color:var(--cyan)">Inženýrský nástroj</small><h3 style="font-size:19px">Kalkulačka kotoučů</h3></div>
+      <button class="ghost" id="closePlate">✕</button>
+    </div>
+    <div class="grid2" style="margin-bottom:12px">
+      <div><label class="muted">Cílová váha (kg)</label><input type="number" id="ptTarget" value="60" step="2.5" inputmode="decimal"></div>
+      <div><label class="muted">Váha osy (kg)</label><input type="number" id="ptBar" value="20" step="2" inputmode="decimal"></div>
+    </div>
+    <div id="plateResult" class="card" style="background:var(--surface2);margin-bottom:12px;text-align:center"></div>
+    <button class="pri" style="width:100%;background:var(--cyan);border-color:var(--cyan)" id="closePlateBtn">Hotovo</button>
+  </div>
+</div>
+
 <!-- MINIMALIZOVANÁ SPODNÍ LIŠTA -->
 <div class="tbar" id="tbar" title="Kliknutím zvětšíš">
   <div class="val" id="tbVal">0:00</div>
@@ -166,7 +197,9 @@ const clone = o => JSON.parse(JSON.stringify(o));
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const today = () => new Date().toISOString().slice(0,10);
 const fmt = d => new Date(d + (String(d).length === 10 ? "T12:00:00" : "")).toLocaleDateString("cs-CZ",{day:"numeric",month:"numeric",year:"numeric"});
+const fmtShort = d => new Date(d + (String(d).length === 10 ? "T12:00:00" : "")).toLocaleDateString("cs-CZ",{day:"numeric",month:"numeric"});
 const mmss = s => `${Math.floor(Math.max(0,s)/60)}:${String(Math.max(0,s)%60).padStart(2,"0")}`;
+const fmtNum = n => Math.round(n || 0).toLocaleString("cs-CZ");
 
 const DEF = [
   {name:"Den 1", title:"Tlak", focus:"Hrudník · Triceps · Boční ramena", color:"#ff5a5f", min:55,
@@ -212,6 +245,7 @@ const DEF = [
 
 let S = load();
 let view = "home", exp = null, elTimer = null;
+let editWeightId = null; // ID upravované váhy/pasu
 let tid = null, restTotal = 0, restEnd = 0, left = 0, timerContext = "";
 let wakeLock = null;
 
@@ -223,28 +257,68 @@ function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} 
 
 function toast(msg){
   const t = $("#toast"); t.textContent = msg; t.classList.add("on");
-  setTimeout(()=>t.classList.remove("on"), 2200);
+  setTimeout(()=>t.classList.remove("on"), 2400);
 }
 
-/* ---------- Zvukový signál (Web Audio API) ---------- */
+/* ---------- Výpočty objemu (Volume v kg) a e1RM ---------- */
+function numVal(v){
+  if (!v) return 0;
+  const n = parseFloat(String(v).replace(",","."));
+  return isNaN(n) || n < 0 ? 0 : n;
+}
+function setVolume(d){
+  if (!d) return 0;
+  return numVal(d.w) * numVal(d.r);
+}
+function e1RM(d){
+  const w = numVal(d?.w), r = numVal(d?.r);
+  if (w <= 0 || r <= 0) return 0;
+  return r === 1 ? w : Math.round(w * (1 + r / 30));
+}
+function exVolume(sess, exIdx, onlyDone = false){
+  const e = sess.exs[exIdx];
+  if (!e) return 0;
+  let sum = 0;
+  for (let k = 0; k < e.s; k++){
+    const d = sess.data[`${exIdx}|${k}`];
+    if (d && (!onlyDone || d.done)) sum += setVolume(d);
+  }
+  return sum;
+}
+function sessionVolume(sess, onlyDone = false){
+  if (!sess || !sess.exs) return 0;
+  return sess.exs.reduce((acc, _, idx) => acc + exVolume(sess, idx, onlyDone), 0);
+}
+function historicalMaxE1RM(exName, excludeSessionId = null){
+  let max = 0;
+  for (const s of S.sessions){
+    if (excludeSessionId && s.id === excludeSessionId) continue;
+    s.exs.forEach((e, j) => {
+      if (e.n !== exName) return;
+      for (let k = 0; k < e.s; k++){
+        const rm = e1RM(s.data[`${j}|${k}`]);
+        if (rm > max) max = rm;
+      }
+    });
+  }
+  return max;
+}
+
+/* ---------- Zvukový signál + WakeLock ---------- */
 function playBeep(){
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     [0, 0.22, 0.44].forEach((delay, idx) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+      const osc = ctx.createOscillator(), gain = ctx.createGain();
       osc.type = "sine";
-      osc.frequency.value = idx === 2 ? 1046.5 : 784; // G5, G5, C6
+      osc.frequency.value = idx === 2 ? 1046.5 : 784;
       gain.gain.setValueAtTime(0.25, ctx.currentTime + delay);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.18);
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + 0.19);
+      osc.start(ctx.currentTime + delay); osc.stop(ctx.currentTime + delay + 0.19);
     });
   } catch(e){}
 }
-
-/* ---------- WakeLock (Proti zhasínání displeje) ---------- */
 async function requestWakeLock(){
   if ("wakeLock" in navigator && S.active && !wakeLock){
     try { wakeLock = await navigator.wakeLock.request("screen"); } catch(e){}
@@ -273,50 +347,118 @@ function render(){
 
 function homeV(){
   const lw = S.weights.at(-1);
-  let h = `<section class="hero"><small>Systém Jarvis v2.5</small><h2>Připraven na trénink, Michale?</h2>
-    <p class="muted">Dnes je ${fmt(today())}. Zvol tréninkový modul a jdeme budovat 3D architekturu.</p>`;
+  const fw = S.weights[0];
+  const totalTons = (S.sessions.reduce((a,s)=>a + sessionVolume(s), 0) / 1000).toFixed(1);
+  const ew = editWeightId ? S.weights.find(w => String(w.id) === String(editWeightId)) : null;
+
+  let h = `<section class="hero"><small>Systém Jarvis v3.0 PRO</small><h2>Připraven na trénink, Michale?</h2>
+    <p class="muted">Dnes je ${fmt(today())}. Všechna data, objemy a progrese jsou pod plnou kontrolou.</p>
+    <div class="grid3" style="margin-top:14px">
+      <div class="stat-box"><small>Odjeto</small><div class="v">${S.sessions.length} <span class="muted">trén.</span></div></div>
+      <div class="stat-box"><small>Nazvedáno</small><div class="v" style="color:var(--cyan)">${totalTons} <span class="muted">t</span></div></div>
+      <div class="stat-box"><small>Akt. váha</small><div class="v" style="color:var(--ok)">${lw ? lw.kg : "–"} <span class="muted">kg</span></div></div>
+    </div>`;
   if (S.active) h += `<button class="resume" data-go="session">▶ Pokračovat v tréninku · ${esc(S.active.dayName)}</button>`;
-  h += `</section><h3 class="sec">Začít trénink (Sokol 24/7)</h3><div class="grid2">` +
+  h += `</section><h3 class="sec"><span>Začít trénink (Sokol 24/7)</span></h3><div class="grid2">` +
     S.days.map((d,i)=>`<button class="dayc" style="--c:${d.color}" data-start="${i}">
       <span>${esc(d.name)}</span><b>${esc(d.title)}</b><small>${d.ex.length} cviků · cca ${d.min} min</small></button>`).join("") +
-    `</div><h3 class="sec">Tělesné metriky (Váha a Pas)</h3><div class="card">
-      <div class="wrow">
-        <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)">
-        <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)">
-        <input id="wdate" type="date" value="${today()}">
-        <button class="pri" data-wsave>Uložit</button>
-      </div>
-      ${lw ? `<p class="muted" style="margin-top:10px">Poslední zápis: <b style="color:var(--text)">${lw.kg} kg</b>${lw.cm ? ` · Pas: <b style="color:var(--text)">${lw.cm} cm</b>` : ""} (${fmt(lw.date)})</p>` : `<p class="muted" style="margin-top:10px">Zatím žádný zápis.</p>`}
+    `</div>`;
+
+  h += `<h3 class="sec"><span>Tělesné metriky (Váha a Pas)</span></h3><div class="card">`;
+  if (ew) {
+    h += `<div class="edit-banner"><span>✎ Upravuješ záznam ze dne <b>${fmt(ew.date)}</b></span><button class="ghost" data-wcancel>Zrušit úpravu</button></div>`;
+  }
+  h += `<div class="wrow">
+        <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew ? ew.kg : ""}">
+        <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew && ew.cm ? ew.cm : ""}">
+        <input id="wdate" type="date" value="${ew ? ew.date : today()}">
+        <button class="${ew ? "ok" : "pri"}" data-wsave>${ew ? "Uložit změnu" : "Zapsat"}</button>
+      </div>`;
+  if (lw) {
+    const diffKg = fw && fw !== lw ? (lw.kg - fw.kg).toFixed(1) : null;
+    h += `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
+      <span class="muted">Poslední: <b style="color:var(--text)">${lw.kg} kg</b>${lw.cm ? ` · Pas: <b style="color:var(--cyan)">${lw.cm} cm</b>` : ""} (${fmt(lw.date)})${diffKg ? ` · Celkem: <b style="color:${diffKg<=0?"var(--ok)":"var(--c)"}">${diffKg>0?"+":""}${diffKg} kg</b>` : ""}</span>
+      <button class="ghost" data-wedit="${lw.id}">✎ Opravit</button>
     </div>`;
+  }
+  h += `</div>`;
   return h;
 }
 
 function diaryV(){
   const sess = S.sessions;
   const ws = [...S.weights].sort((a,b)=>b.date.localeCompare(a.date));
-  let h = `<div style="margin:6px 0 0"><small>Deník</small><h2>Historie a Progrese</h2>
-    <p class="muted">${sess.length} odjetých tréninků · ${S.weights.length} měření</p></div>`;
+  const totalKgAll = sess.reduce((a,s)=>a + sessionVolume(s), 0);
+  const ew = editWeightId ? S.weights.find(w => String(w.id) === String(editWeightId)) : null;
 
-  h += `<h3 class="sec">Vývoj váhy a pasu</h3><div class="card">`;
-  if (S.weights.length >= 2) h += spark();
-  h += ws.length ? ws.map(w=>`<div class="row-item"><span>${fmt(w.date)}</span>
-      <span><b>${w.kg} kg</b>${w.cm ? ` <span class="muted">(${w.cm} cm)</span>` : ""} <button class="ghost danger" data-wdel="${w.id}">✕</button></span></div>`).join("")
+  let h = `<div style="margin:6px 0 12px"><small>Analytický modul</small><h2>Deník & Srovnávací grafy</h2>
+    <p class="muted">Celkem odjeto <b>${sess.length}</b> tréninků · Celkem nazvedáno <b style="color:var(--cyan)">${fmtNum(totalKgAll)} kg</b> (${(totalKgAll/1000).toFixed(2)} tun)</p></div>`;
+
+  /* --- FORMULÁŘ PRO RYCHLOU EDITACI VÁHY A PASU V DENÍKU --- */
+  if (ew) {
+    h += `<div class="card" style="border-color:var(--gold)">
+      <div class="edit-banner"><span>✎ Oprava záznamu (${fmt(ew.date)})</span><button class="ghost" data-wcancel>✕ Zavřít</button></div>
+      <div class="wrow">
+        <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew.kg}">
+        <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew.cm || ""}">
+        <input id="wdate" type="date" value="${ew.date}">
+        <button class="ok" data-wsave>Uložit opravu</button>
+      </div>
+    </div>`;
+  }
+
+  /* --- SROVNÁVACÍ GRAF: VÁHA VS. PAS --- */
+  h += `<h3 class="sec"><span>Vývoj tělesné váhy a obvodu pasu</span><button class="ghost" data-csv-weights style="color:var(--ok)">⬇ Excel CSV</button></h3><div class="card">`;
+  if (S.weights.length >= 2) {
+    h += dualWeightWaistChart();
+  } else {
+    h += `<p class="muted" style="margin-bottom:8px">Pro vykreslení srovnávacího grafu zadej alespoň 2 měření váhy/pasu.</p>`;
+  }
+  h += ws.length ? `<div style="max-height:240px;overflow-y:auto;margin-top:8px">` + ws.map(w=>`<div class="row-item">
+      <span><b>${fmt(w.date)}</b></span>
+      <span>
+        <b style="color:var(--c)">${w.kg} kg</b>
+        ${w.cm ? ` · <b style="color:var(--cyan)">${w.cm} cm</b>` : ""}
+        <button class="ghost" data-wedit="${w.id}" title="Upravit">✎</button>
+        <button class="ghost danger" data-wdel="${w.id}" title="Smazat">✕</button>
+      </span></div>`).join("") + `</div>`
     : `<p class="muted">Zatím žádná váha. Přidej ji na úvodní obrazovce.</p>`;
   h += `</div>`;
 
-  h += `<h3 class="sec">Odjeté tréninky</h3>`;
+  /* --- GRAF NAZVEDANÉHO OBJEMU V TRÉNINCÍCH --- */
+  if (sess.length >= 2) {
+    h += `<h3 class="sec"><span>Progrese nazvedané hmotnosti (kg / trénink)</span></h3>
+    <div class="card">${volumeBarChart()}</div>`;
+  }
+
+  /* --- HISTORIE TRÉNINKŮ --- */
+  h += `<h3 class="sec"><span>Historie tréninků (${sess.length})</span><button class="ghost" data-csv-sessions style="color:var(--ok)">⬇ Export do Excelu</button></h3>`;
   h += sess.length ? sess.map(s=>{
-    const done = Object.values(s.data).filter(x=>x.done).length;
+    const done = Object.values(s.data).filter(x=>x && x.done).length;
+    const vol = sessionVolume(s);
     const open = exp === String(s.id);
     return `<div class="card sess" data-sopen="${s.id}">
-      <div class="sess-head"><div><b>${esc(s.dayName)}</b><div class="muted">${fmt(s.date)} · ${s.dur} min · ${done} pracovních sérií</div></div>
-        <button class="ghost danger" data-sdel="${s.id}">Smazat</button></div>
+      <div class="sess-head">
+        <div>
+          <b>${esc(s.dayName)}</b>
+          <div class="muted">${fmt(s.date)} · ${s.dur} min · ${done} sérií · <b style="color:var(--cyan)">⚡ ${fmtNum(vol)} kg</b></div>
+        </div>
+        <div style="display:flex;gap:4px">
+          <button class="ghost" data-sedit="${s.id}" title="Opravit trénink">✎ Upravit</button>
+          <button class="ghost danger" data-sdel="${s.id}" title="Smazat">✕</button>
+        </div>
+      </div>
       ${open ? `<div class="sess-body">${s.exs.map((e,j)=>{
+        const exVol = exVolume(s, j);
         const lines = Array.from({length:e.s},(_,k)=>{
           const d = s.data[`${j}|${k}`];
-          return d && (d.w || d.r) ? `<div class="sline"><span class="muted">Série ${k+1}</span><span><b>${esc(d.w||"–")} kg × ${esc(d.r||"–")}</b>${d.done?"":" <span class='muted'>(neodškrtnuto)</span>"}</span></div>` : "";
+          const sv = setVolume(d);
+          return d && (d.w || d.r) ? `<div class="sline"><span class="muted">Série ${k+1}</span><span><b>${esc(d.w||"0")} kg × ${esc(d.r||"0")}</b> <span class="muted">(${fmtNum(sv)} kg · e1RM ${e1RM(d)} kg)</span>${d.done?"":" <span class='muted'>(neodškrtnuto)</span>"}</span></div>` : "";
         }).join("");
-        return `<div style="margin-bottom:10px"><b>${esc(e.n)}</b>${lines || `<div class="muted">Bez zápisu</div>`}</div>`;
+        return `<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between"><b>${esc(e.n)}</b><span style="color:var(--cyan);font-size:13px;font-weight:700">${fmtNum(exVol)} kg</span></div>
+          ${lines || `<div class="muted">Bez zápisu</div>`}
+        </div>`;
       }).join("")}
       ${s.note ? `<p class="muted" style="margin-top:8px">📝 ${esc(s.note)}</p>` : ""}</div>` : ""}
     </div>`;
@@ -324,23 +466,119 @@ function diaryV(){
   return h;
 }
 
-function spark(){
-  const pts = S.weights.slice(-15);
-  const vals = pts.map(p=>p.kg), min = Math.min(...vals), max = Math.max(...vals);
-  const W = 600, H = 70, rng = (max - min) || 1;
-  const xy = pts.map((p,i)=>`${(i/(pts.length-1))*W},${H - 6 - ((p.kg-min)/rng)*(H-12)}`).join(" ");
-  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-    <polyline points="${xy}" fill="none" stroke="#ff5a5f" stroke-width="3" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
+/* ---------- Duální srovnávací SVG graf (Váha + Pas) ---------- */
+function dualWeightWaistChart(){
+  const pts = S.weights.slice(-16);
+  const W = 600, H = 150, padL = 34, padR = 34, padT = 18, padB = 26;
+  const plotW = W - padL - padR, plotH = H - padT - padB;
+
+  const kgs = pts.map(p=>p.kg);
+  const minKg = Math.min(...kgs), maxKg = Math.max(...kgs), rngKg = (maxKg - minKg) || 1;
+  const firstKg = kgs[0], lastKg = kgs.at(-1), diffKg = (lastKg - firstKg).toFixed(1);
+
+  const cmPts = pts.map((p,i)=>({i, cm: p.cm})).filter(x=>x.cm > 0);
+  const cms = cmPts.map(x=>x.cm);
+  const minCm = cms.length ? Math.min(...cms) : 0, maxCm = cms.length ? Math.max(...cms) : 0, rngCm = (maxCm - minCm) || 1;
+  const diffCm = cms.length >= 2 ? (cms.at(-1) - cms[0]).toFixed(1) : null;
+
+  const xPos = i => padL + (pts.length > 1 ? (i / (pts.length - 1)) * plotW : plotW / 2);
+  const yKg = val => padT + plotH - ((val - minKg) / rngKg) * plotH;
+  const yCm = val => padT + plotH - ((val - minCm) / rngCm) * plotH;
+
+  const kgLine = pts.map((p,i)=>`${xPos(i).toFixed(1)},${yKg(p.kg).toFixed(1)}`).join(" ");
+  const cmLine = cmPts.map(x=>`${xPos(x.i).toFixed(1)},${yCm(x.cm).toFixed(1)}`).join(" ");
+
+  let svg = `<div class="chart-legend">
+    <span><i class="dot" style="background:var(--c)"></i> Váha: <b>${lastKg} kg</b> (${diffKg>0?"+":""}${diffKg} kg)</span>
+    ${cms.length ? `<span><i class="dot" style="background:var(--cyan)"></i> Pas: <b>${cms.at(-1)} cm</b> ${diffCm!==null?`(${diffCm>0?"+":""}${diffCm} cm)`:""}</span>` : `<span class="muted">Tip: Zadej k váze i pas (cm) pro druhou křivku</span>`}
+  </div>
+  <svg class="chart-box" viewBox="0 0 ${W} ${H}">
+    <line x1="${padL}" y1="${padT}" x2="${W-padR}" y2="${padT}" stroke="#262d40" stroke-dasharray="4 4"/>
+    <line x1="${padL}" y1="${padT+plotH/2}" x2="${W-padR}" y2="${padT+plotH/2}" stroke="#262d40" stroke-dasharray="4 4"/>
+    <line x1="${padL}" y1="${padT+plotH}" x2="${W-padR}" y2="${padT+plotH}" stroke="#262d40"/>
+    <text x="2" y="${padT+4}" fill="#ff5a5f" font-size="10" font-weight="700">${maxKg}</text>
+    <text x="2" y="${padT+plotH}" fill="#ff5a5f" font-size="10" font-weight="700">${minKg}</text>`;
+
+  if (cms.length >= 1) {
+    svg += `<text x="${W-padR+4}" y="${padT+4}" fill="#38bdf8" font-size="10" font-weight="700">${maxCm}</text>
+            <text x="${W-padR+4}" y="${padT+plotH}" fill="#38bdf8" font-size="10" font-weight="700">${minCm}</text>`;
+  }
+  svg += `<polyline points="${kgLine}" fill="none" stroke="#ff5a5f" stroke-width="3" stroke-linejoin="round"/>`;
+  if (cmPts.length >= 2) {
+    svg += `<polyline points="${cmLine}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="5 3" stroke-linejoin="round"/>`;
+  }
+  pts.forEach((p,i)=>{
+    const cx = xPos(i), cy = yKg(p.kg);
+    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="#ff5a5f"/>`;
+    if (i === 0 || i === pts.length - 1 || i % Math.ceil(pts.length/5) === 0) {
+      svg += `<text x="${cx}" y="${H-6}" fill="#8a93a8" font-size="10" text-anchor="middle">${fmtShort(p.date)}</text>`;
+    }
+  });
+  cmPts.forEach(x=>{
+    svg += `<circle cx="${xPos(x.i)}" cy="${yCm(x.cm)}" r="3.5" fill="#38bdf8"/>`;
+  });
+  svg += `</svg>`;
+  return svg;
+}
+
+/* ---------- Sloupcový graf tréninkového objemu (Volume) ---------- */
+function volumeBarChart(){
+  const list = [...S.sessions].slice(0, 12).reverse();
+  const vols = list.map(s => sessionVolume(s));
+  const maxV = Math.max(...vols, 1);
+  const W = 600, H = 130, padB = 24, padT = 18;
+  const plotH = H - padT - padB;
+  const bw = Math.min(36, Math.floor((W - 20) / list.length) - 8);
+
+  let svg = `<svg class="chart-box" viewBox="0 0 ${W} ${H}">`;
+  list.forEach((s, i) => {
+    const v = vols[i];
+    const h = Math.max(4, (v / maxV) * plotH);
+    const x = 16 + i * ((W - 32) / list.length);
+    const y = padT + plotH - h;
+    svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="5" fill="#38bdf8" opacity="0.85"/>
+            <text x="${x + bw/2}" y="${y - 4}" fill="#eef1f7" font-size="9.5" font-weight="700" text-anchor="middle">${(v/1000).toFixed(1)}t</text>
+            <text x="${x + bw/2}" y="${H - 6}" fill="#8a93a8" font-size="9.5" text-anchor="middle">${fmtShort(s.date)}</text>`;
+  });
+  svg += `</svg>`;
+  return svg;
 }
 
 function progV(){
-  let h = `<div style="margin:6px 0 16px"><small>Nastavení</small><h2>Tréninkový program</h2>
-    <p class="muted">Změny se ukládají automaticky. Zde můžeš upravit cviky, série i časy pauz.</p></div>`;
+  let h = `<div style="margin:6px 0 14px"><small>Centrum přípravy a dat</small><h2>Tréninkový plán & Excel</h2>
+    <p class="muted">Zde můžeš upravovat tréninkové dny přímo v mobilu, nebo si celý plán i historii vyexportovat do Excelu (CSV) a upravovat na PC.</p></div>`;
+
+  /* --- EXCEL EXPORT / IMPORT HUB --- */
+  h += `<div class="card" style="border-color:var(--ok);margin-bottom:20px">
+    <h3 class="sec" style="margin-top:0;color:var(--ok)"><span>📊 MS Excel (CSV s českou diakritikou)</span></h3>
+    <div class="grid2" style="margin-bottom:10px">
+      <button class="ok" data-csv-sessions>⬇ Historie tréninků (.CSV)</button>
+      <button class="ok" data-csv-weights>⬇ Váha a Pas (.CSV)</button>
+    </div>
+    <div class="grid2" style="margin-bottom:10px">
+      <button data-csv-plan-out>⬇ Export plánu do Excelu</button>
+      <button data-csv-plan-in>⬆ Nahrát plán z Excelu (.CSV)</button>
+    </div>
+    <input type="file" id="importPlanCsv" accept=".csv" style="display:none">
+    <p class="muted" style="font-size:12px">Tip: Exportovaný <b>jarvis-plan.csv</b> otevřeš v Excelu, upravíš cviky/série/opakování, uložíš a přes „Nahrát plán z Excelu“ se ti aktualizuje celá aplikace.</p>
+    <div class="grid2" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
+      <button class="ghost" data-export>📦 Kompletní JSON záloha</button>
+      <button class="ghost" data-import-btn>📂 Obnovit JSON zálohu</button>
+    </div>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+  </div>`;
+
   S.days.forEach((d,i)=>{
     h += `<section class="pday" style="--c:${d.color}">
       <div class="dayhead">
-        <div><div class="lab">Název dne</div><input data-pday="${i}|name" value="${esc(d.name)}"></div>
-        <div><div class="lab">Název tréninku</div><input data-pday="${i}|title" value="${esc(d.title)}"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <b style="color:${d.color};font-size:16px">${esc(d.name)} · ${esc(d.title)}</b>
+          ${S.days.length > 1 ? `<button class="ghost danger" data-dday="${i}">Smazat den</button>` : ""}
+        </div>
+        <div class="grid2">
+          <div><div class="lab">Označení dne</div><input data-pday="${i}|name" value="${esc(d.name)}"></div>
+          <div><div class="lab">Název modulu</div><input data-pday="${i}|title" value="${esc(d.title)}"></div>
+        </div>
         <div><div class="lab">Zaměření</div><input data-pday="${i}|focus" value="${esc(d.focus)}"></div>
         <div><div class="lab">Rozcvička</div><textarea data-pday="${i}|warm">${esc(d.warm)}</textarea></div>
       </div>
@@ -355,18 +593,11 @@ function progV(){
         <input data-pf="${i}|${j}|warn" value="${esc(e.warn)}" placeholder="Varování (nepovinné)">
         <textarea data-pf="${i}|${j}|tip" placeholder="Technika">${esc(e.tip)}</textarea>
       </div>`).join("")}
-      <button data-addex="${i}" style="width:100%;color:var(--muted);border-style:dashed;background:none">+ Přidat cvik</button>
+      <button data-addex="${i}" style="width:100%;color:var(--muted);border-style:dashed;background:none">+ Přidat cvik do ${esc(d.name)}</button>
     </section>`;
   });
-  h += `<div class="card" style="margin-bottom:16px">
-    <h3 class="sec" style="margin-top:0">Záloha dat (Export / Import)</h3>
-    <div class="grid2">
-      <button data-export>⬇ Stáhnout zálohu</button>
-      <button data-import-btn>⬆ Nahrát zálohu</button>
-    </div>
-    <input type="file" id="importFile" accept=".json" style="display:none">
-  </div>`;
-  h += `<button data-preset style="width:100%;margin-bottom:30px" class="danger">Obnovit výchozí program</button>`;
+  h += `<button data-addday style="width:100%;margin-bottom:12px;border-color:var(--cyan);color:var(--cyan)">+ Přidat nový tréninkový den</button>`;
+  h += `<button data-preset style="width:100%;margin-bottom:30px" class="danger">Obnovit výchozí 4denní program Jarvis</button>`;
   return h;
 }
 
@@ -375,32 +606,53 @@ function sessV(){
   const totalSets = a.exs.reduce((acc, e) => acc + e.s, 0);
   const doneSets = Object.values(a.data).filter(x => x && x.done).length;
   const pct = totalSets ? Math.round((doneSets / totalSets) * 100) : 0;
+  const curVol = sessionVolume(a);
 
-  let h = `<div class="shead"><div><small>${esc(a.dayName)}</small><h2>Trénink v běhu</h2>
-    <span class="muted">${fmt(a.date)} · Čas: <b id="elapsed" style="color:var(--text)">0:00</b> · Hotovo: <b>${doneSets}/${totalSets}</b> (${pct} %)</span></div>
-    <button class="ghost danger" data-cancel>Zrušit</button></div>
-    <div class="pbar-wrap"><div class="pbar-fill" style="width:${pct}%"></div></div>`;
+  let h = `<div class="shead"><div><small>${a.editing ? "✎ ÚPRAVA ULOŽENÉHO TRÉNINKU" : esc(a.dayName)}</small><h2>${esc(a.dayName)}</h2></div>
+    <div style="display:flex;gap:6px">
+      <button class="ghost" style="color:var(--cyan);border:1px solid var(--line)" id="openPlateBtn">🧮 Kotouče</button>
+      <button class="ghost danger" data-cancel>Zrušit</button>
+    </div></div>
+    <div class="pbar-wrap"><div class="pbar-fill" id="sessPbar" style="width:${pct}%"></div></div>
+    <div class="live-stats">
+      <div class="stat-box"><small>Čas</small><div class="v" id="elapsed">0:00</div></div>
+      <div class="stat-box"><small>Série</small><div class="v" id="sessSets">${doneSets}/${totalSets}</div></div>
+      <div class="stat-box"><small>Nazvedáno</small><div class="v" style="color:var(--cyan)" id="sessVol">${fmtNum(curVol)} kg</div></div>
+    </div>`;
 
   if (a.warm) {
-    h += `<div class="card" style="border-left:4px solid #fbbf24;padding:12px 14px;margin-bottom:14px">
-      <small style="color:#fbbf24">Zahřátí a mobilita</small><div class="muted" style="color:var(--text);margin-top:2px">${esc(a.warm)}</div>
+    h += `<div class="card" style="border-left:4px solid var(--gold);padding:12px 14px;margin-bottom:14px">
+      <small style="color:var(--gold)">Zahřátí a mobilita</small><div class="muted" style="color:var(--text);margin-top:2px">${esc(a.warm)}</div>
     </div>`;
   }
 
   h += a.exs.map((e,i)=>{
-    const prev = lastExerciseHistory(e.n);
-    const prevSummary = prev.length ? `Minule: ` + prev.map(p => `${p.w||0}kg×${p.r||0}`).join(", ") : "";
+    const prev = lastExerciseHistory(e.n, a.id);
+    const prevVol = prev.reduce((acc, p) => acc + numVal(p.w)*numVal(p.r), 0);
+    const curExVol = exVolume(a, i);
+    const deltaVol = prevVol > 0 && curExVol > 0 ? curExVol - prevVol : null;
+    const prevMaxRM = historicalMaxE1RM(e.n, a.id);
+    const prevSummary = prev.length ? `Minule (${fmtNum(prevVol)} kg): ` + prev.map(p => `${p.w||0}×${p.r||0}`).join(", ") : "";
+
     const rows = Array.from({length:e.s},(_,k)=>{
       const key = `${i}|${k}`, d = a.data[key] || {w:"",r:"",done:false};
-      const prevRep = prev[k]?.r ? `minule ${prev[k].r}` : e.r;
+      const prevRep = prev[k]?.r ? `min. ${prev[k].r}` : e.r;
+      const sv = setVolume(d);
+      const rm = e1RM(d);
+      const isPR = rm > 0 && prevMaxRM > 0 && rm > prevMaxRM;
       return `<div class="srow"><span class="num">${k+1}</span>
         <input inputmode="decimal" placeholder="kg" value="${esc(d.w)}" data-sf="w" data-key="${key}">
         <input inputmode="numeric" placeholder="${esc(prevRep)}" value="${esc(d.r)}" data-sf="r" data-key="${key}">
+        <div class="svol" id="svol-${i}-${k}">${sv > 0 ? `<b>${fmtNum(sv)}</b> kg${isPR ? `<br><span class="pr-pill">🏆 PR</span>` : ""}` : "–"}</div>
         <button class="chk ${d.done?"on":""}" data-done="${key}" data-rest="${e.rest}" data-exname="${esc(e.n)} · Série ${k+1}/${e.s}">✓</button></div>`;
     }).join("");
+
     return `<article class="cx"><div class="ch"><span class="idx">${i+1}</span>
       <div class="ct"><h3>${esc(e.n)}</h3><p>${esc(e.m)} · Pauza ${e.rest} s</p></div><span class="badge">${e.s} × ${esc(e.r)}</span></div>
-      ${prevSummary ? `<div class="last-perf">📊 ${esc(prevSummary)}</div>` : ""}
+      <div class="ex-meta">
+        <span class="vol-pill" id="exvol-${i}">⚡ Objem: ${fmtNum(curExVol)} kg ${deltaVol !== null ? `(${deltaVol >= 0 ? "+" : ""}${fmtNum(deltaVol)} kg)` : ""}</span>
+        ${prevSummary ? `<span class="last-perf">📊 ${esc(prevSummary)}</span>` : ""}
+      </div>
       ${rows}
       <button class="addset" data-addset="${i}">+ Přidat sérii</button>
       ${e.warn ? `<div class="warn">⚠️ ${esc(e.warn)}</div>` : ""}
@@ -408,13 +660,41 @@ function sessV(){
     </article>`;
   }).join("");
   h += `<textarea id="note" placeholder="Poznámka k tréninku (spánek, energie, rezervy ve váze…)" style="margin-top:6px">${esc(a.note)}</textarea>
-    <button class="pri big" data-finish>Ukončit a uložit trénink ✓</button>`;
+    <button class="pri big" data-finish>${a.editing ? "Uložit upravený trénink ✓" : "Ukončit a uložit trénink ✓"}</button>`;
   return h;
 }
 
+function updateLiveSessionNumbers(){
+  const a = S.active;
+  if (!a || view !== "session") return;
+  const totalVol = sessionVolume(a);
+  const elVol = $("#sessVol");
+  if (elVol) elVol.textContent = `${fmtNum(totalVol)} kg`;
+
+  a.exs.forEach((e, i) => {
+    const prev = lastExerciseHistory(e.n, a.id);
+    const prevVol = prev.reduce((acc, p) => acc + numVal(p.w)*numVal(p.r), 0);
+    const curExVol = exVolume(a, i);
+    const delta = prevVol > 0 && curExVol > 0 ? ` (${curExVol - prevVol >= 0 ? "+" : ""}${fmtNum(curExVol - prevVol)} kg)` : "";
+    const exEl = document.getElementById(`exvol-${i}`);
+    if (exEl) exEl.textContent = `⚡ Objem: ${fmtNum(curExVol)} kg${delta}`;
+
+    const prevMaxRM = historicalMaxE1RM(e.n, a.id);
+    for (let k = 0; k < e.s; k++){
+      const d = a.data[`${i}|${k}`];
+      const sv = setVolume(d);
+      const rm = e1RM(d);
+      const isPR = rm > 0 && prevMaxRM > 0 && rm > prevMaxRM;
+      const cell = document.getElementById(`svol-${i}-${k}`);
+      if (cell) cell.innerHTML = sv > 0 ? `<b>${fmtNum(sv)}</b> kg${isPR ? `<br><span class="pr-pill">🏆 PR</span>` : ""}` : "–";
+    }
+  });
+}
+
 /* ---------- Historie cviku pro dvojitou progresi ---------- */
-function lastExerciseHistory(name){
+function lastExerciseHistory(name, excludeSessionId = null){
   for (const s of S.sessions){
+    if (excludeSessionId && s.id === excludeSessionId) continue;
     const j = s.exs.findIndex(e=>e.n===name);
     if (j < 0) continue;
     const arr = [];
@@ -444,18 +724,36 @@ function startSession(i){
   save(); view = "session"; render(); window.scrollTo(0,0);
 }
 
+function editSavedSession(sessId){
+  if (S.active && !confirm("Probíhá trénink. Chceš ho přepsat úpravou staršího záznamu?")) return;
+  const idx = S.sessions.findIndex(s => String(s.id) === String(sessId));
+  if (idx < 0) return;
+  const s = clone(S.sessions[idx]);
+  S.active = {
+    id: s.id, dayName: s.dayName, warm: "", date: s.date,
+    start: Date.now() - (s.dur || 45)*60000, exs: s.exs, data: s.data, note: s.note || "",
+    editing: true
+  };
+  save(); view = "session"; render(); window.scrollTo(0,0);
+  toast("Režim úpravy tréninku");
+}
+
 function finish(){
   const a = S.active;
   const dur = Math.max(1, Math.round((Date.now() - a.start)/60000));
-  S.sessions.unshift({id:a.id, date:a.date, dayName:a.dayName, exs:a.exs, data:a.data, note:a.note, dur});
+  const record = {id:a.id, date:a.date, dayName:a.dayName, exs:a.exs, data:a.data, note:a.note, dur};
+  const existingIdx = S.sessions.findIndex(s => s.id === a.id);
+  if (existingIdx >= 0) S.sessions[existingIdx] = record;
+  else S.sessions.unshift(record);
+
   S.active = null; closeTimer(); save();
   if (wakeLock){ wakeLock.release().catch(()=>{}); wakeLock = null; }
   view = "diary"; render(); window.scrollTo(0,0);
-  toast("Skvělá práce, Michale! Trénink uložen ✓");
+  toast(`Uloženo! Nazvedáno ${fmtNum(sessionVolume(record))} kg ✓`);
 }
 
 function cancel(){
-  if (!confirm("Zrušit probíhající trénink? Zápisy se zahodí.")) return;
+  if (!confirm("Opustit tento trénink bez uložení změn?")) return;
   S.active = null; closeTimer(); save();
   if (wakeLock){ wakeLock.release().catch(()=>{}); wakeLock = null; }
   view = "home"; render();
@@ -465,10 +763,141 @@ function saveWeight(){
   const kg = parseFloat($("#wkg").value);
   const cm = parseFloat($("#wcm").value) || null;
   const date = $("#wdate").value || today();
-  if (!kg || kg < 30 || kg > 250) return toast("Zadej platnou váhu v kg");
-  S.weights.push({id: Date.now(), date, kg, cm});
+  if (!kg || kg < 30 || kg > 250) return toast("Zadej platnou váhu v kg (30–250)");
+
+  if (editWeightId){
+    const item = S.weights.find(w => String(w.id) === String(editWeightId));
+    if (item){ item.kg = kg; item.cm = cm; item.date = date; }
+    editWeightId = null;
+    toast("Záznam úspěšně opraven ✓");
+  } else {
+    S.weights.push({id: Date.now(), date, kg, cm});
+    toast("Metriky uloženy ✓");
+  }
   S.weights.sort((a,b)=>a.date.localeCompare(b.date));
-  save(); render(); toast("Metriky uloženy ✓");
+  save(); render();
+}
+
+/* ---------- CSV Export / Import pro MS Excel ---------- */
+function downloadCSV(filename, rows){
+  const csvCell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const content = "\uFEFF" + rows.map(r => r.map(csvCell).join(";")).join("\r\n");
+  const blob = new Blob([content], {type: "text/csv;charset=utf-8;"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+}
+
+function exportSessionsCSV(){
+  if (!S.sessions.length) return toast("Zatím nejsou žádné tréninky k exportu");
+  const rows = [["Datum", "Trénink", "Doba (min)", "Cvik", "Stroj / Vybavení", "Série č.", "Váha (kg)", "Opakování", "Objem série (kg)", "Odhad 1RM (kg)", "Odškrtnuto", "Poznámka"]];
+  S.sessions.forEach(s => {
+    s.exs.forEach((e, j) => {
+      for (let k = 0; k < e.s; k++){
+        const d = s.data[`${j}|${k}`] || {};
+        if (!d.w && !d.r && !d.done) continue;
+        rows.push([
+          s.date, s.dayName, s.dur, e.n, e.m || "", k + 1,
+          String(d.w || 0).replace(".", ","), String(d.r || 0).replace(".", ","),
+          Math.round(setVolume(d)), e1RM(d), d.done ? "ANO" : "NE", s.note || ""
+        ]);
+      }
+    });
+  });
+  downloadCSV(`jarvis-treninky-${today()}.csv`, rows);
+  toast("CSV pro Excel staženo ✓");
+}
+
+function exportWeightsCSV(){
+  if (!S.weights.length) return toast("Zatím nejsou žádné zápisy váhy");
+  const rows = [["Datum", "Váha (kg)", "Obvod pasu (cm)", "Změna váhy od startu (kg)"]];
+  const startKg = S.weights[0].kg;
+  S.weights.forEach(w => {
+    rows.push([
+      w.date,
+      String(w.kg).replace(".", ","),
+      w.cm ? String(w.cm).replace(".", ",") : "",
+      String((w.kg - startKg).toFixed(1)).replace(".", ",")
+    ]);
+  });
+  downloadCSV(`jarvis-vaha-pas-${today()}.csv`, rows);
+  toast("CSV váhy a pasu staženo ✓");
+}
+
+function exportPlanCSV(){
+  const rows = [["Den", "Název modulu", "Zaměření", "Rozcvička", "Cvik", "Stroj / Vybavení", "Série", "Opakování", "Pauza (s)", "Technika", "Varování"]];
+  S.days.forEach(d => {
+    d.ex.forEach(e => {
+      rows.push([d.name, d.title, d.focus, d.warm || "", e.n, e.m || "", e.s, e.r, e.rest, e.tip || "", e.warn || ""]);
+    });
+  });
+  downloadCSV(`jarvis-plan-${today()}.csv`, rows);
+  toast("Tréninkový plán vyexportován do CSV ✓");
+}
+
+function parseCSVLine(line){
+  const res = []; let cur = "", inQ = false;
+  for (let i = 0; i < line.length; i++){
+    const ch = line[i];
+    if (ch === '"'){
+      if (inQ && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQ = !inQ;
+    } else if ((ch === ";" || ch === ",") && !inQ){
+      res.push(cur.trim()); cur = "";
+    } else cur += ch;
+  }
+  res.push(cur.trim());
+  return res;
+}
+
+function importPlanFromCSV(text){
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter(l => l.trim().length > 0);
+  if (lines.length < 2) return toast("Soubor CSV je prázdný");
+  const colors = ["#ff5a5f", "#4da3ff", "#34d399", "#fbbf24", "#a855f7", "#ec4899"];
+  const map = new Map();
+
+  for (let i = 1; i < lines.length; i++){
+    const cols = parseCSVLine(lines[i]);
+    if (cols.length < 8) continue;
+    const [dName, dTitle, dFocus, dWarm, exN, exM, exS, exR, exRest, exTip, exWarn] = cols;
+    if (!dName || !exN) continue;
+    if (!map.has(dName)){
+      map.set(dName, {
+        name: dName, title: dTitle || "Trénink", focus: dFocus || "", warm: dWarm || "",
+        color: colors[map.size % colors.length], min: 55, ex: []
+      });
+    }
+    map.get(dName).ex.push({
+      n: exN, m: exM || "", s: parseInt(exS) || 3, r: exR || "8–10",
+      rest: parseInt(exRest) || 60, tip: exTip || "", warn: exWarn || ""
+    });
+  }
+  const newDays = Array.from(map.values());
+  if (!newDays.length) return toast("Nepodařilo se načíst žádné cviky z CSV");
+  S.days = newDays; save(); render();
+  toast(`Načteno ${newDays.length} tréninkových dnů z Excelu ✓`);
+}
+
+/* ---------- Kalkulačka kotoučů ---------- */
+function renderPlates(){
+  const target = parseFloat($("#ptTarget").value) || 20;
+  const bar = parseFloat($("#ptBar").value) || 20;
+  const box = $("#plateResult");
+  if (target <= bar){
+    box.innerHTML = `<p class="muted">Samotná prázdná osa (${bar} kg)</p>`;
+    return;
+  }
+  let rem = (target - bar) / 2;
+  const avail = [25, 20, 15, 10, 5, 2.5, 1.25];
+  const pColors = {25:"#ef4444", 20:"#3b82f6", 15:"#eab308", 10:"#22c55e", 5:"#f8fafc", 2.5:"#94a3b8", 1.25:"#64748b"};
+  const out = [];
+  avail.forEach(p => {
+    while (rem >= p - 0.01){ out.push(p); rem = Math.round((rem - p)*100)/100; }
+  });
+  box.innerHTML = `<div class="muted" style="margin-bottom:6px">Na <b>KAŽDOU STRANU</b> osy nalož (${((target-bar)/2).toFixed(2)} kg):</div>` +
+    (out.length ? out.map(p => `<span class="plate-pill" style="background:${pColors[p]};color:${p>=10&&p!==15?"#fff":"#0b0d12"}">${p} kg</span>`).join("") : `<p class="muted">Nelze složit ze standardních kotoučů</p>`) +
+    (rem > 0 ? `<div class="muted" style="margin-top:6px;color:var(--gold)">Zbytek mimo standardní kotouče: ${rem*2} kg</div>` : "");
 }
 
 /* ---------- Events ---------- */
@@ -478,8 +907,20 @@ document.addEventListener("click", e => {
   if (b = A("[data-go]")){ view = b.dataset.go; render(); window.scrollTo(0,0); return; }
   if (b = A("[data-start]")) return startSession(+b.dataset.start);
   if (A("[data-wsave]")) return saveWeight();
+  if (b = A("[data-wedit]")){
+    editWeightId = b.dataset.wedit;
+    render();
+    window.scrollTo({top: 0, behavior: "smooth"});
+    return;
+  }
+  if (A("[data-wcancel]")){ editWeightId = null; render(); return; }
   if (b = A("[data-wdel]")){
-    if (confirm("Smazat tento zápis váhy?")){ S.weights = S.weights.filter(w=>String(w.id)!==b.dataset.wdel); save(); render(); }
+    if (confirm("Smazat tento zápis váhy?")){ S.weights = S.weights.filter(w=>String(w.id)!==b.dataset.wdel); if(String(editWeightId)===b.dataset.wdel) editWeightId=null; save(); render(); }
+    return;
+  }
+  if (b = A("[data-sedit]")){
+    e.stopPropagation();
+    editSavedSession(b.dataset.sedit);
     return;
   }
   if (b = A("[data-sdel]")){
@@ -492,15 +933,14 @@ document.addEventListener("click", e => {
     const a = S.active, k = b.dataset.done;
     a.data[k] ??= {w:"", r:"", done:false};
     a.data[k].done = !a.data[k].done;
-    save();
-    render();
+    save(); render();
     if (a.data[k].done) startTimer(+b.dataset.rest, b.dataset.exname);
     return;
   }
   if (b = A("[data-addset]")){
     const a = S.active, i = +b.dataset.addset;
     const k = a.exs[i].s; a.exs[i].s++;
-    a.data[`${i}|${k}`] = {w: a.data[`${i}|${k-1}`]?.w || "", r:"", done:false};
+    a.data[`${i}|${k}`] = {w: a.data[`${i}|${k-1}`]?.w || "", r: a.data[`${i}|${k-1}`]?.r || "", done:false};
     save(); render(); return;
   }
   if (A("[data-finish]")) return finish();
@@ -508,6 +948,16 @@ document.addEventListener("click", e => {
   if (b = A("[data-addex]")){
     S.days[+b.dataset.addex].ex.push({n:"Nový cvik", m:"", s:3, r:"8–10", rest:60, tip:"", warn:""});
     save(); render(); return;
+  }
+  if (A("[data-addday]")){
+    const idx = S.days.length + 1;
+    S.days.push({name:`Den ${idx}`, title:"Nový modul", focus:"Zaměření", color:"#a855f7", min:50, warm:"", ex:[{n:"Cvik 1", m:"", s:3, r:"8–10", rest:60, tip:"", warn:""}]});
+    save(); render(); toast("Přidán nový tréninkový den"); return;
+  }
+  if (b = A("[data-dday]")){
+    const d = +b.dataset.dday;
+    if (confirm(`Smazat celý den „${S.days[d].name}“?`)){ S.days.splice(d,1); save(); render(); }
+    return;
   }
   if (b = A("[data-dex]")){
     const [d,j] = b.dataset.dex.split("|").map(Number);
@@ -518,6 +968,10 @@ document.addEventListener("click", e => {
     if (confirm("Obnovit výchozí program? Tvé úpravy programu se přepíšou (historie tréninků zůstane).")){ S.days = clone(DEF); save(); render(); }
     return;
   }
+  if (A("[data-csv-sessions]")) return exportSessionsCSV();
+  if (A("[data-csv-weights]")) return exportWeightsCSV();
+  if (A("[data-csv-plan-out]")) return exportPlanCSV();
+  if (A("[data-csv-plan-in]")){ $("#importPlanCsv").click(); return; }
   if (A("[data-export]")){
     const blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
     const a = document.createElement("a");
@@ -527,6 +981,8 @@ document.addEventListener("click", e => {
     return;
   }
   if (A("[data-import-btn]")){ $("#importFile").click(); return; }
+  if (t.id === "openPlateBtn"){ $("#plateModal").classList.add("on"); renderPlates(); return; }
+  if (t.id === "closePlate" || t.id === "closePlateBtn"){ $("#plateModal").classList.remove("on"); return; }
 });
 
 document.addEventListener("change", e => {
@@ -535,20 +991,27 @@ document.addEventListener("change", e => {
     reader.onload = ev => {
       try {
         const parsed = JSON.parse(ev.target.result);
-        if (parsed && parsed.days){ S = parsed; save(); render(); toast("Záloha úspěšně nahrána ✓"); }
+        if (parsed && parsed.days){ S = parsed; save(); render(); toast("JSON záloha nahrána ✓"); }
       } catch(err){ toast("Chybný soubor zálohy"); }
     };
     reader.readAsText(e.target.files[0]);
+  }
+  if (e.target.id === "importPlanCsv" && e.target.files[0]){
+    const reader = new FileReader();
+    reader.onload = ev => importPlanFromCSV(ev.target.result);
+    reader.readAsText(e.target.files[0], "UTF-8");
   }
 });
 
 document.addEventListener("input", e => {
   const t = e.target;
+  if (t.id === "ptTarget" || t.id === "ptBar") return renderPlates();
   if (t.dataset.sf){
     const a = S.active; if (!a) return;
     a.data[t.dataset.key] ??= {w:"", r:"", done:false};
     a.data[t.dataset.key][t.dataset.sf] = t.value;
     save();
+    updateLiveSessionNumbers();
   } else if (t.dataset.pf){
     const [d,j,f] = t.dataset.pf.split("|");
     const ex = S.days[+d].ex[+j];
@@ -574,7 +1037,7 @@ function startElapsed(){
   tick(); elTimer = setInterval(tick, 1000);
 }
 
-const CIRC = 326.7; // 2 * PI * 52
+const CIRC = 326.7;
 function paintTimer(){
   const str = mmss(left);
   $("#tmVal").textContent = str;
