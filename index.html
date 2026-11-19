@@ -1,1125 +1,2059 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="cs" class="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b0d12">
-<title>Jarvis · Tréninkový deník v3.0 PRO</title>
-<style>
-:root{--bg:#0b0d12;--surface:#141821;--surface2:#1b2030;--line:#262d40;--text:#eef1f7;--muted:#8a93a8;--c:#ff5a5f;--ok:#34d399;--cyan:#38bdf8;--gold:#fbbf24;--safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px)}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding:calc(var(--safe-t) + 14px) 0 calc(108px + var(--safe-b));line-height:1.45;font-size:15px}
-main{max-width:660px;margin:0 auto;padding:0 16px}
-small{display:block;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
-h2{font-size:24px;font-weight:800;letter-spacing:-.02em;margin:2px 0 6px}
-h3.sec{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:22px 0 10px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
-.muted{color:var(--muted);font-size:13px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
-input,textarea,select{width:100%;background:var(--surface2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:10px 12px;font:inherit;font-size:15px;outline:none}
-input:focus,textarea:focus{border-color:var(--c)}
-textarea{min-height:56px;resize:vertical}
-button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--surface2);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:600;transition:transform .08s,opacity .15s}
-button:active{transform:scale(.97)}
-button.pri{background:var(--c);border-color:var(--c);color:#0b0d12;font-weight:800}
-button.ok{background:var(--ok);border-color:var(--ok);color:#0b0d12;font-weight:800}
-button.ghost{background:none;color:var(--muted);border-color:transparent;padding:6px 8px;font-size:13px}
-button.danger{color:#ff8a8d}
-button.big{width:100%;padding:15px;font-size:16px;margin-top:12px}
-.hero{background:linear-gradient(150deg,#2a1a22,#141821 70%);border:1px solid #3a2530;border-radius:22px;padding:20px;margin:6px 0 4px}
-.resume{width:100%;margin:14px 0 0;padding:14px;background:linear-gradient(90deg,#ff5a5f,#fbbf24);border:0;color:#0b0d12;font-size:15px;font-weight:800}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.stat-box{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
-.stat-box .v{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:2px}
-.dayc{text-align:left;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:2px}
-.dayc span{font-size:12px;color:var(--c);font-weight:700;letter-spacing:.08em;text-transform:uppercase}
-.dayc b{font-size:17px}
-.dayc small{text-transform:none;letter-spacing:0;font-size:12px;font-weight:400}
-.wrow{display:grid;grid-template-columns:1fr 1fr 1.25fr auto;gap:8px}
-@media(max-width:440px){.wrow{grid-template-columns:1fr 1fr;}}
-.edit-banner{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);color:var(--gold);padding:8px 12px;border-radius:10px;font-size:13px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.row-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid var(--line);gap:8px}
-.row-item:first-child{border-top:0}
-.nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:rgba(11,13,18,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 8px calc(8px + var(--safe-b));z-index:20}
-.nav button{flex:1;background:none;border:0;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;padding:6px}
-.nav button .i{font-size:20px}
-.nav button.on{color:var(--text)}
-.nav button.on span:last-child{color:var(--c);font-weight:700}
-.shead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin:6px 0 10px}
-.shead h2{margin-top:0}
-.pbar-wrap{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;margin-bottom:12px}
-.pbar-fill{height:100%;background:linear-gradient(90deg,var(--c),#fbbf24);width:0%;transition:width .3s}
-.live-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-.cx{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
-.ch{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px}
-.idx{flex:0 0 28px;height:28px;border-radius:9px;background:var(--surface2);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--c)}
-.ct{flex:1;min-width:0}
-.ct h3{font-size:16px;font-weight:700;line-height:1.25}
-.ct p{font-size:12px;color:var(--muted)}
-.ex-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;align-items:center}
-.last-perf{font-size:12px;color:var(--gold);background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.22);border-radius:8px;padding:4px 8px}
-.vol-pill{font-size:12px;color:var(--cyan);background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.25);border-radius:8px;padding:4px 8px;font-weight:700}
-.pr-pill{font-size:11px;color:#0b0d12;background:var(--gold);border-radius:6px;padding:2px 6px;font-weight:800}
-.badge{font-size:12px;font-weight:700;padding:5px 9px;border-radius:9px;background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--c);white-space:nowrap}
-.srow{display:grid;grid-template-columns:26px 1fr 1fr 58px 46px;gap:6px;align-items:center;margin-bottom:8px}
-.srow .num{font-size:13px;color:var(--muted);text-align:center;font-weight:600}
-.srow input{padding:10px 6px;text-align:center;font-weight:600}
-.srow .svol{font-size:11px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums;line-height:1.15}
-.chk{width:46px;height:42px;padding:0;border-radius:12px;font-size:18px;font-weight:800}
-.chk.on{background:var(--ok);border-color:var(--ok);color:#0b0d12}
-.warn{font-size:13px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fde68a;border-radius:10px;padding:8px 10px;margin:8px 0}
-details{border-top:1px solid var(--line);margin-top:8px;padding-top:6px}
-summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--c);list-style:none;padding:4px 0}
-summary::-webkit-details-marker{display:none}
-details p{font-size:13px;color:#b8c0d0;padding:4px 0}
-.addset{width:100%;margin-top:4px;color:var(--muted);border-style:dashed;background:none;padding:9px}
-.sess{cursor:pointer}
-.sess-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.sess-body{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
-.sline{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed rgba(255,255,255,.04)}
-.chart-box{width:100%;margin-top:8px}
-.chart-legend{display:flex;gap:14px;font-size:12px;margin-bottom:6px;flex-wrap:wrap}
-.chart-legend span{display:inline-flex;align-items:center;gap:5px;font-weight:600}
-.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-.pday{border-left:4px solid var(--c);padding-left:12px;margin-bottom:24px}
-.pday .dayhead{display:grid;gap:8px;margin-bottom:14px}
-.pex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;display:grid;gap:8px}
-.pex .g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-.pex .g label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.pex .g input{padding:8px;margin-top:2px}
-.pex .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
-.prow{display:flex;gap:8px;align-items:center}
-.prow input{font-weight:600}
-
-/* --- MODÁLNÍ OKNA (ČASOVAČ + KALKULAČKA KOTOUČŮ) --- */
-.tmodal-backdrop{position:fixed;inset:0;background:rgba(6,8,12,.86);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}
-.tmodal-backdrop.on{display:flex;animation:fadeIn .18s ease-out}
-@keyframes fadeIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-.tmodal{width:100%;max-width:400px;background:var(--surface);border:2px solid var(--c);border-radius:28px;padding:24px 20px 20px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.75);position:relative}
-.tmodal.done{border-color:var(--ok);box-shadow:0 0 50px rgba(52,211,153,.28)}
-.tmodal-tag{font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-bottom:4px}
-.tmodal.done .tmodal-tag{color:var(--ok)}
-.tmodal-ex{font-size:14px;color:var(--muted);margin-bottom:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ring-wrap{position:relative;width:210px;height:210px;margin:0 auto 18px;display:grid;place-items:center}
-.ring-svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-.ring-bg{fill:none;stroke:var(--surface2);stroke-width:10}
-.ring-fg{fill:none;stroke:var(--c);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .25s linear}
-.tmodal.done .ring-fg{stroke:var(--ok)}
-.tmodal-val{font-size:60px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.03em;line-height:1;color:var(--text)}
-.tmodal.done .tmodal-val{color:var(--ok)}
-.tmodal-sub{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.1em}
-.tmodal-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.tmodal-btns button{padding:13px;font-size:16px;border-radius:14px}
-.tmodal-main{width:100%;padding:15px;font-size:16px;border-radius:16px;background:var(--c);border-color:var(--c);color:#0b0d12;font-weight:800}
-.tmodal.done .tmodal-main{background:var(--ok);border-color:var(--ok)}
-.tmodal-min{margin-top:8px;width:100%;background:none;border:0;color:var(--muted);font-size:13px;padding:6px}
-
-.tbar{position:fixed;left:12px;right:12px;bottom:calc(74px + var(--safe-b));max-width:628px;margin:0 auto;z-index:30;display:none;align-items:center;gap:12px;padding:12px 16px;border-radius:18px;background:rgba(27,32,48,.96);backdrop-filter:blur(14px);border:1.5px solid var(--c);box-shadow:0 12px 40px rgba(0,0,0,.5);cursor:pointer}
-.tbar.on{display:flex}
-.tbar.done{border-color:var(--ok)}
-.tbar .val{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--c);line-height:1}
-.tbar.done .val{color:var(--ok)}
-.tbar .info{flex:1;min-width:0}
-.tbar .lbl{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.tbar .exn{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-.plate-pill{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:10px;font-weight:800;font-size:14px;margin:4px;border:1px solid rgba(255,255,255,.15)}
-
-.toast{position:fixed;top:calc(var(--safe-t) + 12px);left:50%;transform:translateX(-50%) translateY(-140%);background:var(--ok);color:#0b0d12;font-weight:800;padding:10px 18px;border-radius:12px;transition:transform .3s;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.4)}
-.toast.on{transform:translateX(-50%) translateY(0)}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d12">
+  <title>Jarvis · Tréninkový deník v3.0 PRO</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    // Konfigurace barevné palety a fontu pro Tailwind CSS
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            bg: '#0b0d12',
+            surface: '#141821',
+            surface2: '#1b2030',
+            line: '#262d40',
+            accent: '#ff5a5f',
+            ok: '#34d399',
+            cyanpro: '#38bdf8',
+            gold: '#fbbf24',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Jemné doplňkové styly pro animace, tabular-nums a plynulé přechody */
+    * { -webkit-tap-highlight-color: transparent; }
+    body {
+      background-color: #0b0d12;
+      color: #eef1f7;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    .tabular-nums { font-variant-numeric: tabular-nums; }
+    details summary::-webkit-details-marker { display: none; }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .animate-pop { animation: popIn 0.18s ease-out forwards; }
+  </style>
 </head>
-<body>
-<main id="view"></main>
+<body class="min-h-screen bg-bg text-[#eef1f7] pb-28 antialiased selection:bg-accent selection:text-bg">
 
-<nav class="nav">
-  <button data-go="home"><span class="i">🏠</span><span>Domů</span></button>
-  <button data-go="diary"><span class="i">📊</span><span>Deník & Grafy</span></button>
-  <button data-go="program"><span class="i">⚙️</span><span>Plán & Excel</span></button>
-</nav>
+  <!-- Hlavní kontejner pro dynamické pohledy (Domů, Trénink, Deník, Program) -->
+  <main id="view" class="max-w-2xl mx-auto px-4 pt-4"></main>
 
-<!-- VELKÉ VYSKAKOVACÍ OKNO ČASOVAČE -->
-<div class="tmodal-backdrop" id="tmodalBackdrop">
-  <div class="tmodal" id="tmodal">
-    <div class="tmodal-tag" id="tmTag">Pauza mezi sériemi</div>
-    <div class="tmodal-ex" id="tmEx">Cvik</div>
-    <div class="ring-wrap">
-      <svg class="ring-svg" viewBox="0 0 120 120">
-        <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
-        <circle class="ring-fg" id="tmRing" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"></circle>
-      </svg>
-      <div>
-        <div class="tmodal-val" id="tmVal">0:00</div>
-        <div class="tmodal-sub" id="tmSub">Zbývá</div>
-      </div>
-    </div>
-    <div class="tmodal-btns">
-      <button id="tmMinus15">−15 s</button>
-      <button id="tmPlus30">+30 s</button>
-    </div>
-    <button class="tmodal-main" id="tmClose">Přeskočit pauzu</button>
-    <button class="tmodal-min" id="tmMinimize">⬇ Zmenšit do spodní lišty</button>
-  </div>
-</div>
+  <!-- Spodní navigační lišta -->
+  <nav class="fixed bottom-0 left-0 right-0 z-20 flex bg-bg/95 backdrop-blur-md border-t border-line px-2 py-2 shadow-2xl">
+    <button data-go="home" class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
+      <span class="text-xl leading-none">🏠</span>
+      <span class="text-[11px] font-semibold">Domů</span>
+    </button>
+    <button data-go="diary" class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
+      <span class="text-xl leading-none">📊</span>
+      <span class="text-[11px] font-semibold">Deník & Grafy</span>
+    </button>
+    <button data-go="program" class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
+      <span class="text-xl leading-none">⚙️</span>
+      <span class="text-[11px] font-semibold">Plán & Excel</span>
+    </button>
+  </nav>
 
-<!-- KALKULAČKA KOTOUČŮ NA OSU -->
-<div class="tmodal-backdrop" id="plateModal">
-  <div class="tmodal" style="border-color:var(--cyan);text-align:left">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div><small style="color:var(--cyan)">Inženýrský nástroj</small><h3 style="font-size:19px">Kalkulačka kotoučů</h3></div>
-      <button class="ghost" id="closePlate">✕</button>
-    </div>
-    <div class="grid2" style="margin-bottom:12px">
-      <div><label class="muted">Cílová váha (kg)</label><input type="number" id="ptTarget" value="60" step="2.5" inputmode="decimal"></div>
-      <div><label class="muted">Váha osy (kg)</label><input type="number" id="ptBar" value="20" step="2" inputmode="decimal"></div>
-    </div>
-    <div id="plateResult" class="card" style="background:var(--surface2);margin-bottom:12px;text-align:center"></div>
-    <button class="pri" style="width:100%;background:var(--cyan);border-color:var(--cyan)" id="closePlateBtn">Hotovo</button>
-  </div>
-</div>
+  <!-- ===================================================================== -->
+  <!-- VELKÉ VYSKAKOVACÍ OKNO ODPOČTU PAUZY (FULL-SCREEN MODAL)               -->
+  <!-- ===================================================================== -->
+  <div id="tmodalBackdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-5">
+    <div id="tmodal" class="animate-pop w-full max-w-sm bg-surface border-2 border-accent rounded-3xl p-6 text-center shadow-2xl">
+      <div id="tmTag" class="text-xs font-extrabold uppercase tracking-widest text-accent mb-1">Pauza mezi sériemi</div>
+      <div id="tmEx" class="text-sm text-slate-400 truncate mb-4">Cvik</div>
 
-<!-- MINIMALIZOVANÁ SPODNÍ LIŠTA -->
-<div class="tbar" id="tbar" title="Kliknutím zvětšíš">
-  <div class="val" id="tbVal">0:00</div>
-  <div class="info">
-    <div class="lbl" id="tbLbl">Pauza (klikni pro zvětšení)</div>
-    <div class="exn" id="tbEx">Cvik</div>
-  </div>
-  <button class="pri" id="tbClose" style="padding:8px 12px">Hotovo</button>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const KEY = "jarvis-denik-v2";
-const $ = s => document.querySelector(s);
-const clone = o => JSON.parse(JSON.stringify(o));
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const today = () => new Date().toISOString().slice(0,10);
-const fmt = d => new Date(d + (String(d).length === 10 ? "T12:00:00" : "")).toLocaleDateString("cs-CZ",{day:"numeric",month:"numeric",year:"numeric"});
-const fmtShort = d => new Date(d + (String(d).length === 10 ? "T12:00:00" : "")).toLocaleDateString("cs-CZ",{day:"numeric",month:"numeric"});
-const mmss = s => `${Math.floor(Math.max(0,s)/60)}:${String(Math.max(0,s)%60).padStart(2,"0")}`;
-const fmtNum = n => Math.round(n || 0).toLocaleString("cs-CZ");
-
-const DEF = [
-  {name:"Den 1", title:"Tlak", focus:"Hrudník · Triceps · Boční ramena", color:"#ff5a5f", min:55,
-   warm:"5 min rotoped, kroužení rameny, rozcvičovací série s lehkou váhou.",
-   ex:[
-    {n:"Tlaky na rovné lavici", m:"Jednoručky nebo velká činka", s:4, r:"6–8", rest:120, tip:"Lopatky stáhni k sobě a zamkni do lavice, hrudník vypni vzhůru.", warn:""},
-    {n:"Tlaky hlavou nahoru (Incline)", m:"Multipress nebo jednoručky", s:4, r:"8–10", rest:90, tip:"Lavice pod úhlem 30–45°. Poslední sérii dotlač na hranici selhání.", warn:""},
-    {n:"Tlaky hlavou dolů (Decline)", m:"Velká činka na lavici", s:3, r:"8–10", rest:90, tip:"Spouštěj 2 vteřiny, tlak nahoru výbušně.", warn:""},
-    {n:"Rozpažování (Chest Fly)", m:"Jednoručky na rovné lavici", s:3, r:"10–12", rest:60, tip:"Lokty mírně pokrčené, hluboké protažení dole.", warn:""},
-    {n:"Upažování ve stoji (1. stimul)", m:"Lehčí jednoručky", s:3, r:"12–15", rest:60, tip:"Lokty mírně výš než zápěstí, netaháš krkem.", warn:""},
-    {n:"Stlačování horní kladky", m:"Kladkostroj", s:3, r:"12–15", rest:60, tip:"Lokty přibité k žebrům, dole 1 s zastav.", warn:""}
-   ]},
-  {name:"Den 2", title:"Tah", focus:"Záda · Biceps · Střed těla", color:"#4da3ff", min:55,
-   warm:"5 min veslo, rozhýbání kyčlí a hrudní páteře.",
-   ex:[
-    {n:"Mrtvý tah (Deadlift)", m:"Velká činka", s:4, r:"5–6", rest:120, tip:"Rovná záda, tlak přes paty.", warn:""},
-    {n:"Stahování kladky před hrudník", m:"Horní kladka, široký úchop", s:4, r:"8–10", rest:90, tip:"Lokty dolů a k bokům, mírný záklon.", warn:"ZÁKAZ stahování za krk – ochrana rotátorové manžety!"},
-    {n:"Přítahy kladky vsedě (veslo)", m:"Spodní kladka", s:4, r:"10–12", rest:90, tip:"K pupíku, na vteřinu zmáčkni lopatky.", warn:""},
-    {n:"Přítahy jednoručky v předklonu", m:"Jednoručka + lavice", s:3, r:"10 / ruka", rest:60, tip:"Po oblouku ke kyčli, ne k rameni.", warn:""},
-    {n:"Bicepsový zdvih ve stoji", m:"Činka nebo jednoručky", s:3, r:"8–10", rest:60, tip:"Žádné houpání v bedrech.", warn:""},
-    {n:"Kladivové zdvihy + zkracovačky", m:"Jednoručky (supersérie)", s:3, r:"10–12 / 15", rest:60, tip:"Kladiva, hned 15 zkracovaček.", warn:""}
-   ]},
-  {name:"Den 3", title:"Podvozek", focus:"Stehna · Lýtka · Střed těla", color:"#34d399", min:50,
-   warm:"5–8 min rotoped, 2 lehké série na legpressu.",
-   ex:[
-    {n:"Legpress", m:"Stroj na legpress", s:4, r:"8–12", rest:120, tip:"Pánev přitisknutá k opěrce, šetří páteř.", warn:"V horní fázi nikdy nepropínej kolena na 100 % – nezamykej je!"},
-    {n:"Rumunský mrtvý tah (RDL)", m:"Jednoručky nebo činka", s:3, r:"10–12", rest:90, tip:"Mírně pokrčená kolena, zadkem couváš dozadu.", warn:""},
-    {n:"Předkopávání vsedě", m:"Stroj na předkopávání", s:4, r:"12–15", rest:60, tip:"Nahoře 1 s zastav a zatni stehna.", warn:""},
-    {n:"Zakopávání vleže / vsedě", m:"Stroj na zakopávání", s:4, r:"10–12", rest:60, tip:"Pánev drž přitisknutou, zadek nezvedat.", warn:""},
-    {n:"Výpony ve stoji + plank", m:"Multipress + podložka", s:4, r:"15–20 / 45 s", rest:60, tip:"Výpony v plném rozsahu, v pauze prkno.", warn:""}
-   ]},
-  {name:"Den 4", title:"3D Speciál", focus:"Ramena · Trapézy · Paže", color:"#fbbf24", min:55,
-   warm:"Lehká rozcvička ramen, 1–2 rozcvičovací série u prvního cviku.",
-   ex:[
-    {n:"Tlaky na ramena vsedě", m:"Multipress nebo jednoručky", s:4, r:"8–10", rest:90, tip:"Lavice téměř kolmo (cca 80°).", warn:""},
-    {n:"Upažování ve stoji (2. stimul)", m:"Jednoručky střední/lehčí", s:4, r:"12–15", rest:60, tip:"Poslední sérii shazovanou: lehčí činky a 8 dalších.", warn:""},
-    {n:"Upažování v předklonu / přítahy k obličeji", m:"Jednoručky nebo horní kladka", s:4, r:"12–15", rest:60, tip:"Lokty do šířky za úroveň zad.", warn:""},
-    {n:"Krčení ramen (Shrugs)", m:"Těžké jednoručky nebo Multipress", s:4, r:"12–15", rest:60, tip:"Kolmo k uším, nahoře 2 s drž.", warn:""},
-    {n:"Extenze za hlavou / francouzský tlak", m:"Kladka nebo jednoručka", s:3, r:"10–12", rest:60, tip:"Dlouhá hlava tricepsu.", warn:""},
-    {n:"Izolovaný zdvih o koleno / na kladce", m:"Jednoručka nebo spodní kladka", s:3, r:"12–15", rest:60, tip:"Čistá pumpa na závěr.", warn:""}
-   ]}
-];
-
-let S = load();
-let view = "home", exp = null, elTimer = null;
-let editWeightId = null; // ID upravované váhy/pasu
-let tid = null, restTotal = 0, restEnd = 0, left = 0, timerContext = "";
-let wakeLock = null;
-
-function load(){
-  try{ const x = JSON.parse(localStorage.getItem(KEY)); if (x && x.days) return x; }catch(e){}
-  return {days: clone(DEF), sessions: [], weights: [], active: null};
-}
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-
-function toast(msg){
-  const t = $("#toast"); t.textContent = msg; t.classList.add("on");
-  setTimeout(()=>t.classList.remove("on"), 2400);
-}
-
-/* ---------- Výpočty objemu (Volume v kg) a e1RM ---------- */
-function numVal(v){
-  if (!v) return 0;
-  const n = parseFloat(String(v).replace(",","."));
-  return isNaN(n) || n < 0 ? 0 : n;
-}
-function setVolume(d){
-  if (!d) return 0;
-  return numVal(d.w) * numVal(d.r);
-}
-function e1RM(d){
-  const w = numVal(d?.w), r = numVal(d?.r);
-  if (w <= 0 || r <= 0) return 0;
-  return r === 1 ? w : Math.round(w * (1 + r / 30));
-}
-function exVolume(sess, exIdx, onlyDone = false){
-  const e = sess.exs[exIdx];
-  if (!e) return 0;
-  let sum = 0;
-  for (let k = 0; k < e.s; k++){
-    const d = sess.data[`${exIdx}|${k}`];
-    if (d && (!onlyDone || d.done)) sum += setVolume(d);
-  }
-  return sum;
-}
-function sessionVolume(sess, onlyDone = false){
-  if (!sess || !sess.exs) return 0;
-  return sess.exs.reduce((acc, _, idx) => acc + exVolume(sess, idx, onlyDone), 0);
-}
-function historicalMaxE1RM(exName, excludeSessionId = null){
-  let max = 0;
-  for (const s of S.sessions){
-    if (excludeSessionId && s.id === excludeSessionId) continue;
-    s.exs.forEach((e, j) => {
-      if (e.n !== exName) return;
-      for (let k = 0; k < e.s; k++){
-        const rm = e1RM(s.data[`${j}|${k}`]);
-        if (rm > max) max = rm;
-      }
-    });
-  }
-  return max;
-}
-
-/* ---------- Zvukový signál + WakeLock ---------- */
-function playBeep(){
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [0, 0.22, 0.44].forEach((delay, idx) => {
-      const osc = ctx.createOscillator(), gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = idx === 2 ? 1046.5 : 784;
-      gain.gain.setValueAtTime(0.25, ctx.currentTime + delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.18);
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + delay); osc.stop(ctx.currentTime + delay + 0.19);
-    });
-  } catch(e){}
-}
-async function requestWakeLock(){
-  if ("wakeLock" in navigator && S.active && !wakeLock){
-    try { wakeLock = await navigator.wakeLock.request("screen"); } catch(e){}
-  }
-}
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible"){
-    if (S.active) requestWakeLock();
-    if (tid) tickTimer();
-  }
-});
-
-/* ---------- Views ---------- */
-function render(){
-  document.querySelectorAll(".nav button").forEach(b=>{
-    const on = b.dataset.go === view || (view === "session" && b.dataset.go === "home");
-    b.classList.toggle("on", on);
-  });
-  const v = $("#view");
-  if (view === "diary") v.innerHTML = diaryV();
-  else if (view === "program") v.innerHTML = progV();
-  else if (view === "session" && S.active) v.innerHTML = sessV();
-  else { view = "home"; v.innerHTML = homeV(); }
-  if (view === "session"){ startElapsed(); requestWakeLock(); }
-}
-
-function homeV(){
-  const lw = S.weights.at(-1);
-  const fw = S.weights[0];
-  const totalTons = (S.sessions.reduce((a,s)=>a + sessionVolume(s), 0) / 1000).toFixed(1);
-  const ew = editWeightId ? S.weights.find(w => String(w.id) === String(editWeightId)) : null;
-
-  let h = `<section class="hero"><small>Systém Jarvis v3.0 PRO</small><h2>Připraven na trénink, Michale?</h2>
-    <p class="muted">Dnes je ${fmt(today())}. Všechna data, objemy a progrese jsou pod plnou kontrolou.</p>
-    <div class="grid3" style="margin-top:14px">
-      <div class="stat-box"><small>Odjeto</small><div class="v">${S.sessions.length} <span class="muted">trén.</span></div></div>
-      <div class="stat-box"><small>Nazvedáno</small><div class="v" style="color:var(--cyan)">${totalTons} <span class="muted">t</span></div></div>
-      <div class="stat-box"><small>Akt. váha</small><div class="v" style="color:var(--ok)">${lw ? lw.kg : "–"} <span class="muted">kg</span></div></div>
-    </div>`;
-  if (S.active) h += `<button class="resume" data-go="session">▶ Pokračovat v tréninku · ${esc(S.active.dayName)}</button>`;
-  h += `</section><h3 class="sec"><span>Začít trénink (Sokol 24/7)</span></h3><div class="grid2">` +
-    S.days.map((d,i)=>`<button class="dayc" style="--c:${d.color}" data-start="${i}">
-      <span>${esc(d.name)}</span><b>${esc(d.title)}</b><small>${d.ex.length} cviků · cca ${d.min} min</small></button>`).join("") +
-    `</div>`;
-
-  h += `<h3 class="sec"><span>Tělesné metriky (Váha a Pas)</span></h3><div class="card">`;
-  if (ew) {
-    h += `<div class="edit-banner"><span>✎ Upravuješ záznam ze dne <b>${fmt(ew.date)}</b></span><button class="ghost" data-wcancel>Zrušit úpravu</button></div>`;
-  }
-  h += `<div class="wrow">
-        <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew ? ew.kg : ""}">
-        <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew && ew.cm ? ew.cm : ""}">
-        <input id="wdate" type="date" value="${ew ? ew.date : today()}">
-        <button class="${ew ? "ok" : "pri"}" data-wsave>${ew ? "Uložit změnu" : "Zapsat"}</button>
-      </div>`;
-  if (lw) {
-    const diffKg = fw && fw !== lw ? (lw.kg - fw.kg).toFixed(1) : null;
-    h += `<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
-      <span class="muted">Poslední: <b style="color:var(--text)">${lw.kg} kg</b>${lw.cm ? ` · Pas: <b style="color:var(--cyan)">${lw.cm} cm</b>` : ""} (${fmt(lw.date)})${diffKg ? ` · Celkem: <b style="color:${diffKg<=0?"var(--ok)":"var(--c)"}">${diffKg>0?"+":""}${diffKg} kg</b>` : ""}</span>
-      <button class="ghost" data-wedit="${lw.id}">✎ Opravit</button>
-    </div>`;
-  }
-  h += `</div>`;
-  return h;
-}
-
-function diaryV(){
-  const sess = S.sessions;
-  const ws = [...S.weights].sort((a,b)=>b.date.localeCompare(a.date));
-  const totalKgAll = sess.reduce((a,s)=>a + sessionVolume(s), 0);
-  const ew = editWeightId ? S.weights.find(w => String(w.id) === String(editWeightId)) : null;
-
-  let h = `<div style="margin:6px 0 12px"><small>Analytický modul</small><h2>Deník & Srovnávací grafy</h2>
-    <p class="muted">Celkem odjeto <b>${sess.length}</b> tréninků · Celkem nazvedáno <b style="color:var(--cyan)">${fmtNum(totalKgAll)} kg</b> (${(totalKgAll/1000).toFixed(2)} tun)</p></div>`;
-
-  /* --- FORMULÁŘ PRO RYCHLOU EDITACI VÁHY A PASU V DENÍKU --- */
-  if (ew) {
-    h += `<div class="card" style="border-color:var(--gold)">
-      <div class="edit-banner"><span>✎ Oprava záznamu (${fmt(ew.date)})</span><button class="ghost" data-wcancel>✕ Zavřít</button></div>
-      <div class="wrow">
-        <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew.kg}">
-        <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew.cm || ""}">
-        <input id="wdate" type="date" value="${ew.date}">
-        <button class="ok" data-wsave>Uložit opravu</button>
-      </div>
-    </div>`;
-  }
-
-  /* --- SROVNÁVACÍ GRAF: VÁHA VS. PAS --- */
-  h += `<h3 class="sec"><span>Vývoj tělesné váhy a obvodu pasu</span><button class="ghost" data-csv-weights style="color:var(--ok)">⬇ Excel CSV</button></h3><div class="card">`;
-  if (S.weights.length >= 2) {
-    h += dualWeightWaistChart();
-  } else {
-    h += `<p class="muted" style="margin-bottom:8px">Pro vykreslení srovnávacího grafu zadej alespoň 2 měření váhy/pasu.</p>`;
-  }
-  h += ws.length ? `<div style="max-height:240px;overflow-y:auto;margin-top:8px">` + ws.map(w=>`<div class="row-item">
-      <span><b>${fmt(w.date)}</b></span>
-      <span>
-        <b style="color:var(--c)">${w.kg} kg</b>
-        ${w.cm ? ` · <b style="color:var(--cyan)">${w.cm} cm</b>` : ""}
-        <button class="ghost" data-wedit="${w.id}" title="Upravit">✎</button>
-        <button class="ghost danger" data-wdel="${w.id}" title="Smazat">✕</button>
-      </span></div>`).join("") + `</div>`
-    : `<p class="muted">Zatím žádná váha. Přidej ji na úvodní obrazovce.</p>`;
-  h += `</div>`;
-
-  /* --- GRAF NAZVEDANÉHO OBJEMU V TRÉNINCÍCH --- */
-  if (sess.length >= 2) {
-    h += `<h3 class="sec"><span>Progrese nazvedané hmotnosti (kg / trénink)</span></h3>
-    <div class="card">${volumeBarChart()}</div>`;
-  }
-
-  /* --- HISTORIE TRÉNINKŮ --- */
-  h += `<h3 class="sec"><span>Historie tréninků (${sess.length})</span><button class="ghost" data-csv-sessions style="color:var(--ok)">⬇ Export do Excelu</button></h3>`;
-  h += sess.length ? sess.map(s=>{
-    const done = Object.values(s.data).filter(x=>x && x.done).length;
-    const vol = sessionVolume(s);
-    const open = exp === String(s.id);
-    return `<div class="card sess" data-sopen="${s.id}">
-      <div class="sess-head">
+      <!-- Kruhový SVG ukazatel odpočtu -->
+      <div class="relative w-52 h-52 mx-auto mb-5 grid place-items-center">
+        <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="#1b2030" stroke-width="10"></circle>
+          <circle id="tmRing" cx="60" cy="60" r="52" fill="none" stroke="#ff5a5f" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="0" class="transition-all duration-200"></circle>
+        </svg>
         <div>
-          <b>${esc(s.dayName)}</b>
-          <div class="muted">${fmt(s.date)} · ${s.dur} min · ${done} sérií · <b style="color:var(--cyan)">⚡ ${fmtNum(vol)} kg</b></div>
-        </div>
-        <div style="display:flex;gap:4px">
-          <button class="ghost" data-sedit="${s.id}" title="Opravit trénink">✎ Upravit</button>
-          <button class="ghost danger" data-sdel="${s.id}" title="Smazat">✕</button>
+          <div id="tmVal" class="text-6xl font-black tabular-nums tracking-tight text-white leading-none">0:00</div>
+          <div id="tmSub" class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mt-1.5">Zbývá</div>
         </div>
       </div>
-      ${open ? `<div class="sess-body">${s.exs.map((e,j)=>{
-        const exVol = exVolume(s, j);
-        const lines = Array.from({length:e.s},(_,k)=>{
-          const d = s.data[`${j}|${k}`];
-          const sv = setVolume(d);
-          return d && (d.w || d.r) ? `<div class="sline"><span class="muted">Série ${k+1}</span><span><b>${esc(d.w||"0")} kg × ${esc(d.r||"0")}</b> <span class="muted">(${fmtNum(sv)} kg · e1RM ${e1RM(d)} kg)</span>${d.done?"":" <span class='muted'>(neodškrtnuto)</span>"}</span></div>` : "";
-        }).join("");
-        return `<div style="margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between"><b>${esc(e.n)}</b><span style="color:var(--cyan);font-size:13px;font-weight:700">${fmtNum(exVol)} kg</span></div>
-          ${lines || `<div class="muted">Bez zápisu</div>`}
-        </div>`;
-      }).join("")}
-      ${s.note ? `<p class="muted" style="margin-top:8px">📝 ${esc(s.note)}</p>` : ""}</div>` : ""}
-    </div>`;
-  }).join("") : `<div class="card"><p class="muted">Zatím žádný uložený trénink.</p></div>`;
-  return h;
-}
 
-/* ---------- Duální srovnávací SVG graf (Váha + Pas) ---------- */
-function dualWeightWaistChart(){
-  const pts = S.weights.slice(-16);
-  const W = 600, H = 150, padL = 34, padR = 34, padT = 18, padB = 26;
-  const plotW = W - padL - padR, plotH = H - padT - padB;
-
-  const kgs = pts.map(p=>p.kg);
-  const minKg = Math.min(...kgs), maxKg = Math.max(...kgs), rngKg = (maxKg - minKg) || 1;
-  const firstKg = kgs[0], lastKg = kgs.at(-1), diffKg = (lastKg - firstKg).toFixed(1);
-
-  const cmPts = pts.map((p,i)=>({i, cm: p.cm})).filter(x=>x.cm > 0);
-  const cms = cmPts.map(x=>x.cm);
-  const minCm = cms.length ? Math.min(...cms) : 0, maxCm = cms.length ? Math.max(...cms) : 0, rngCm = (maxCm - minCm) || 1;
-  const diffCm = cms.length >= 2 ? (cms.at(-1) - cms[0]).toFixed(1) : null;
-
-  const xPos = i => padL + (pts.length > 1 ? (i / (pts.length - 1)) * plotW : plotW / 2);
-  const yKg = val => padT + plotH - ((val - minKg) / rngKg) * plotH;
-  const yCm = val => padT + plotH - ((val - minCm) / rngCm) * plotH;
-
-  const kgLine = pts.map((p,i)=>`${xPos(i).toFixed(1)},${yKg(p.kg).toFixed(1)}`).join(" ");
-  const cmLine = cmPts.map(x=>`${xPos(x.i).toFixed(1)},${yCm(x.cm).toFixed(1)}`).join(" ");
-
-  let svg = `<div class="chart-legend">
-    <span><i class="dot" style="background:var(--c)"></i> Váha: <b>${lastKg} kg</b> (${diffKg>0?"+":""}${diffKg} kg)</span>
-    ${cms.length ? `<span><i class="dot" style="background:var(--cyan)"></i> Pas: <b>${cms.at(-1)} cm</b> ${diffCm!==null?`(${diffCm>0?"+":""}${diffCm} cm)`:""}</span>` : `<span class="muted">Tip: Zadej k váze i pas (cm) pro druhou křivku</span>`}
+      <!-- Ovládací tlačítka pro úpravu času -->
+      <div class="grid grid-cols-2 gap-2.5 mb-2.5">
+        <button id="tmMinus15" class="py-3.5 px-4 rounded-2xl bg-surface2 border border-line font-bold text-base hover:bg-slate-800 active:scale-95 transition">−15 s</button>
+        <button id="tmPlus30" class="py-3.5 px-4 rounded-2xl bg-surface2 border border-line font-bold text-base hover:bg-slate-800 active:scale-95 transition">+30 s</button>
+      </div>
+      <button id="tmClose" class="w-full py-4 rounded-2xl bg-accent text-bg font-extrabold text-base hover:brightness-110 active:scale-95 transition">Přeskočit pauzu</button>
+      <button id="tmMinimize" class="w-full mt-2 py-2 text-xs font-semibold text-slate-400 hover:text-white transition">⬇ Zmenšit do spodní lišty</button>
+    </div>
   </div>
-  <svg class="chart-box" viewBox="0 0 ${W} ${H}">
-    <line x1="${padL}" y1="${padT}" x2="${W-padR}" y2="${padT}" stroke="#262d40" stroke-dasharray="4 4"/>
-    <line x1="${padL}" y1="${padT+plotH/2}" x2="${W-padR}" y2="${padT+plotH/2}" stroke="#262d40" stroke-dasharray="4 4"/>
-    <line x1="${padL}" y1="${padT+plotH}" x2="${W-padR}" y2="${padT+plotH}" stroke="#262d40"/>
-    <text x="2" y="${padT+4}" fill="#ff5a5f" font-size="10" font-weight="700">${maxKg}</text>
-    <text x="2" y="${padT+plotH}" fill="#ff5a5f" font-size="10" font-weight="700">${minKg}</text>`;
 
-  if (cms.length >= 1) {
-    svg += `<text x="${W-padR+4}" y="${padT+4}" fill="#38bdf8" font-size="10" font-weight="700">${maxCm}</text>
-            <text x="${W-padR+4}" y="${padT+plotH}" fill="#38bdf8" font-size="10" font-weight="700">${minCm}</text>`;
-  }
-  svg += `<polyline points="${kgLine}" fill="none" stroke="#ff5a5f" stroke-width="3" stroke-linejoin="round"/>`;
-  if (cmPts.length >= 2) {
-    svg += `<polyline points="${cmLine}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="5 3" stroke-linejoin="round"/>`;
-  }
-  pts.forEach((p,i)=>{
-    const cx = xPos(i), cy = yKg(p.kg);
-    svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="#ff5a5f"/>`;
-    if (i === 0 || i === pts.length - 1 || i % Math.ceil(pts.length/5) === 0) {
-      svg += `<text x="${cx}" y="${H-6}" fill="#8a93a8" font-size="10" text-anchor="middle">${fmtShort(p.date)}</text>`;
-    }
-  });
-  cmPts.forEach(x=>{
-    svg += `<circle cx="${xPos(x.i)}" cy="${yCm(x.cm)}" r="3.5" fill="#38bdf8"/>`;
-  });
-  svg += `</svg>`;
-  return svg;
-}
-
-/* ---------- Sloupcový graf tréninkového objemu (Volume) ---------- */
-function volumeBarChart(){
-  const list = [...S.sessions].slice(0, 12).reverse();
-  const vols = list.map(s => sessionVolume(s));
-  const maxV = Math.max(...vols, 1);
-  const W = 600, H = 130, padB = 24, padT = 18;
-  const plotH = H - padT - padB;
-  const bw = Math.min(36, Math.floor((W - 20) / list.length) - 8);
-
-  let svg = `<svg class="chart-box" viewBox="0 0 ${W} ${H}">`;
-  list.forEach((s, i) => {
-    const v = vols[i];
-    const h = Math.max(4, (v / maxV) * plotH);
-    const x = 16 + i * ((W - 32) / list.length);
-    const y = padT + plotH - h;
-    svg += `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="5" fill="#38bdf8" opacity="0.85"/>
-            <text x="${x + bw/2}" y="${y - 4}" fill="#eef1f7" font-size="9.5" font-weight="700" text-anchor="middle">${(v/1000).toFixed(1)}t</text>
-            <text x="${x + bw/2}" y="${H - 6}" fill="#8a93a8" font-size="9.5" text-anchor="middle">${fmtShort(s.date)}</text>`;
-  });
-  svg += `</svg>`;
-  return svg;
-}
-
-function progV(){
-  let h = `<div style="margin:6px 0 14px"><small>Centrum přípravy a dat</small><h2>Tréninkový plán & Excel</h2>
-    <p class="muted">Zde můžeš upravovat tréninkové dny přímo v mobilu, nebo si celý plán i historii vyexportovat do Excelu (CSV) a upravovat na PC.</p></div>`;
-
-  /* --- EXCEL EXPORT / IMPORT HUB --- */
-  h += `<div class="card" style="border-color:var(--ok);margin-bottom:20px">
-    <h3 class="sec" style="margin-top:0;color:var(--ok)"><span>📊 MS Excel (CSV s českou diakritikou)</span></h3>
-    <div class="grid2" style="margin-bottom:10px">
-      <button class="ok" data-csv-sessions>⬇ Historie tréninků (.CSV)</button>
-      <button class="ok" data-csv-weights>⬇ Váha a Pas (.CSV)</button>
+  <!-- ===================================================================== -->
+  <!-- MINIMALIZOVANÁ SPODNÍ LIŠTA ČASOVAČE                                  -->
+  <!-- ===================================================================== -->
+  <div id="tbar" class="fixed left-3 right-3 bottom-20 max-w-2xl mx-auto z-30 hidden items-center gap-3 px-4 py-3 rounded-2xl bg-surface2/95 backdrop-blur-md border-2 border-accent shadow-2xl cursor-pointer">
+    <div id="tbVal" class="text-3xl font-extrabold tabular-nums text-accent leading-none">0:00</div>
+    <div class="flex-1 min-w-0">
+      <div id="tbLbl" class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pauza (klikni pro zvětšení)</div>
+      <div id="tbEx" class="text-xs font-medium text-white truncate">Cvik</div>
     </div>
-    <div class="grid2" style="margin-bottom:10px">
-      <button data-csv-plan-out>⬇ Export plánu do Excelu</button>
-      <button data-csv-plan-in>⬆ Nahrát plán z Excelu (.CSV)</button>
-    </div>
-    <input type="file" id="importPlanCsv" accept=".csv" style="display:none">
-    <p class="muted" style="font-size:12px">Tip: Exportovaný <b>jarvis-plan.csv</b> otevřeš v Excelu, upravíš cviky/série/opakování, uložíš a přes „Nahrát plán z Excelu“ se ti aktualizuje celá aplikace.</p>
-    <div class="grid2" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
-      <button class="ghost" data-export>📦 Kompletní JSON záloha</button>
-      <button class="ghost" data-import-btn>📂 Obnovit JSON zálohu</button>
-    </div>
-    <input type="file" id="importFile" accept=".json" style="display:none">
-  </div>`;
+    <button id="tbClose" class="px-3 py-2 rounded-xl bg-accent text-bg font-bold text-xs active:scale-95 transition">Hotovo</button>
+  </div>
 
-  S.days.forEach((d,i)=>{
-    h += `<section class="pday" style="--c:${d.color}">
-      <div class="dayhead">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <b style="color:${d.color};font-size:16px">${esc(d.name)} · ${esc(d.title)}</b>
-          ${S.days.length > 1 ? `<button class="ghost danger" data-dday="${i}">Smazat den</button>` : ""}
+  <!-- ===================================================================== -->
+  <!-- KALKULAČKA KOTOUČŮ NA OSU (MODAL)                                     -->
+  <!-- ===================================================================== -->
+  <div id="plateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-md p-5">
+    <div class="animate-pop w-full max-w-sm bg-surface border-2 border-cyanpro rounded-3xl p-5 shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <span class="block text-[10px] font-bold uppercase tracking-widest text-cyanpro">Inženýrský nástroj</span>
+          <h3 class="text-lg font-extrabold text-white">Kalkulačka kotoučů</h3>
         </div>
-        <div class="grid2">
-          <div><div class="lab">Označení dne</div><input data-pday="${i}|name" value="${esc(d.name)}"></div>
-          <div><div class="lab">Název modulu</div><input data-pday="${i}|title" value="${esc(d.title)}"></div>
-        </div>
-        <div><div class="lab">Zaměření</div><input data-pday="${i}|focus" value="${esc(d.focus)}"></div>
-        <div><div class="lab">Rozcvička</div><textarea data-pday="${i}|warm">${esc(d.warm)}</textarea></div>
+        <button id="closePlate" class="p-2 text-slate-400 hover:text-white rounded-xl">✕</button>
       </div>
-      ${d.ex.map((e,j)=>`<div class="pex">
-        <div class="prow"><input data-pf="${i}|${j}|n" value="${esc(e.n)}"><button class="ghost danger" data-dex="${i}|${j}">✕</button></div>
-        <input data-pf="${i}|${j}|m" value="${esc(e.m)}" placeholder="Stroj / vybavení">
-        <div class="g">
-          <div><label>Série</label><input type="number" min="1" data-pf="${i}|${j}|s" value="${e.s}"></div>
-          <div><label>Opak.</label><input data-pf="${i}|${j}|r" value="${esc(e.r)}"></div>
-          <div><label>Pauza (s)</label><input type="number" min="0" data-pf="${i}|${j}|rest" value="${e.rest}"></div>
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Cílová váha (kg)</label>
+          <input type="number" id="ptTarget" value="60" step="2.5" inputmode="decimal"
+                 class="w-full bg-surface2 border border-line rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-cyanpro">
         </div>
-        <input data-pf="${i}|${j}|warn" value="${esc(e.warn)}" placeholder="Varování (nepovinné)">
-        <textarea data-pf="${i}|${j}|tip" placeholder="Technika">${esc(e.tip)}</textarea>
-      </div>`).join("")}
-      <button data-addex="${i}" style="width:100%;color:var(--muted);border-style:dashed;background:none">+ Přidat cvik do ${esc(d.name)}</button>
-    </section>`;
-  });
-  h += `<button data-addday style="width:100%;margin-bottom:12px;border-color:var(--cyan);color:var(--cyan)">+ Přidat nový tréninkový den</button>`;
-  h += `<button data-preset style="width:100%;margin-bottom:30px" class="danger">Obnovit výchozí 4denní program Jarvis</button>`;
-  return h;
-}
-
-function sessV(){
-  const a = S.active;
-  const totalSets = a.exs.reduce((acc, e) => acc + e.s, 0);
-  const doneSets = Object.values(a.data).filter(x => x && x.done).length;
-  const pct = totalSets ? Math.round((doneSets / totalSets) * 100) : 0;
-  const curVol = sessionVolume(a);
-
-  let h = `<div class="shead"><div><small>${a.editing ? "✎ ÚPRAVA ULOŽENÉHO TRÉNINKU" : esc(a.dayName)}</small><h2>${esc(a.dayName)}</h2></div>
-    <div style="display:flex;gap:6px">
-      <button class="ghost" style="color:var(--cyan);border:1px solid var(--line)" id="openPlateBtn">🧮 Kotouče</button>
-      <button class="ghost danger" data-cancel>Zrušit</button>
-    </div></div>
-    <div class="pbar-wrap"><div class="pbar-fill" id="sessPbar" style="width:${pct}%"></div></div>
-    <div class="live-stats">
-      <div class="stat-box"><small>Čas</small><div class="v" id="elapsed">0:00</div></div>
-      <div class="stat-box"><small>Série</small><div class="v" id="sessSets">${doneSets}/${totalSets}</div></div>
-      <div class="stat-box"><small>Nazvedáno</small><div class="v" style="color:var(--cyan)" id="sessVol">${fmtNum(curVol)} kg</div></div>
-    </div>`;
-
-  if (a.warm) {
-    h += `<div class="card" style="border-left:4px solid var(--gold);padding:12px 14px;margin-bottom:14px">
-      <small style="color:var(--gold)">Zahřátí a mobilita</small><div class="muted" style="color:var(--text);margin-top:2px">${esc(a.warm)}</div>
-    </div>`;
-  }
-
-  h += a.exs.map((e,i)=>{
-    const prev = lastExerciseHistory(e.n, a.id);
-    const prevVol = prev.reduce((acc, p) => acc + numVal(p.w)*numVal(p.r), 0);
-    const curExVol = exVolume(a, i);
-    const deltaVol = prevVol > 0 && curExVol > 0 ? curExVol - prevVol : null;
-    const prevMaxRM = historicalMaxE1RM(e.n, a.id);
-    const prevSummary = prev.length ? `Minule (${fmtNum(prevVol)} kg): ` + prev.map(p => `${p.w||0}×${p.r||0}`).join(", ") : "";
-
-    const rows = Array.from({length:e.s},(_,k)=>{
-      const key = `${i}|${k}`, d = a.data[key] || {w:"",r:"",done:false};
-      const prevRep = prev[k]?.r ? `min. ${prev[k].r}` : e.r;
-      const sv = setVolume(d);
-      const rm = e1RM(d);
-      const isPR = rm > 0 && prevMaxRM > 0 && rm > prevMaxRM;
-      return `<div class="srow"><span class="num">${k+1}</span>
-        <input inputmode="decimal" placeholder="kg" value="${esc(d.w)}" data-sf="w" data-key="${key}">
-        <input inputmode="numeric" placeholder="${esc(prevRep)}" value="${esc(d.r)}" data-sf="r" data-key="${key}">
-        <div class="svol" id="svol-${i}-${k}">${sv > 0 ? `<b>${fmtNum(sv)}</b> kg${isPR ? `<br><span class="pr-pill">🏆 PR</span>` : ""}` : "–"}</div>
-        <button class="chk ${d.done?"on":""}" data-done="${key}" data-rest="${e.rest}" data-exname="${esc(e.n)} · Série ${k+1}/${e.s}">✓</button></div>`;
-    }).join("");
-
-    return `<article class="cx"><div class="ch"><span class="idx">${i+1}</span>
-      <div class="ct"><h3>${esc(e.n)}</h3><p>${esc(e.m)} · Pauza ${e.rest} s</p></div><span class="badge">${e.s} × ${esc(e.r)}</span></div>
-      <div class="ex-meta">
-        <span class="vol-pill" id="exvol-${i}">⚡ Objem: ${fmtNum(curExVol)} kg ${deltaVol !== null ? `(${deltaVol >= 0 ? "+" : ""}${fmtNum(deltaVol)} kg)` : ""}</span>
-        ${prevSummary ? `<span class="last-perf">📊 ${esc(prevSummary)}</span>` : ""}
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Váha osy (kg)</label>
+          <input type="number" id="ptBar" value="20" step="2" inputmode="decimal"
+                 class="w-full bg-surface2 border border-line rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-cyanpro">
+        </div>
       </div>
-      ${rows}
-      <button class="addset" data-addset="${i}">+ Přidat sérii</button>
-      ${e.warn ? `<div class="warn">⚠️ ${esc(e.warn)}</div>` : ""}
-      ${e.tip ? `<details><summary>Technika a provedení</summary><p>${esc(e.tip)}</p></details>` : ""}
-    </article>`;
-  }).join("");
-  h += `<textarea id="note" placeholder="Poznámka k tréninku (spánek, energie, rezervy ve váze…)" style="margin-top:6px">${esc(a.note)}</textarea>
-    <button class="pri big" data-finish>${a.editing ? "Uložit upravený trénink ✓" : "Ukončit a uložit trénink ✓"}</button>`;
-  return h;
-}
+      <div id="plateResult" class="bg-surface2 border border-line rounded-2xl p-4 mb-4 text-center"></div>
+      <button id="closePlateBtn" class="w-full py-3 rounded-2xl bg-cyanpro text-bg font-extrabold hover:brightness-110 active:scale-95 transition">Hotovo</button>
+    </div>
+  </div>
 
-function updateLiveSessionNumbers(){
-  const a = S.active;
-  if (!a || view !== "session") return;
-  const totalVol = sessionVolume(a);
-  const elVol = $("#sessVol");
-  if (elVol) elVol.textContent = `${fmtNum(totalVol)} kg`;
+  <!-- ===================================================================== -->
+  <!-- VLASTNÍ POTVRZOVACÍ DIALOG (NÁHRADA ZA SYSTÉMOVÉ confirm())           -->
+  <!-- ===================================================================== -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-5">
+    <div class="animate-pop w-full max-w-sm bg-surface border border-line rounded-3xl p-6 shadow-2xl">
+      <h3 id="cmTitle" class="text-lg font-extrabold text-white mb-2">Potvrzení akce</h3>
+      <p id="cmMsg" class="text-sm text-slate-300 mb-5 leading-relaxed"></p>
+      <div class="grid grid-cols-2 gap-3">
+        <button id="cmCancel" class="py-3 px-4 rounded-xl bg-surface2 border border-line text-slate-200 font-bold hover:bg-slate-800 transition">Zrušit</button>
+        <button id="cmOk" class="py-3 px-4 rounded-xl bg-accent text-bg font-extrabold hover:brightness-110 transition">Potvrdit</button>
+      </div>
+    </div>
+  </div>
 
-  a.exs.forEach((e, i) => {
-    const prev = lastExerciseHistory(e.n, a.id);
-    const prevVol = prev.reduce((acc, p) => acc + numVal(p.w)*numVal(p.r), 0);
-    const curExVol = exVolume(a, i);
-    const delta = prevVol > 0 && curExVol > 0 ? ` (${curExVol - prevVol >= 0 ? "+" : ""}${fmtNum(curExVol - prevVol)} kg)` : "";
-    const exEl = document.getElementById(`exvol-${i}`);
-    if (exEl) exEl.textContent = `⚡ Objem: ${fmtNum(curExVol)} kg${delta}`;
+  <!-- ===================================================================== -->
+  <!-- MODÁLNÍ OKNO PRO UKONČENÍ TRÉNINKU (STOP + KONTROLA ČASU)             -->
+  <!-- ===================================================================== -->
+  <div id="stopModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-5">
+    <div class="animate-pop w-full max-w-sm bg-surface border-2 border-accent rounded-3xl p-6 shadow-2xl">
+      <span id="smTag" class="block text-[11px] font-extrabold uppercase tracking-widest text-accent mb-1">Ukončení tréninku</span>
+      <h3 id="smTitle" class="text-xl font-extrabold text-white mb-1">Uložit trénink do deníku?</h3>
+      <p id="smWarn" class="hidden text-xs text-amber-200 bg-amber-500/15 border border-amber-500/35 rounded-xl p-2.5 my-3 leading-relaxed"></p>
 
-    const prevMaxRM = historicalMaxE1RM(e.n, a.id);
-    for (let k = 0; k < e.s; k++){
-      const d = a.data[`${i}|${k}`];
-      const sv = setVolume(d);
-      const rm = e1RM(d);
-      const isPR = rm > 0 && prevMaxRM > 0 && rm > prevMaxRM;
-      const cell = document.getElementById(`svol-${i}-${k}`);
-      if (cell) cell.innerHTML = sv > 0 ? `<b>${fmtNum(sv)}</b> kg${isPR ? `<br><span class="pr-pill">🏆 PR</span>` : ""}` : "–";
+      <div class="grid grid-cols-2 gap-2.5 my-4">
+        <div class="bg-surface2 border border-line rounded-2xl p-3 text-center">
+          <span class="block text-[10px] font-bold uppercase text-slate-400">Odjeté série</span>
+          <div id="smSets" class="text-lg font-extrabold text-white tabular-nums mt-0.5">0/0</div>
+        </div>
+        <div class="bg-surface2 border border-line rounded-2xl p-3 text-center">
+          <span class="block text-[10px] font-bold uppercase text-slate-400">Nazvedáno</span>
+          <div id="smVol" class="text-lg font-extrabold text-cyanpro tabular-nums mt-0.5">0 kg</div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="smDurInput" class="block text-xs font-semibold text-slate-400 mb-1">Doba tréninku v minutách (můžeš upravit):</label>
+        <input id="smDurInput" type="number" min="1" max="300" inputmode="numeric"
+               class="w-full bg-surface2 border border-line rounded-xl px-3 py-2.5 text-center text-lg font-extrabold text-white tabular-nums focus:outline-none focus:border-ok">
+      </div>
+
+      <button id="smSave" class="w-full py-3.5 rounded-2xl bg-ok text-bg font-extrabold text-base hover:brightness-110 active:scale-95 transition mb-2.5">Uložit trénink ✓</button>
+      <div class="grid grid-cols-2 gap-2">
+        <button id="smResume" class="py-2.5 px-3 rounded-xl bg-surface2 border border-line text-slate-200 font-bold text-xs hover:bg-slate-800 transition">Pokračovat</button>
+        <button id="smDiscard" class="py-2.5 px-3 rounded-xl bg-surface2 border border-red-500/35 text-red-400 font-bold text-xs hover:bg-red-500/10 transition">Zahodit trénink</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODÁLNÍ OKNO PRO UKÁZKU CVIKU (OBRÁZEK ZE SLOŽKY img/ + TECHNIKA)     -->
+  <!-- ===================================================================== -->
+  <div id="imgModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/85 backdrop-blur-md p-4">
+    <div class="animate-pop w-full max-w-md bg-surface border-2 border-cyanpro rounded-3xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-start gap-2 mb-3">
+        <div class="min-w-0">
+          <span class="block text-[10px] font-bold uppercase tracking-widest text-cyanpro">Ukázka techniky</span>
+          <h3 id="imTitle" class="text-lg font-extrabold text-white leading-tight">Cvik</h3>
+          <p id="imSub" class="text-xs text-slate-400 mt-0.5"></p>
+        </div>
+        <button id="closeImgModal" class="p-2 text-slate-400 hover:text-white rounded-xl shrink-0">✕</button>
+      </div>
+      <!-- Kontejner pro načtený obrázek nebo MP4/WebM animaci -->
+      <div id="imImgWrap" class="hidden mb-3 bg-bg border border-line rounded-2xl p-2 text-center">
+        <img id="imPhoto" alt="Ukázka cviku" class="hidden w-full max-h-72 object-contain rounded-xl mx-auto">
+        <video id="imVideo" autoplay loop muted playsinline controls class="hidden w-full max-h-72 object-contain rounded-xl mx-auto bg-black"></video>
+        <div id="imLoadedPath" class="text-[10px] text-slate-500 mt-1.5 font-mono"></div>
+      </div>
+
+      <!-- Záložní informační box, pokud obrázek nebo video ve složce img/ zatím není nahrané -->
+      <div id="imMissing" class="hidden mb-3 bg-surface2 border border-dashed border-line rounded-2xl p-4 text-center">
+        <div class="text-3xl mb-1.5">🎬</div>
+        <div class="text-xs font-bold text-white mb-1">Ukázka zatím není nahraná na GitHubu</div>
+        <p class="text-[11px] text-slate-400 leading-relaxed mb-2.5">
+          Nahraj animaci nebo obrázek do složky <code class="text-cyanpro font-mono">img/</code> v repozitáři pod přesným názvem:
+        </p>
+        <div class="bg-bg border border-line rounded-xl px-3 py-2 font-mono text-xs text-gold font-bold break-all mb-2.5" id="imExpected"></div>
+        <button id="imCopyBtn" class="px-3.5 py-2 rounded-xl bg-cyanpro/15 border border-cyanpro/40 text-cyanpro text-xs font-bold hover:bg-cyanpro/25 transition">📋 Kopírovat název souboru</button>
+        <p class="text-[10px] text-slate-500 mt-2">Podporované formáty: .mp4, .webm, .gif, .webp, .jpg, .png (pozor na velká/malá písmena).</p>
+      </div>
+
+      <!-- Technické pokyny a bezpečnostní varování -->
+      <div id="imWarn" class="hidden mb-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-medium"></div>
+      <div id="imTip" class="hidden mb-4 p-3 rounded-xl bg-surface2 border border-line text-xs text-slate-200 leading-relaxed"></div>
+
+      <button id="closeImgModalBtn" class="w-full py-3 rounded-2xl bg-cyanpro text-bg font-extrabold text-sm hover:brightness-110 active:scale-95 transition">Zavřít</button>
+    </div>
+  </div>
+
+  <!-- Notifikační lišta (Toast) -->
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 -translate-y-24 opacity-0 pointer-events-none z-50 bg-ok text-bg font-extrabold text-sm px-5 py-2.5 rounded-2xl shadow-xl transition-all duration-300"></div>
+
+  <script>
+    /* =========================================================================
+       JARVIS TRÉNINKOVÝ DENÍK v3.0 PRO (Single-file Standalone Engine)
+       Ukládání dat: localStorage (klíč 'jarvis-denik-v2' pro plnou zpětnou kompatibilitu)
+       ========================================================================= */
+
+    const KEY = "jarvis-denik-v2";
+    const $ = s => document.querySelector(s);
+    const clone = o => JSON.parse(JSON.stringify(o));
+    const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+    const today = () => new Date().toISOString().slice(0, 10);
+    // Formátování aktuálního dne a celého data: např. "Dnes je čtvrtek 19.11.2026"
+    const fmtTodayFull = () => {
+      const now = new Date();
+      const days = ["neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"];
+      return `Dnes je ${days[now.getDay()]} ${now.getDate()}.${now.getMonth() + 1}.${now.getFullYear()}`;
+    };
+    const fmt = d => {
+      try {
+        return new Date(d + (String(d).length === 10 ? "T12:00:00" : ""))
+          .toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric" });
+      } catch (e) { return String(d || ""); }
+    };
+    const fmtShort = d => {
+      try {
+        return new Date(d + (String(d).length === 10 ? "T12:00:00" : ""))
+          .toLocaleDateString("cs-CZ", { day: "numeric", month: "numeric" });
+      } catch (e) { return String(d || ""); }
+    };
+    const mmss = s => `${Math.floor(Math.max(0, s) / 60)}:${String(Math.max(0, s) % 60).padStart(2, "0")}`;
+    const fmtNum = n => Math.round(n || 0).toLocaleString("cs-CZ");
+
+    // Převod názvu cviku na čistý název souboru bez diakritiky a mezer (např. "Tlaky na rovné lavici" -> "TlakyNaRovneLavici")
+    const toImgKey = name => String(name || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .split(/[^a-zA-Z0-9]+/)
+      .filter(Boolean)
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join("");
+    // Vrátí pevný klíč obrázku/animace cviku (pokud je prázdný, odvodí ho z názvu cviku)
+    const getExImgKey = ex => (ex?.img && String(ex.img).trim()) ? String(ex.img).trim() : toImgKey(ex?.n);
+    // Sestaví seznam kandidátních cest k médiu (podporuje MP4/WebM animace i obrázky ve složce img/)
+    const VIDEO_EXT_RE = /\.(mp4|webm|mov)(\?.*)?$/i;
+    const MEDIA_EXT_RE = /\.(mp4|webm|mov|gif|webp|jpg|jpeg|png|svg)$/i;
+
+    function getImgCandidates(rawKey) {
+      const k = String(rawKey || "").trim();
+      if (!k) return [];
+      if (/^(https?:\/\/|\/)/i.test(k)) return [k];
+      const clean = k.replace(/^img\//i, "");
+      if (MEDIA_EXT_RE.test(clean)) return [`img/${clean}`];
+      // Prioritně zkouší plynulé MP4/WebM animace, poté GIF a statické obrázky
+      return ["mp4", "webm", "gif", "webp", "jpg", "png", "jpeg"].map(ext => `img/${clean}.${ext}`);
     }
-  });
-}
 
-/* ---------- Historie cviku pro dvojitou progresi ---------- */
-function lastExerciseHistory(name, excludeSessionId = null){
-  for (const s of S.sessions){
-    if (excludeSessionId && s.id === excludeSessionId) continue;
-    const j = s.exs.findIndex(e=>e.n===name);
-    if (j < 0) continue;
-    const arr = [];
-    for (let k = 0; k < s.exs[j].s; k++){
-      const d = s.data[`${j}|${k}`];
-      if (d && (d.w || d.r)) arr.push({w: d.w, r: d.r});
+    // Spolehlivé kopírování do schránky kompatibilní i s iFrame náhledem
+    function copyText(text) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        toast(`Zkopírováno: ${text}`);
+      } catch (e) {
+        toast("Nepodařilo se zkopírovat");
+      }
     }
-    if (arr.length) return arr;
-  }
-  return [];
-}
 
-/* ---------- Actions ---------- */
-function startSession(i){
-  if (S.active){ view = "session"; render(); return toast("Trénink už běží"); }
-  const d = S.days[i];
-  const exs = clone(d.ex);
-  const data = {};
-  exs.forEach((e,j)=>{
-    const hist = lastExerciseHistory(e.n);
-    const fallbackW = hist.at(-1)?.w || "";
-    for (let k=0;k<e.s;k++) {
-      data[`${j}|${k}`] = {w: hist[k]?.w || fallbackW, r:"", done:false};
+    // Výchozí 4denní silový program pro sokolskou posilovnu (Sokol 24/7)
+    const DEF = [
+      {
+        name: "Hrudník - Triceps - ramena", title: "", focus: "Hrudník · Triceps · Boční ramena", color: "#ff5a5f", min: 55,
+        warm: "5 min rotoped, kroužení rameny, rozcvičovací série s lehkou váhou.",
+        ex: [
+          { n: "Tlaky na rovné lavici", m: "Jednoručky nebo velká činka", s: 4, r: "6–8", rest: 120, img: "TlakyNaRovneLavici", tip: "Lopatky stáhni k sobě a zamkni do lavice, hrudník vypni vzhůru.", warn: "" },
+          { n: "Tlaky hlavou nahoru (Incline)", m: "Multipress nebo jednoručky", s: 4, r: "8–10", rest: 90, img: "TlakyHlavouNahoru", tip: "Lavice pod úhlem 30–45°. Poslední sérii dotlač na hranici selhání.", warn: "" },
+          { n: "Tlaky hlavou dolů (Decline)", m: "Velká činka na lavici", s: 3, r: "8–10", rest: 90, img: "TlakyHlavouDolu", tip: "Spouštěj 2 vteřiny, tlak nahoru výbušně.", warn: "" },
+          { n: "Rozpažování (Chest Fly)", m: "Jednoručky na rovné lavici", s: 3, r: "10–12", rest: 60, img: "Rozpazovani", tip: "Lokty mírně pokrčené, hluboké protažení dole.", warn: "" },
+          { n: "Upažování ve stoji (1. stimul)", m: "Lehčí jednoručky", s: 3, r: "12–15", rest: 60, img: "UpazovaniVeStoji", tip: "Lokty mírně výš než zápěstí, netaháš krkem.", warn: "" },
+          { n: "Stlačování horní kladky", m: "Kladkostroj", s: 3, r: "12–15", rest: 60, img: "StlacovaniHorniKladky", tip: "Lokty přibité k žebrům, dole 1 s zastav.", warn: "" }
+        ]
+      },
+      {
+        name: "Záda - Biceps", title: "", focus: "Záda · Biceps · Střed těla", color: "#4da3ff", min: 55,
+        warm: "5 min veslo, rozhýbání kyčlí a hrudní páteře.",
+        ex: [
+          { n: "Mrtvý tah (Deadlift)", m: "Velká činka", s: 4, r: "5–6", rest: 120, img: "MrtvyTah", tip: "Rovná záda, tlak přes paty.", warn: "" },
+          { n: "Stahování kladky před hrudník", m: "Horní kladka, široký úchop", s: 4, r: "8–10", rest: 90, img: "StahovaniKladkyPredHrudnik", tip: "Lokty dolů a k bokům, mírný záklon.", warn: "ZÁKAZ stahování za krk – ochrana rotátorové manžety!" },
+          { n: "Přítahy kladky vsedě (veslo)", m: "Spodní kladka", s: 4, r: "10–12", rest: 90, img: "PritahyKladkyVsede", tip: "K pupíku, na vteřinu zmáčkni lopatky.", warn: "" },
+          { n: "Přítahy jednoručky v předklonu", m: "Jednoručka + lavice", s: 3, r: "10 / ruka", rest: 60, img: "PritahyJednoruckyVPredklonu", tip: "Po oblouku ke kyčli, ne k rameni.", warn: "" },
+          { n: "Bicepsový zdvih ve stoji", m: "Činka nebo jednoručky", s: 3, r: "8–10", rest: 60, img: "BicepsovyZdvihVeStoji", tip: "Žádné houpání v bedrech.", warn: "" },
+          { n: "Kladivové zdvihy + zkracovačky", m: "Jednoručky (supersérie)", s: 3, r: "10–12 / 15", rest: 60, img: "KladivoveZdvihy", tip: "Kladiva, hned 15 zkracovaček.", warn: "" }
+        ]
+      },
+      {
+        name: "Stehna - Lýtka - Střed těla", title: "", focus: "Stehna · Lýtka · Střed těla", color: "#34d399", min: 50,
+        warm: "5–8 min rotoped, 2 lehké série na legpressu.",
+        ex: [
+          { n: "Legpress", m: "Stroj na legpress", s: 4, r: "8–12", rest: 120, img: "Legpress", tip: "Pánev přitisknutá k opěrce, šetří páteř.", warn: "V horní fázi nikdy nepropínej kolena na 100 % – nezamykej je!" },
+          { n: "Rumunský mrtvý tah (RDL)", m: "Jednoručky nebo činka", s: 3, r: "10–12", rest: 90, img: "RumunskyMrtvyTah", tip: "Mírně pokrčená kolena, zadkem couváš dozadu.", warn: "" },
+          { n: "Předkopávání vsedě", m: "Stroj na předkopávání", s: 4, r: "12–15", rest: 60, img: "PredkopavaniVsede", tip: "Nahoře 1 s zastav a zatni stehna.", warn: "" },
+          { n: "Zakopávání vleže / vsedě", m: "Stroj na zakopávání", s: 4, r: "10–12", rest: 60, img: "Zakopavani", tip: "Pánev drž přitisknutou, zadek nezvedat.", warn: "" },
+          { n: "Výpony ve stoji + plank", m: "Multipress + podložka", s: 4, r: "15–20 / 45 s", rest: 60, img: "VyponyVeStoji", tip: "Výpony v plném rozsahu, v pauze prkno.", warn: "" }
+        ]
+      },
+      {
+        name: "RAMENA - TRAPÉZY A PAŽE", title: "", focus: "Ramena · Trapézy · Paže", color: "#fbbf24", min: 55,
+        warm: "Lehká rozcvička ramen, 1–2 rozcvičovací série u prvního cviku.",
+        ex: [
+          { n: "Tlaky na ramena vsedě", m: "Multipress nebo jednoručky", s: 4, r: "8–10", rest: 90, img: "TlakyNaRamenaVsede", tip: "Lavice téměř kolmo (cca 80°).", warn: "" },
+          { n: "Upažování ve stoji (2. stimul)", m: "Jednoručky střední/lehčí", s: 4, r: "12–15", rest: 60, img: "UpazovaniVeStoji", tip: "Poslední sérii shazovanou: lehčí činky a 8 dalších.", warn: "" },
+          { n: "Upažování v předklonu / přítahy k obličeji", m: "Jednoručky nebo horní kladka", s: 4, r: "12–15", rest: 60, img: "UpazovaniVPredklonu", tip: "Lokty do šířky za úroveň zad.", warn: "" },
+          { n: "Krčení ramen (Shrugs)", m: "Těžké jednoručky nebo Multipress", s: 4, r: "12–15", rest: 60, img: "KrceniRamen", tip: "Kolmo k uším, nahoře 2 s drž.", warn: "" },
+          { n: "Extenze za hlavou / francouzský tlak", m: "Kladka nebo jednoručka", s: 3, r: "10–12", rest: 60, img: "ExtenzeZaHlavou", tip: "Dlouhá hlava tricepsu.", warn: "" },
+          { n: "Izolovaný zdvih o koleno / na kladce", m: "Jednoručka nebo spodní kladka", s: 3, r: "12–15", rest: 60, img: "IzolovanyZdvihOKoleno", tip: "Čistá pumpa na závěr.", warn: "" }
+        ]
+      }
+    ];
+
+    // Konstanta pro pojistku proti zapomenutému ukončení tréninku (180 min = 3 hodiny)
+    const MAX_AUTO_MIN = 180;
+
+    // Stav aplikace
+    let S = load();
+    let view = "home";
+    let previewIdx = null; // Index prohlíženého tréninku před kliknutím na START
+    let previewOpenExs = []; // Rozbalené cviky v režimu náhledu
+    let exp = null;
+    let elTimer = null;
+    let editWeightId = null;
+    let tid = null, restTotal = 0, restEnd = 0, left = 0, timerContext = "";
+    let wakeLock = null;
+    let confirmCallback = null;
+
+    // Načtení dat + automatická migrace starých výchozích názvů dnů (Den 1–4)
+    function load() {
+      try {
+        const x = JSON.parse(localStorage.getItem(KEY));
+        if (x && Array.isArray(x.days)) {
+          const oldMap = {
+            "Den 1|Tlak": "Hrudník - Triceps - ramena",
+            "Den 2|Tah": "Záda - Biceps",
+            "Den 3|Podvozek": "Stehna - Lýtka - Střed těla",
+            "Den 4|3D Speciál": "RAMENA - TRAPÉZY A PAŽE"
+          };
+          let migrated = false;
+          // Mapa výchozích názvů obrázků z DEF pro zpětnou kompatibilitu uložených plánů
+          const defImgByName = {};
+          DEF.forEach(dd => dd.ex.forEach(ee => { defImgByName[ee.n] = ee.img; }));
+          x.days.forEach(d => {
+            const sig = `${d.name}|${d.title}`;
+            if (oldMap[sig]) {
+              d.name = oldMap[sig];
+              d.title = "";
+              migrated = true;
+            }
+            (d.ex || []).forEach(e => {
+              if (e.img === undefined) {
+                e.img = defImgByName[e.n] || toImgKey(e.n);
+                migrated = true;
+              }
+            });
+          });
+          if (migrated) localStorage.setItem(KEY, JSON.stringify(x));
+          return x;
+        }
+      } catch (e) { console.warn("Chyba při čtení localStorage:", e); }
+      return { days: clone(DEF), sessions: [], weights: [], active: null };
     }
-  });
-  S.active = {id: Date.now(), dayName: `${d.name} · ${d.title}`, warm: d.warm || "", date: today(), start: Date.now(), exs, data, note: ""};
-  save(); view = "session"; render(); window.scrollTo(0,0);
-}
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(S)); }
+      catch (e) { console.warn("Chyba při ukládání do localStorage:", e); }
+    }
 
-function editSavedSession(sessId){
-  if (S.active && !confirm("Probíhá trénink. Chceš ho přepsat úpravou staršího záznamu?")) return;
-  const idx = S.sessions.findIndex(s => String(s.id) === String(sessId));
-  if (idx < 0) return;
-  const s = clone(S.sessions[idx]);
-  S.active = {
-    id: s.id, dayName: s.dayName, warm: "", date: s.date,
-    start: Date.now() - (s.dur || 45)*60000, exs: s.exs, data: s.data, note: s.note || "",
-    editing: true
-  };
-  save(); view = "session"; render(); window.scrollTo(0,0);
-  toast("Režim úpravy tréninku");
-}
+    // Zobrazení toast notifikace
+    let toastTimeout = null;
+    function toast(msg) {
+      const t = $("#toast");
+      t.textContent = msg;
+      t.classList.remove("-translate-y-24", "opacity-0");
+      t.classList.add("translate-y-0", "opacity-100");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        t.classList.remove("translate-y-0", "opacity-100");
+        t.classList.add("-translate-y-24", "opacity-0");
+      }, 2400);
+    }
 
-function finish(){
-  const a = S.active;
-  const dur = Math.max(1, Math.round((Date.now() - a.start)/60000));
-  const record = {id:a.id, date:a.date, dayName:a.dayName, exs:a.exs, data:a.data, note:a.note, dur};
-  const existingIdx = S.sessions.findIndex(s => s.id === a.id);
-  if (existingIdx >= 0) S.sessions[existingIdx] = record;
-  else S.sessions.unshift(record);
+    // Vlastní potvrzovací modální okno (bez použití nativního confirm())
+    function askConfirm(title, message, onYes, okLabel = "Potvrdit") {
+      $("#cmTitle").textContent = title;
+      $("#cmMsg").textContent = message;
+      $("#cmOk").textContent = okLabel;
+      confirmCallback = onYes;
+      const modal = $("#confirmModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+    function closeConfirm() {
+      const modal = $("#confirmModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      confirmCallback = null;
+    }
+    $("#cmCancel").addEventListener("click", closeConfirm);
+    $("#cmOk").addEventListener("click", () => {
+      const fn = confirmCallback;
+      closeConfirm();
+      if (typeof fn === "function") fn();
+    });
 
-  S.active = null; closeTimer(); save();
-  if (wakeLock){ wakeLock.release().catch(()=>{}); wakeLock = null; }
-  view = "diary"; render(); window.scrollTo(0,0);
-  toast(`Uloženo! Nazvedáno ${fmtNum(sessionVolume(record))} kg ✓`);
-}
+    /* =========================================================================
+       MATEMATICKÉ FUNKCE (Objem série, Celková tunáž, Epley e1RM, PR detekce)
+       ========================================================================= */
+    function numVal(v) {
+      if (v === null || v === undefined || v === "") return 0;
+      const n = parseFloat(String(v).replace(",", "."));
+      return isNaN(n) || n < 0 ? 0 : n;
+    }
+    function setVolume(d) {
+      if (!d) return 0;
+      return numVal(d.w) * numVal(d.r);
+    }
+    function e1RM(d) {
+      const w = numVal(d?.w), r = numVal(d?.r);
+      if (w <= 0 || r <= 0) return 0;
+      return r === 1 ? w : Math.round(w * (1 + r / 30));
+    }
+    function exVolume(sess, exIdx, onlyDone = false) {
+      const e = sess.exs[exIdx];
+      if (!e) return 0;
+      let sum = 0;
+      for (let k = 0; k < e.s; k++) {
+        const d = sess.data[`${exIdx}|${k}`];
+        if (d && (!onlyDone || d.done)) sum += setVolume(d);
+      }
+      return sum;
+    }
+    function sessionVolume(sess, onlyDone = false) {
+      if (!sess || !sess.exs) return 0;
+      return sess.exs.reduce((acc, _, idx) => acc + exVolume(sess, idx, onlyDone), 0);
+    }
+    function historicalMaxE1RM(exName, excludeSessionId = null) {
+      let max = 0;
+      for (const s of S.sessions) {
+        if (excludeSessionId && s.id === excludeSessionId) continue;
+        s.exs.forEach((e, j) => {
+          if (e.n !== exName) return;
+          for (let k = 0; k < e.s; k++) {
+            const rm = e1RM(s.data[`${j}|${k}`]);
+            if (rm > max) max = rm;
+          }
+        });
+      }
+      return max;
+    }
+    function lastExerciseHistory(name, excludeSessionId = null) {
+      for (const s of S.sessions) {
+        if (excludeSessionId && s.id === excludeSessionId) continue;
+        const j = s.exs.findIndex(e => e.n === name);
+        if (j < 0) continue;
+        const arr = [];
+        for (let k = 0; k < s.exs[j].s; k++) {
+          const d = s.data[`${j}|${k}`];
+          if (d && (d.w || d.r)) arr.push({ w: d.w, r: d.r });
+        }
+        if (arr.length) return arr;
+      }
+      return [];
+    }
 
-function cancel(){
-  if (!confirm("Opustit tento trénink bez uložení změn?")) return;
-  S.active = null; closeTimer(); save();
-  if (wakeLock){ wakeLock.release().catch(()=>{}); wakeLock = null; }
-  view = "home"; render();
-}
+    // Zjištění, zda jsou všechny série daného cviku odškrtnuté
+    function isExComplete(sess, exIdx) {
+      const e = sess?.exs?.[exIdx];
+      if (!e || e.s <= 0) return false;
+      for (let k = 0; k < e.s; k++) {
+        if (!sess.data?.[`${exIdx}|${k}`]?.done) return false;
+      }
+      return true;
+    }
 
-function saveWeight(){
-  const kg = parseFloat($("#wkg").value);
-  const cm = parseFloat($("#wcm").value) || null;
-  const date = $("#wdate").value || today();
-  if (!kg || kg < 30 || kg > 250) return toast("Zadej platnou váhu v kg (30–250)");
+    // Počet odškrtnutých sérií u konkrétního cviku
+    function countExDone(sess, exIdx) {
+      const e = sess?.exs?.[exIdx];
+      if (!e) return 0;
+      let done = 0;
+      for (let k = 0; k < e.s; k++) {
+        if (sess.data?.[`${exIdx}|${k}`]?.done) done++;
+      }
+      return done;
+    }
 
-  if (editWeightId){
-    const item = S.weights.find(w => String(w.id) === String(editWeightId));
-    if (item){ item.kg = kg; item.cm = cm; item.date = date; }
-    editWeightId = null;
-    toast("Záznam úspěšně opraven ✓");
-  } else {
-    S.weights.push({id: Date.now(), date, kg, cm});
-    toast("Metriky uloženy ✓");
-  }
-  S.weights.sort((a,b)=>a.date.localeCompare(b.date));
-  save(); render();
-}
+    // Vrátí pole indexů aktuálně rozbalených cviků (uloženo i po odchodu z aplikace)
+    function getOpenExs(isPreview) {
+      if (isPreview) return previewOpenExs;
+      if (!S.active) return [];
+      if (!Array.isArray(S.active.openExs)) {
+        const firstUndone = S.active.exs.findIndex((_, idx) => !isExComplete(S.active, idx));
+        S.active.openExs = firstUndone >= 0 ? [firstUndone] : [];
+        save();
+      }
+      return S.active.openExs;
+    }
 
-/* ---------- CSV Export / Import pro MS Excel ---------- */
-function downloadCSV(filename, rows){
-  const csvCell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
-  const content = "\uFEFF" + rows.map(r => r.map(csvCell).join(";")).join("\r\n");
-  const blob = new Blob([content], {type: "text/csv;charset=utf-8;"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = filename;
-  a.click();
-}
+    /* =========================================================================
+       ZVUKOVÝ SIGNÁL (Web Audio API) A WAKELOCK PROTI ZHASÍNÁNÍ DISPLEJE
+       ========================================================================= */
+    function playBeep() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        [0, 0.22, 0.44].forEach((delay, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = idx === 2 ? 1046.5 : 784;
+          gain.gain.setValueAtTime(0.25, ctx.currentTime + delay);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.18);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + delay);
+          osc.stop(ctx.currentTime + delay + 0.19);
+        });
+      } catch (e) {}
+    }
 
-function exportSessionsCSV(){
-  if (!S.sessions.length) return toast("Zatím nejsou žádné tréninky k exportu");
-  const rows = [["Datum", "Trénink", "Doba (min)", "Cvik", "Stroj / Vybavení", "Série č.", "Váha (kg)", "Opakování", "Objem série (kg)", "Odhad 1RM (kg)", "Odškrtnuto", "Poznámka"]];
-  S.sessions.forEach(s => {
-    s.exs.forEach((e, j) => {
-      for (let k = 0; k < e.s; k++){
-        const d = s.data[`${j}|${k}`] || {};
-        if (!d.w && !d.r && !d.done) continue;
-        rows.push([
-          s.date, s.dayName, s.dur, e.n, e.m || "", k + 1,
-          String(d.w || 0).replace(".", ","), String(d.r || 0).replace(".", ","),
-          Math.round(setVolume(d)), e1RM(d), d.done ? "ANO" : "NE", s.note || ""
-        ]);
+    async function requestWakeLock() {
+      if ("wakeLock" in navigator && S.active && !wakeLock) {
+        try { wakeLock = await navigator.wakeLock.request("screen"); } catch (e) {}
+      }
+    }
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        if (S.active) {
+          checkAutoStopGuard();
+          requestWakeLock();
+        }
+        if (tid) tickTimer();
       }
     });
-  });
-  downloadCSV(`jarvis-treninky-${today()}.csv`, rows);
-  toast("CSV pro Excel staženo ✓");
-}
 
-function exportWeightsCSV(){
-  if (!S.weights.length) return toast("Zatím nejsou žádné zápisy váhy");
-  const rows = [["Datum", "Váha (kg)", "Obvod pasu (cm)", "Změna váhy od startu (kg)"]];
-  const startKg = S.weights[0].kg;
-  S.weights.forEach(w => {
-    rows.push([
-      w.date,
-      String(w.kg).replace(".", ","),
-      w.cm ? String(w.cm).replace(".", ",") : "",
-      String((w.kg - startKg).toFixed(1)).replace(".", ",")
-    ]);
-  });
-  downloadCSV(`jarvis-vaha-pas-${today()}.csv`, rows);
-  toast("CSV váhy a pasu staženo ✓");
-}
+    /* =========================================================================
+       POJISTKA PROTI ZAPOMENUTÉMU UKONČENÍ TRÉNINKU (24h OCHRANA)
+       ========================================================================= */
+    function checkAutoStopGuard() {
+      const a = S.active;
+      if (!a || a.editing) return false;
+      const elapsedMin = Math.floor((Date.now() - a.start) / 60000);
+      if (elapsedMin >= MAX_AUTO_MIN && !a.autoPaused) {
+        // Odhad reálné doby tréninku podle poslední aktivity (+ 5 min rezerva), omezeno na 15–150 min
+        const lastAct = a.lastActivity || a.start;
+        const rawRealMin = Math.round((lastAct - a.start) / 60000) + 5;
+        a.frozenDurMin = Math.max(15, Math.min(150, rawRealMin));
+        a.autoPaused = true;
+        a.realElapsedWhenPaused = elapsedMin;
+        save();
+        if (view === "session") render();
+        toast("⏱ Časovač automaticky zastaven po 3 hodinách!");
+        return true;
+      }
+      return !!a.autoPaused;
+    }
 
-function exportPlanCSV(){
-  const rows = [["Den", "Název modulu", "Zaměření", "Rozcvička", "Cvik", "Stroj / Vybavení", "Série", "Opakování", "Pauza (s)", "Technika", "Varování"]];
-  S.days.forEach(d => {
-    d.ex.forEach(e => {
-      rows.push([d.name, d.title, d.focus, d.warm || "", e.n, e.m || "", e.s, e.r, e.rest, e.tip || "", e.warn || ""]);
-    });
-  });
-  downloadCSV(`jarvis-plan-${today()}.csv`, rows);
-  toast("Tréninkový plán vyexportován do CSV ✓");
-}
+    function getDisplayDurationSec() {
+      const a = S.active;
+      if (!a) return 0;
+      if (a.autoPaused && a.frozenDurMin) return a.frozenDurMin * 60;
+      return Math.max(0, Math.floor((Date.now() - a.start) / 1000));
+    }
 
-function parseCSVLine(line){
-  const res = []; let cur = "", inQ = false;
-  for (let i = 0; i < line.length; i++){
-    const ch = line[i];
-    if (ch === '"'){
-      if (inQ && line[i+1] === '"'){ cur += '"'; i++; }
-      else inQ = !inQ;
-    } else if ((ch === ";" || ch === ",") && !inQ){
-      res.push(cur.trim()); cur = "";
-    } else cur += ch;
-  }
-  res.push(cur.trim());
-  return res;
-}
+    /* =========================================================================
+       HLAVNÍ RENDEROVACÍ MOTOR
+       ========================================================================= */
+    function render() {
+      if (S.active) checkAutoStopGuard();
+      document.querySelectorAll(".nav-btn").forEach(b => {
+        const active = b.dataset.go === view || ((view === "session" || view === "preview") && b.dataset.go === "home");
+        b.classList.toggle("text-accent", active);
+        b.classList.toggle("text-slate-400", !active);
+      });
 
-function importPlanFromCSV(text){
-  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter(l => l.trim().length > 0);
-  if (lines.length < 2) return toast("Soubor CSV je prázdný");
-  const colors = ["#ff5a5f", "#4da3ff", "#34d399", "#fbbf24", "#a855f7", "#ec4899"];
-  const map = new Map();
+      const v = $("#view");
+      if (view === "diary") v.innerHTML = diaryV();
+      else if (view === "program") v.innerHTML = progV();
+      else if (view === "session" && S.active) v.innerHTML = sessV(false);
+      else if (view === "preview" && previewIdx !== null && S.days[previewIdx]) v.innerHTML = sessV(true);
+      else { view = "home"; v.innerHTML = homeV(); }
 
-  for (let i = 1; i < lines.length; i++){
-    const cols = parseCSVLine(lines[i]);
-    if (cols.length < 8) continue;
-    const [dName, dTitle, dFocus, dWarm, exN, exM, exS, exR, exRest, exTip, exWarn] = cols;
-    if (!dName || !exN) continue;
-    if (!map.has(dName)){
-      map.set(dName, {
-        name: dName, title: dTitle || "Trénink", focus: dFocus || "", warm: dWarm || "",
-        color: colors[map.size % colors.length], min: 55, ex: []
+      if (view === "session" && S.active) {
+        startElapsed();
+        requestWakeLock();
+      } else {
+        clearInterval(elTimer);
+      }
+    }
+
+    /* ---------- POHLED 1: DOMŮ (HOME) ---------- */
+    function homeV() {
+      const lw = S.weights.at(-1);
+      const lcm = [...S.weights].reverse().find(w => w.cm);
+      const fw = S.weights[0];
+      const totalTons = (S.sessions.reduce((a, s) => a + sessionVolume(s), 0) / 1000).toFixed(1);
+      const ew = editWeightId ? S.weights.find(w => String(w.id) === String(editWeightId)) : null;
+
+      let h = `
+        <section class="rounded-3xl p-5 mb-5 border border-[#3a2530] bg-gradient-to-br from-[#2a1a22] via-surface to-surface shadow-lg">
+          <span class="block text-sm font-black uppercase tracking-wider text-accent">Systém Jarvis v3.0 PRO - Gym APP</span>
+          <p class="text-base font-semibold text-slate-200 mt-1">${fmtTodayFull()}</p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
+            <div class="bg-surface2/90 border border-line rounded-2xl p-3">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Odjeto</span>
+              <div class="text-lg font-extrabold tabular-nums mt-0.5">${S.sessions.length} <span class="text-xs font-medium text-slate-400">trén.</span></div>
+            </div>
+            <div class="bg-surface2/90 border border-line rounded-2xl p-3">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Nazvedáno</span>
+              <div class="text-lg font-extrabold tabular-nums text-cyanpro mt-0.5">${totalTons} <span class="text-xs font-medium text-slate-400">t</span></div>
+            </div>
+            <div class="bg-surface2/90 border border-line rounded-2xl p-3">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Akt. váha</span>
+              <div class="text-lg font-extrabold tabular-nums text-ok mt-0.5">${lw ? lw.kg : "–"} <span class="text-xs font-medium text-slate-400">kg</span></div>
+            </div>
+            <div class="bg-surface2/90 border border-line rounded-2xl p-3">
+              <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Akt. pas</span>
+              <div class="text-lg font-extrabold tabular-nums text-gold mt-0.5">${lcm ? lcm.cm : "–"} <span class="text-xs font-medium text-slate-400">cm</span></div>
+            </div>
+          </div>
+          ${S.active ? `
+            <button data-go="session" class="w-full mt-4 py-3.5 px-4 rounded-2xl ${S.active.autoPaused ? "bg-amber-400 text-bg" : "bg-gradient-to-r from-accent to-gold text-bg"} font-extrabold text-sm shadow-lg active:scale-[0.98] transition">
+              ${S.active.autoPaused ? `⚠️ Pozastavený trénink (ukonči ho) · ${esc(S.active.dayName)}` : `▶ Pokračovat v tréninku · ${esc(S.active.dayName)}`}
+            </button>
+          ` : ""}
+        </section>
+
+        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2.5">VYBER TRÉNINK</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6">
+          ${S.days.map((d, i) => `
+            <button data-preview="${i}" style="border-left-color:${d.color}"
+                    class="text-left bg-surface border border-line border-l-4 rounded-2xl p-4 hover:bg-surface2 active:scale-[0.98] transition flex items-center justify-between gap-2 shadow-sm min-h-[68px]">
+              <b class="text-base font-extrabold text-white leading-snug">${esc(d.name)}</b>
+              <span style="color:${d.color}" class="text-lg font-black shrink-0">›</span>
+            </button>
+          `).join("")}
+        </div>
+
+        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2.5">Tělesné metriky</h3>
+        <div class="bg-surface border border-line rounded-2xl p-4 mb-4">
+          ${ew ? `
+            <div class="flex justify-between items-center bg-gold/10 border border-gold/40 text-gold text-xs font-semibold px-3 py-2 rounded-xl mb-3">
+              <span>✎ Upravuješ záznam ze dne <b>${fmt(ew.date)}</b></span>
+              <button data-wcancel class="underline hover:text-white">Zrušit</button>
+            </div>
+          ` : ""}
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew ? ew.kg : ""}"
+                   class="bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-accent">
+            <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew && ew.cm ? ew.cm : ""}"
+                   class="bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-cyanpro">
+            <input id="wdate" type="date" value="${ew ? ew.date : today()}"
+                   class="bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
+            <button data-wsave class="py-2.5 px-4 rounded-xl font-extrabold text-sm ${ew ? "bg-ok text-bg" : "bg-accent text-bg"} active:scale-95 transition">
+              ${ew ? "Uložit změnu" : "Zapsat"}
+            </button>
+          </div>
+          ${lw ? `
+            <div class="flex flex-wrap justify-between items-center gap-2 mt-3 pt-3 border-t border-line text-xs text-slate-400">
+              <span>
+                Poslední: <b class="text-white">${lw.kg} kg</b>
+                ${lw.cm ? ` · Pas: <b class="text-cyanpro">${lw.cm} cm</b>` : ""} (${fmt(lw.date)})
+                ${fw && fw !== lw ? (() => {
+                  const diff = (lw.kg - fw.kg).toFixed(1);
+                  return ` · Celkem: <b class="${diff <= 0 ? "text-ok" : "text-accent"}">${diff > 0 ? "+" : ""}${diff} kg</b>`;
+                })() : ""}
+              </span>
+              <button data-wedit="${lw.id}" class="text-slate-300 hover:text-white font-semibold px-2 py-1 rounded-lg bg-surface2 border border-line">✎ Opravit</button>
+            </div>
+          ` : `<p class="text-xs text-slate-500 mt-3">Zatím žádný zápis váhy.</p>`}
+        </div>
+      `;
+      return h;
+    }
+
+    /* ---------- POHLED 2: DENÍK & GRAFY (DIARY) ---------- */
+    function diaryV() {
+      const sess = S.sessions;
+      const ws = [...S.weights].sort((a, b) => b.date.localeCompare(a.date));
+      const totalKgAll = sess.reduce((a, s) => a + sessionVolume(s), 0);
+      const ew = editWeightId ? S.weights.find(w => String(w.id) === String(editWeightId)) : null;
+
+      let h = `
+        <div class="mb-4">
+          <span class="block text-[11px] font-bold uppercase tracking-widest text-slate-400">Analytický modul</span>
+          <h2 class="text-2xl font-extrabold text-white">Deník & Srovnávací grafy</h2>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Celkem odjeto <b class="text-white">${sess.length}</b> tréninků · Nazvedáno
+            <b class="text-cyanpro">${fmtNum(totalKgAll)} kg</b> (${(totalKgAll / 1000).toFixed(2)} tun)
+          </p>
+        </div>
+      `;
+
+      if (ew) {
+        h += `
+          <div class="bg-surface border-2 border-gold rounded-2xl p-4 mb-4">
+            <div class="flex justify-between items-center text-xs text-gold font-bold mb-3">
+              <span>✎ Oprava záznamu (${fmt(ew.date)})</span>
+              <button data-wcancel class="text-slate-300 hover:text-white">✕ Zavřít</button>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew.kg}"
+                     class="bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white font-bold">
+              <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew.cm || ""}"
+                     class="bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white font-bold">
+              <input id="wdate" type="date" value="${ew.date}"
+                     class="bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+              <button data-wsave class="py-2 px-3 rounded-xl bg-ok text-bg font-extrabold text-sm">Uložit opravu</button>
+            </div>
+          </div>
+        `;
+      }
+
+      // Sekce Váha & Pas
+      h += `
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Vývoj tělesné váhy a obvodu pasu</h3>
+          <button data-csv-weights class="text-xs font-bold text-ok hover:underline">⬇ Excel CSV</button>
+        </div>
+        <div class="bg-surface border border-line rounded-2xl p-4 mb-5">
+          ${S.weights.length >= 2 ? dualWeightWaistChart() : `<p class="text-xs text-slate-400 mb-2">Pro vykreslení srovnávacího grafu zadej alespoň 2 měření váhy/pasu.</p>`}
+          ${ws.length ? `
+            <div class="max-h-56 overflow-y-auto mt-3 divide-y divide-line">
+              ${ws.map(w => `
+                <div class="flex justify-between items-center py-2.5 text-sm">
+                  <span class="font-semibold text-slate-200">${fmt(w.date)}</span>
+                  <div class="flex items-center gap-2">
+                    <b class="text-accent tabular-nums">${w.kg} kg</b>
+                    ${w.cm ? `<span class="text-slate-500">·</span><b class="text-cyanpro tabular-nums">${w.cm} cm</b>` : ""}
+                    <button data-wedit="${w.id}" title="Upravit" class="px-2 py-1 text-xs rounded-lg bg-surface2 text-slate-300 hover:text-white">✎</button>
+                    <button data-wdel="${w.id}" title="Smazat" class="px-2 py-1 text-xs rounded-lg bg-surface2 text-red-400 hover:text-red-300">✕</button>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          ` : `<p class="text-xs text-slate-500">Zatím žádná váha. Přidej ji na úvodní obrazovce.</p>`}
+        </div>
+      `;
+
+      // Sekce Sloupcový graf tunáže
+      if (sess.length >= 2) {
+        h += `
+          <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Progrese nazvedané hmotnosti (kg / trénink)</h3>
+          <div class="bg-surface border border-line rounded-2xl p-4 mb-5">${volumeBarChart()}</div>
+        `;
+      }
+
+      // Sekce Historie tréninků
+      h += `
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Historie tréninků (${sess.length})</h3>
+          <button data-csv-sessions class="text-xs font-bold text-ok hover:underline">⬇ Export do Excelu</button>
+        </div>
+      `;
+
+      if (sess.length) {
+        h += sess.map(s => {
+          const done = Object.values(s.data).filter(x => x && x.done).length;
+          const vol = sessionVolume(s);
+          const open = exp === String(s.id);
+          return `
+            <div data-sopen="${s.id}" class="bg-surface border border-line rounded-2xl p-4 mb-3 cursor-pointer hover:border-slate-600 transition">
+              <div class="flex justify-between items-start gap-2">
+                <div>
+                  <b class="text-base font-extrabold text-white">${esc(s.dayName)}</b>
+                  <div class="text-xs text-slate-400 mt-0.5">
+                    ${fmt(s.date)} · ${s.dur} min · ${done} sérií · <b class="text-cyanpro">⚡ ${fmtNum(vol)} kg</b>
+                  </div>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button data-sedit="${s.id}" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-surface2 text-slate-200 hover:text-white">✎ Upravit</button>
+                  <button data-sdel="${s.id}" class="px-2 py-1 text-xs font-semibold rounded-lg bg-surface2 text-red-400 hover:text-red-300">✕</button>
+                </div>
+              </div>
+              ${open ? `
+                <div class="mt-3 pt-3 border-t border-line space-y-3">
+                  ${s.exs.map((e, j) => {
+                    const exVol = exVolume(s, j);
+                    const lines = Array.from({ length: e.s }, (_, k) => {
+                      const d = s.data[`${j}|${k}`];
+                      const sv = setVolume(d);
+                      return d && (d.w || d.r) ? `
+                        <div class="flex justify-between text-xs py-1 border-b border-white/5 last:border-0">
+                          <span class="text-slate-400">Série ${k + 1}</span>
+                          <span>
+                            <b class="text-white">${esc(d.w || "0")} kg × ${esc(d.r || "0")}</b>
+                            <span class="text-slate-400 ml-1">(${fmtNum(sv)} kg · e1RM ${e1RM(d)} kg)</span>
+                            ${d.done ? "" : `<span class="text-amber-400 ml-1">(neodškrtnuto)</span>`}
+                          </span>
+                        </div>
+                      ` : "";
+                    }).join("");
+                    return `
+                      <div>
+                        <div class="flex justify-between text-sm mb-1">
+                          <b class="text-white">${esc(e.n)}</b>
+                          <span class="text-cyanpro font-bold text-xs">${fmtNum(exVol)} kg</span>
+                        </div>
+                        ${lines || `<div class="text-xs text-slate-500">Bez zápisu</div>`}
+                      </div>
+                    `;
+                  }).join("")}
+                  ${s.note ? `<p class="text-xs text-slate-300 bg-surface2 p-2.5 rounded-xl">📝 ${esc(s.note)}</p>` : ""}
+                </div>
+              ` : ""}
+            </div>
+          `;
+        }).join("");
+      } else {
+        h += `<div class="bg-surface border border-line rounded-2xl p-5 text-center text-xs text-slate-400">Zatím žádný uložený trénink. Spusť trénink na kartě Domů!</div>`;
+      }
+      return h;
+    }
+
+    // Duální srovnávací SVG graf (Váha kg vs Pas cm)
+    function dualWeightWaistChart() {
+      const pts = S.weights.slice(-16);
+      const W = 600, H = 155, padL = 36, padR = 36, padT = 18, padB = 26;
+      const plotW = W - padL - padR, plotH = H - padT - padB;
+
+      const kgs = pts.map(p => p.kg);
+      const minKg = Math.min(...kgs), maxKg = Math.max(...kgs), rngKg = (maxKg - minKg) || 1;
+      const diffKg = (kgs.at(-1) - kgs[0]).toFixed(1);
+
+      const cmPts = pts.map((p, i) => ({ i, cm: p.cm })).filter(x => x.cm > 0);
+      const cms = cmPts.map(x => x.cm);
+      const minCm = cms.length ? Math.min(...cms) : 0, maxCm = cms.length ? Math.max(...cms) : 0, rngCm = (maxCm - minCm) || 1;
+      const diffCm = cms.length >= 2 ? (cms.at(-1) - cms[0]).toFixed(1) : null;
+
+      const xPos = i => padL + (pts.length > 1 ? (i / (pts.length - 1)) * plotW : plotW / 2);
+      const yKg = val => padT + plotH - ((val - minKg) / rngKg) * plotH;
+      const yCm = val => padT + plotH - ((val - minCm) / rngCm) * plotH;
+
+      const kgLine = pts.map((p, i) => `${xPos(i).toFixed(1)},${yKg(p.kg).toFixed(1)}`).join(" ");
+      const cmLine = cmPts.map(x => `${xPos(x.i).toFixed(1)},${yCm(x.cm).toFixed(1)}`).join(" ");
+
+      let svg = `
+        <div class="flex flex-wrap gap-4 text-xs mb-2 font-semibold">
+          <span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-accent"></span> Váha: <b class="text-white">${kgs.at(-1)} kg</b> (${diffKg > 0 ? "+" : ""}${diffKg} kg)</span>
+          ${cms.length ? `<span class="inline-flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyanpro"></span> Pas: <b class="text-white">${cms.at(-1)} cm</b> ${diffCm !== null ? `(${diffCm > 0 ? "+" : ""}${diffCm} cm)` : ""}</span>` : `<span class="text-slate-500">Tip: Přidej k váze i pas (cm) pro srovnávací křivku</span>`}
+        </div>
+        <svg class="w-full h-auto" viewBox="0 0 ${W} ${H}">
+          <line x1="${padL}" y1="${padT}" x2="${W - padR}" y2="${padT}" stroke="#262d40" stroke-dasharray="4 4"/>
+          <line x1="${padL}" y1="${padT + plotH / 2}" x2="${W - padR}" y2="${padT + plotH / 2}" stroke="#262d40" stroke-dasharray="4 4"/>
+          <line x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" stroke="#262d40"/>
+          <text x="2" y="${padT + 4}" fill="#ff5a5f" font-size="10" font-weight="700">${maxKg}</text>
+          <text x="2" y="${padT + plotH}" fill="#ff5a5f" font-size="10" font-weight="700">${minKg}</text>
+      `;
+      if (cms.length >= 1) {
+        svg += `<text x="${W - padR + 4}" y="${padT + 4}" fill="#38bdf8" font-size="10" font-weight="700">${maxCm}</text>
+                <text x="${W - padR + 4}" y="${padT + plotH}" fill="#38bdf8" font-size="10" font-weight="700">${minCm}</text>`;
+      }
+      svg += `<polyline points="${kgLine}" fill="none" stroke="#ff5a5f" stroke-width="3" stroke-linejoin="round"/>`;
+      if (cmPts.length >= 2) {
+        svg += `<polyline points="${cmLine}" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="5 3" stroke-linejoin="round"/>`;
+      }
+      pts.forEach((p, i) => {
+        const cx = xPos(i), cy = yKg(p.kg);
+        svg += `<circle cx="${cx}" cy="${cy}" r="4" fill="#ff5a5f"/>`;
+        if (i === 0 || i === pts.length - 1 || i % Math.ceil(pts.length / 5) === 0) {
+          svg += `<text x="${cx}" y="${H - 6}" fill="#8a93a8" font-size="10" text-anchor="middle">${fmtShort(p.date)}</text>`;
+        }
+      });
+      cmPts.forEach(x => {
+        svg += `<circle cx="${xPos(x.i)}" cy="${yCm(x.cm)}" r="3.5" fill="#38bdf8"/>`;
+      });
+      svg += `</svg>`;
+      return svg;
+    }
+
+    // Sloupcový SVG graf objemu nazvedaných kg v posledních trénincích
+    function volumeBarChart() {
+      const list = [...S.sessions].slice(0, 12).reverse();
+      const vols = list.map(s => sessionVolume(s));
+      const maxV = Math.max(...vols, 1);
+      const W = 600, H = 135, padB = 24, padT = 20;
+      const plotH = H - padT - padB;
+      const bw = Math.min(36, Math.floor((W - 24) / list.length) - 8);
+
+      let svg = `<svg class="w-full h-auto" viewBox="0 0 ${W} ${H}">`;
+      list.forEach((s, i) => {
+        const v = vols[i];
+        const barH = Math.max(4, (v / maxV) * plotH);
+        const x = 16 + i * ((W - 32) / list.length);
+        const y = padT + plotH - barH;
+        svg += `<rect x="${x}" y="${y}" width="${bw}" height="${barH}" rx="5" fill="#38bdf8" opacity="0.88"/>
+                <text x="${x + bw / 2}" y="${y - 5}" fill="#eef1f7" font-size="10" font-weight="700" text-anchor="middle">${(v / 1000).toFixed(1)}t</text>
+                <text x="${x + bw / 2}" y="${H - 6}" fill="#8a93a8" font-size="10" text-anchor="middle">${fmtShort(s.date)}</text>`;
+      });
+      svg += `</svg>`;
+      return svg;
+    }
+
+    /* ---------- POHLED 3: PLÁN & EXCEL (PROGRAM) ---------- */
+    function progV() {
+      let h = `
+        <div class="mb-4">
+          <span class="block text-[11px] font-bold uppercase tracking-widest text-slate-400">Centrum přípravy a dat</span>
+          <h2 class="text-2xl font-extrabold text-white">Tréninkový plán & Excel</h2>
+          <p class="text-xs text-slate-400 mt-0.5">Upravuj tréninky přímo zde nebo exportuj/importuj CSV pro MS Excel.</p>
+        </div>
+
+        <div class="bg-surface border border-ok/50 rounded-2xl p-4 mb-6">
+          <h3 class="text-xs font-extrabold uppercase tracking-wider text-ok mb-3">📊 MS Excel (CSV s českou diakritikou)</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-2.5">
+            <button data-csv-sessions class="py-2.5 px-3 rounded-xl bg-ok text-bg font-extrabold text-xs hover:brightness-110 transition">⬇ Historie tréninků (.CSV)</button>
+            <button data-csv-weights class="py-2.5 px-3 rounded-xl bg-ok text-bg font-extrabold text-xs hover:brightness-110 transition">⬇ Váha a Pas (.CSV)</button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-2.5">
+            <button data-csv-plan-out class="py-2.5 px-3 rounded-xl bg-surface2 border border-line text-white font-bold text-xs hover:bg-slate-800 transition">⬇ Export plánu do Excelu</button>
+            <button data-csv-plan-in class="py-2.5 px-3 rounded-xl bg-surface2 border border-line text-white font-bold text-xs hover:bg-slate-800 transition">⬆ Nahrát plán z Excelu (.CSV)</button>
+          </div>
+          <input type="file" id="importPlanCsv" accept=".csv" class="hidden">
+          <p class="text-[11px] text-slate-400">Exportovaný soubor otevřeš v Excelu, upravíš cviky/série/pauzy a nahraješ zpět do aplikace.</p>
+          <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-line">
+            <button data-export class="py-2 text-xs font-semibold text-slate-300 hover:text-white rounded-xl bg-surface2">📦 JSON záloha</button>
+            <button data-import-btn class="py-2 text-xs font-semibold text-slate-300 hover:text-white rounded-xl bg-surface2">📂 Obnovit JSON</button>
+          </div>
+          <input type="file" id="importFile" accept=".json" class="hidden">
+        </div>
+      `;
+
+      S.days.forEach((d, i) => {
+        h += `
+          <section style="border-left-color:${d.color}" class="border-l-4 pl-3 mb-7">
+            <div class="space-y-2 mb-3">
+              <div class="flex justify-between items-center">
+                <b style="color:${d.color}" class="text-base font-extrabold">${esc(d.name)}${d.title ? ` · ${esc(d.title)}` : ""}</b>
+                ${S.days.length > 1 ? `<button data-dday="${i}" class="text-xs font-semibold text-red-400 hover:text-red-300">Smazat den</button>` : ""}
+              </div>
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Název tréninku (dlaždice)</label>
+                  <input data-pday="${i}|name" value="${esc(d.name)}" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+                </div>
+                <div>
+                  <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Podtitulek (volitelné)</label>
+                  <input data-pday="${i}|title" value="${esc(d.title)}" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+                </div>
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Zaměření</label>
+                <input data-pday="${i}|focus" value="${esc(d.focus)}" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Rozcvička</label>
+                <textarea data-pday="${i}|warm" rows="2" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">${esc(d.warm)}</textarea>
+              </div>
+            </div>
+            <div class="space-y-2.5 mb-3">
+              ${d.ex.map((e, j) => `
+                <div class="bg-surface border border-line rounded-2xl p-3 space-y-2">
+                  <div class="flex gap-2 items-center">
+                    <input data-pf="${i}|${j}|n" value="${esc(e.n)}" placeholder="Název cviku" class="flex-1 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm font-bold text-white">
+                    <button data-dex="${i}|${j}" title="Smazat cvik" class="px-2.5 py-2 rounded-xl bg-surface2 text-red-400 hover:text-red-300 text-xs font-bold">✕</button>
+                  </div>
+                  <input data-pf="${i}|${j}|m" value="${esc(e.m)}" placeholder="Stroj / vybavení" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-xs text-slate-200">
+                  <div class="grid grid-cols-3 gap-2">
+                    <div>
+                      <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Série</label>
+                      <input type="number" min="1" data-pf="${i}|${j}|s" value="${e.s}" class="w-full bg-surface2 border border-line rounded-xl px-2.5 py-1.5 text-sm text-center font-bold text-white">
+                    </div>
+                    <div>
+                      <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Opak.</label>
+                      <input data-pf="${i}|${j}|r" value="${esc(e.r)}" class="w-full bg-surface2 border border-line rounded-xl px-2.5 py-1.5 text-sm text-center font-bold text-white">
+                    </div>
+                    <div>
+                      <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Pauza (s)</label>
+                      <input type="number" min="0" data-pf="${i}|${j}|rest" value="${e.rest}" class="w-full bg-surface2 border border-line rounded-xl px-2.5 py-1.5 text-sm text-center font-bold text-white">
+                    </div>
+                  </div>
+                  <input data-pf="${i}|${j}|warn" value="${esc(e.warn)}" placeholder="Varování (nepovinné)" class="w-full bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs text-amber-200">
+                  <textarea data-pf="${i}|${j}|tip" rows="2" placeholder="Technika a provedení" class="w-full bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs text-slate-200">${esc(e.tip)}</textarea>
+                  <div class="pt-1 border-t border-line/60">
+                    <label class="block text-[10px] uppercase tracking-wider text-cyanpro mb-1">🎬 Soubor animace / obrázku (.mp4, .gif, .jpg) ve složce img/</label>
+                    <div class="flex gap-1.5 items-center">
+                      <input data-pf="${i}|${j}|img" value="${esc(e.img ?? "")}" placeholder="${esc(toImgKey(e.n))}" class="flex-1 bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs font-mono text-cyanpro">
+                      <button type="button" data-copy-img="${i}|${j}" title="Kopírovat název souboru" class="px-2.5 py-1.5 rounded-xl bg-surface2 border border-line text-xs font-bold text-slate-200 hover:text-white">📋</button>
+                      <button type="button" data-show-plan-img="${i}|${j}" title="Náhled ukázky" class="px-2.5 py-1.5 rounded-xl bg-cyanpro/15 border border-cyanpro/40 text-xs font-bold text-cyanpro hover:bg-cyanpro/25">🎬</button>
+                    </div>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+            <button data-addex="${i}" class="w-full py-2.5 rounded-xl border border-dashed border-line text-xs font-semibold text-slate-400 hover:text-white transition">+ Přidat cvik do ${esc(d.name)}</button>
+          </section>
+        `;
+      });
+
+      h += `
+        <button data-addday class="w-full mb-3 py-3 rounded-2xl border border-cyanpro/60 text-cyanpro font-bold text-sm hover:bg-cyanpro/10 transition">+ Přidat nový tréninkový den</button>
+        <button data-preset class="w-full mb-8 py-3 rounded-2xl bg-surface2 border border-red-500/35 text-red-400 font-bold text-sm hover:bg-red-500/10 transition">Obnovit výchozí 4denní program Jarvis</button>
+      `;
+      return h;
+    }
+
+    /* ---------- POHLED 4: NÁHLED A AKTIVNÍ TRÉNINK (PREVIEW / SESSION) ---------- */
+    function sessV(isPreview = false) {
+      let a;
+      if (isPreview) {
+        const d = S.days[previewIdx];
+        const previewData = {};
+        d.ex.forEach((e, j) => {
+          const hist = lastExerciseHistory(e.n);
+          const fallbackW = hist.at(-1)?.w || "";
+          for (let k = 0; k < e.s; k++) {
+            previewData[`${j}|${k}`] = { w: hist[k]?.w || fallbackW, r: "", done: false };
+          }
+        });
+        a = {
+          id: null,
+          dayName: d.title ? `${d.name} · ${d.title}` : d.name,
+          warm: d.warm || "",
+          date: today(),
+          exs: d.ex,
+          data: previewData,
+          note: "",
+          isPreview: true
+        };
+      } else {
+        a = S.active;
+      }
+
+      const openList = getOpenExs(isPreview);
+      const totalSets = a.exs.reduce((acc, e) => acc + e.s, 0);
+      const doneSets = isPreview ? 0 : Object.values(a.data).filter(x => x && x.done).length;
+      const pct = totalSets ? Math.round((doneSets / totalSets) * 100) : 0;
+      const curVol = isPreview ? 0 : sessionVolume(a);
+
+      let h = `
+        <div class="flex justify-between items-start gap-2 mb-3">
+          <div class="min-w-0">
+            ${!isPreview ? `<span class="block text-[11px] font-bold uppercase tracking-widest ${a.editing ? "text-gold" : (a.autoPaused ? "text-amber-400" : "text-ok")}">
+              ${a.editing ? "✎ Úprava uloženého tréninku" : (a.autoPaused ? "⚠️ Pozastaveno (ochrana proti 24h)" : "● Trénink probíhá")}
+            </span>` : ""}
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white leading-tight">${esc(a.dayName)}</h2>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button id="openPlateBtn" class="px-3 py-2 rounded-xl bg-surface2 border border-line text-cyanpro font-bold text-xs hover:bg-slate-800 transition">🧮 Kotouče</button>
+            ${isPreview
+              ? `<button data-back-home class="px-3 py-2 rounded-xl bg-surface2 border border-line text-slate-200 font-bold text-xs hover:bg-slate-800 transition">← Zpět</button>`
+              : `<button data-cancel class="px-3 py-2 rounded-xl bg-surface2 border border-line text-red-400 font-bold text-xs hover:bg-red-500/10 transition">Zrušit</button>`
+            }
+          </div>
+        </div>
+
+        <!-- JEDNOZNAČNÉ TLAČÍTKO START / STOP -->
+        ${isPreview ? `
+          <div class="mb-4">
+            <button data-begin="${previewIdx}" class="w-full py-4 px-5 rounded-2xl bg-ok text-bg font-black text-base tracking-wide shadow-lg hover:brightness-110 active:scale-[0.98] transition flex items-center justify-center gap-2">
+              <span>▶</span><span>START TRÉNINKU</span>
+            </button>
+          </div>
+        ` : `
+          <div class="mb-3">
+            <button data-stop class="w-full py-3.5 px-5 rounded-2xl bg-accent text-bg font-black text-base tracking-wide shadow-lg hover:brightness-110 active:scale-[0.98] transition flex items-center justify-center gap-2">
+              <span>⏹</span><span>${a.editing ? "ULOŽIT ÚPRAVY" : "STOP · UKONČIT TRÉNINK"}</span>
+            </button>
+          </div>
+        `}
+
+        ${!isPreview && a.autoPaused ? `
+          <div class="bg-amber-500/15 border-2 border-amber-400/60 rounded-2xl p-3.5 mb-3 text-xs text-amber-100 leading-relaxed">
+            <div class="font-extrabold text-amber-300 mb-1">🛡️ Aktivována ochrana proti zapomenutému ukončení</div>
+            Trénink běžel déle než 3 hodiny bez ukončení. Časovač jsem automaticky zastavil na odhadovaných <b>${a.frozenDurMin} min</b> (podle tvé poslední zapsané série). Klikni na <b>STOP</b> a trénink bezpečně ulož.
+          </div>
+        ` : ""}
+
+        <!-- Progress bar tréninku -->
+        <div class="h-1.5 bg-surface2 rounded-full overflow-hidden mb-3">
+          <div id="sessPbar" class="h-full bg-gradient-to-r from-accent to-gold transition-all duration-300" style="width:${pct}%"></div>
+        </div>
+
+        <!-- Živé KPI během tréninku -->
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="bg-surface border border-line rounded-2xl p-2.5">
+            <span class="block text-[10px] font-bold uppercase text-slate-400">Čas</span>
+            <div id="elapsed" class="text-base font-extrabold tabular-nums ${isPreview ? "text-slate-500" : (a.autoPaused ? "text-amber-300" : "text-white")} mt-0.5">${isPreview ? "0:00" : mmss(getDisplayDurationSec())}</div>
+          </div>
+          <div class="bg-surface border border-line rounded-2xl p-2.5">
+            <span class="block text-[10px] font-bold uppercase text-slate-400">Série</span>
+            <div id="sessSets" class="text-base font-extrabold tabular-nums text-white mt-0.5">${doneSets}/${totalSets}</div>
+          </div>
+          <div class="bg-surface border border-line rounded-2xl p-2.5">
+            <span class="block text-[10px] font-bold uppercase text-slate-400">Nazvedáno</span>
+            <div id="sessVol" class="text-base font-extrabold tabular-nums text-cyanpro mt-0.5">${fmtNum(curVol)} kg</div>
+          </div>
+        </div>
+      `;
+
+      if (a.warm) {
+        h += `
+          <details class="bg-surface border border-line border-l-4 border-l-gold rounded-2xl px-3.5 py-2.5 mb-3">
+            <summary class="cursor-pointer flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-gold select-none">
+              <span>🔥 Zahřátí a mobilita</span>
+              <span class="text-slate-400 font-normal normal-case">zobrazit ▾</span>
+            </summary>
+            <p class="text-xs text-slate-200 mt-1.5 leading-relaxed">${esc(a.warm)}</p>
+          </details>
+        `;
+      }
+
+      // Ovládací lišta nad cviky: rychlé sbalení / rozbalení všech cviků
+      h += `
+        <div class="flex justify-end items-center gap-1.5 mb-2.5 px-0.5">
+          <button data-collapse-all class="px-2.5 py-1 rounded-lg bg-surface2 border border-line text-[11px] font-bold text-slate-300 hover:text-white transition">Sbalit vše</button>
+          <button data-expand-all class="px-2.5 py-1 rounded-lg bg-surface2 border border-line text-[11px] font-bold text-slate-300 hover:text-white transition">Rozbalit vše</button>
+        </div>
+      `;
+
+      h += a.exs.map((e, i) => {
+        const isOpen = openList.includes(i);
+        const exDone = isPreview ? 0 : countExDone(a, i);
+        const allDone = !isPreview && isExComplete(a, i);
+        // Sbalený (kompaktní) stav – zobrazuje jen číslo/fajfku, název cviku, ikonku obrázku a stručný stav
+        if (!isOpen) {
+          return `
+            <article class="rounded-2xl border transition mb-2 flex items-center ${allDone ? "bg-ok/5 border-ok/40" : "bg-surface border-line hover:border-slate-600"}">
+              <button type="button" data-toggle-ex="${i}" class="flex-1 min-w-0 text-left pl-3.5 pr-2 py-3.5 flex items-center gap-2.5 select-none active:scale-[0.99] transition">
+                <span class="w-7 h-7 rounded-lg font-extrabold text-xs grid place-items-center shrink-0 ${allDone ? "bg-ok text-bg" : "bg-surface2 text-accent"}">
+                  ${allDone ? "✓" : i + 1}
+                </span>
+                <h3 class="flex-1 min-w-0 text-[15px] font-extrabold leading-snug truncate ${allDone ? "text-ok" : "text-white"}">${esc(e.n)}</h3>
+                <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg tabular-nums shrink-0 ${allDone ? "bg-ok/20 text-ok" : (exDone > 0 ? "bg-gold/15 text-gold" : "bg-surface2 text-slate-400")}">
+                  ${isPreview ? `${e.s} × ${esc(e.r)}` : `${exDone}/${e.s}`}
+                </span>
+                <span class="text-slate-400 text-sm font-bold shrink-0">▸</span>
+              </button>
+              <button type="button" data-show-img="${i}" title="Ukázka cviku" class="mr-2.5 p-2 rounded-xl bg-surface2 border border-line text-sm hover:border-cyanpro active:scale-90 transition shrink-0">🖼️</button>
+            </article>
+          `;
+        }
+
+        // Rozbalený stav – plný detail cviku se sériemi, váhami a technikou
+        const prev = lastExerciseHistory(e.n, a.id);
+        const prevVol = prev.reduce((acc, p) => acc + numVal(p.w) * numVal(p.r), 0);
+        const curExVol = isPreview ? 0 : exVolume(a, i);
+        const deltaVol = !isPreview && prevVol > 0 && curExVol > 0 ? curExVol - prevVol : null;
+        const prevMaxRM = historicalMaxE1RM(e.n, a.id);
+        const prevSummary = prev.length ? `Minule (${fmtNum(prevVol)} kg): ` + prev.map(p => `${p.w || 0}×${p.r || 0}`).join(", ") : "";
+
+        const rows = Array.from({ length: e.s }, (_, k) => {
+          const key = `${i}|${k}`, d = a.data[key] || { w: "", r: "", done: false };
+          const prevRep = prev[k]?.r ? `min. ${prev[k].r}` : e.r;
+          const sv = isPreview ? 0 : setVolume(d);
+          const rm = isPreview ? 0 : e1RM(d);
+          const isPR = rm > 0 && prevMaxRM > 0 && rm > prevMaxRM;
+
+          return `
+            <div class="grid grid-cols-[26px_1fr_1fr_62px_46px] gap-1.5 items-center mb-2 ${isPreview ? "opacity-60" : ""}">
+              <span class="text-xs font-bold text-slate-400 text-center">${k + 1}</span>
+              <input inputmode="decimal" placeholder="kg" value="${esc(d.w)}" ${isPreview ? "disabled" : `data-sf="w" data-key="${key}"`}
+                     class="bg-surface2 border border-line rounded-xl py-2.5 px-1 text-center text-sm font-bold text-white focus:outline-none focus:border-accent disabled:cursor-not-allowed">
+              <input inputmode="numeric" placeholder="${esc(prevRep)}" value="${esc(d.r)}" ${isPreview ? "disabled" : `data-sf="r" data-key="${key}"`}
+                     class="bg-surface2 border border-line rounded-xl py-2.5 px-1 text-center text-sm font-bold text-white focus:outline-none focus:border-accent disabled:cursor-not-allowed">
+              <div id="svol-${i}-${k}" class="text-[11px] text-right text-slate-400 tabular-nums leading-tight">
+                ${sv > 0 ? `<b class="text-slate-200">${fmtNum(sv)}</b> kg${isPR ? `<br><span class="inline-block px-1.5 py-0.5 rounded bg-gold text-bg font-black text-[10px] mt-0.5">🏆 PR</span>` : ""}` : "–"}
+              </div>
+              <button ${isPreview ? `data-need-start` : `data-done="${key}" data-rest="${e.rest}" data-exname="${esc(e.n)} · Série ${k + 1}/${e.s}"`}
+                      class="w-11 h-11 rounded-xl font-black text-lg transition active:scale-90 ${d.done ? "bg-ok text-bg border border-ok" : "bg-surface2 text-slate-300 border border-line hover:border-slate-500"}">✓</button>
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <article class="bg-surface border-2 ${allDone ? "border-ok/60" : "border-accent/60"} rounded-2xl p-4 mb-3 shadow-lg">
+            <div class="flex items-start gap-2 mb-2.5">
+              <button type="button" data-toggle-ex="${i}" class="flex-1 min-w-0 text-left flex items-start gap-2.5 select-none">
+                <span class="w-7 h-7 rounded-lg font-extrabold text-xs grid place-items-center shrink-0 ${allDone ? "bg-ok text-bg" : "bg-accent text-bg"}">${allDone ? "✓" : i + 1}</span>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-base font-extrabold text-white leading-tight">${esc(e.n)}</h3>
+                  <p class="text-xs text-slate-400 mt-0.5">${esc(e.m)} · Pauza ${e.rest} s</p>
+                </div>
+                <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-accent/15 text-accent whitespace-nowrap shrink-0">${e.s} × ${esc(e.r)}</span>
+                <span class="text-slate-300 text-sm font-bold pt-0.5 shrink-0">▾</span>
+              </button>
+              <button type="button" data-show-img="${i}" title="Ukázka cviku" class="px-2.5 py-1.5 rounded-xl bg-cyanpro/15 border border-cyanpro/40 text-cyanpro text-xs font-bold hover:bg-cyanpro/25 active:scale-90 transition shrink-0">🖼️</button>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              ${!isPreview ? `<span id="exvol-${i}" class="text-[11px] font-bold text-cyanpro bg-cyanpro/10 border border-cyanpro/25 rounded-lg px-2 py-1">
+                ⚡ Objem: ${fmtNum(curExVol)} kg ${deltaVol !== null ? `(${deltaVol >= 0 ? "+" : ""}${fmtNum(deltaVol)} kg)` : ""}
+              </span>` : ""}
+              ${prevSummary ? `<span class="text-[11px] font-medium text-gold bg-gold/10 border border-gold/25 rounded-lg px-2 py-1">📊 ${esc(prevSummary)}</span>` : ""}
+            </div>
+
+            ${rows}
+
+            ${!isPreview ? `<button data-addset="${i}" class="w-full mt-1 py-2 rounded-xl border border-dashed border-line text-xs font-semibold text-slate-400 hover:text-white transition">+ Přidat sérii</button>` : ""}
+            ${e.warn ? `<div class="mt-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-medium">⚠️ ${esc(e.warn)}</div>` : ""}
+            ${e.tip ? `
+              <details class="mt-2.5 pt-2 border-t border-line">
+                <summary class="cursor-pointer text-xs font-bold text-accent">Technika a provedení ▾</summary>
+                <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">${esc(e.tip)}</p>
+              </details>
+            ` : ""}
+          </article>
+        `;
+      }).join("");
+
+      if (isPreview) {
+        h += `
+          <button data-begin="${previewIdx}" class="w-full mt-3 py-4 rounded-2xl bg-ok text-bg font-black text-base shadow-lg hover:brightness-110 active:scale-[0.98] transition">
+            ▶ START TRÉNINKU
+          </button>
+        `;
+      } else {
+        h += `
+          <textarea id="note" rows="2" placeholder="Poznámka k tréninku (spánek, energie, rezervy ve váze…)"
+                    class="w-full mt-2 bg-surface border border-line rounded-2xl p-3 text-sm text-white focus:outline-none focus:border-accent">${esc(a.note)}</textarea>
+          <button data-stop class="w-full mt-3 py-4 rounded-2xl bg-accent text-bg font-black text-base shadow-lg hover:brightness-110 active:scale-[0.98] transition">
+            ⏹ ${a.editing ? "ULOŽIT UPRAVENÝ TRÉNINK ✓" : "STOP · UKONČIT A ULOŽIT TRÉNINK"}
+          </button>
+        `;
+      }
+      return h;
+    }
+
+    // Živý přepočet čísel během psaní váhy/opakování bez překreslení celého DOMu
+    function updateLiveSessionNumbers() {
+      const a = S.active;
+      if (!a || view !== "session") return;
+      const elVol = $("#sessVol");
+      if (elVol) elVol.textContent = `${fmtNum(sessionVolume(a))} kg`;
+
+      a.exs.forEach((e, i) => {
+        const prev = lastExerciseHistory(e.n, a.id);
+        const prevVol = prev.reduce((acc, p) => acc + numVal(p.w) * numVal(p.r), 0);
+        const curExVol = exVolume(a, i);
+        const delta = prevVol > 0 && curExVol > 0 ? ` (${curExVol - prevVol >= 0 ? "+" : ""}${fmtNum(curExVol - prevVol)} kg)` : "";
+        const exEl = document.getElementById(`exvol-${i}`);
+        if (exEl) exEl.textContent = `⚡ Objem: ${fmtNum(curExVol)} kg${delta}`;
+
+        const prevMaxRM = historicalMaxE1RM(e.n, a.id);
+        for (let k = 0; k < e.s; k++) {
+          const d = a.data[`${i}|${k}`];
+          const sv = setVolume(d);
+          const rm = e1RM(d);
+          const isPR = rm > 0 && prevMaxRM > 0 && rm > prevMaxRM;
+          const cell = document.getElementById(`svol-${i}-${k}`);
+          if (cell) {
+            cell.innerHTML = sv > 0
+              ? `<b class="text-slate-200">${fmtNum(sv)}</b> kg${isPR ? `<br><span class="inline-block px-1.5 py-0.5 rounded bg-gold text-bg font-black text-[10px] mt-0.5">🏆 PR</span>` : ""}`
+              : "–";
+          }
+        }
       });
     }
-    map.get(dName).ex.push({
-      n: exN, m: exM || "", s: parseInt(exS) || 3, r: exR || "8–10",
-      rest: parseInt(exRest) || 60, tip: exTip || "", warn: exWarn || ""
+
+    /* =========================================================================
+       AKCE TRÉNINKU (NÁHLED -> START -> STOP / UKONČENÍ)
+       ========================================================================= */
+    function openPreview(i) {
+      previewIdx = i;
+      previewOpenExs = []; // V náhledu začni přehledně se sbaleným seznamem cviků
+      view = "preview";
+      render();
+      window.scrollTo(0, 0);
+    }
+
+    function beginWorkout(i) {
+      if (S.active) { view = "session"; render(); return toast("Trénink už běží"); }
+      const d = S.days[i];
+      if (!d) return;
+      const exs = clone(d.ex);
+      const data = {};
+      exs.forEach((e, j) => {
+        const hist = lastExerciseHistory(e.n);
+        const fallbackW = hist.at(-1)?.w || "";
+        for (let k = 0; k < e.s; k++) {
+          data[`${j}|${k}`] = { w: hist[k]?.w || fallbackW, r: "", done: false };
+        }
+      });
+      const now = Date.now();
+      S.active = {
+        id: now,
+        dayName: d.title ? `${d.name} · ${d.title}` : d.name,
+        warm: d.warm || "",
+        date: today(),
+        start: now,
+        lastActivity: now,
+        autoPaused: false,
+        frozenDurMin: null,
+        openExs: [0], // Automaticky otevři pouze 1. cvik pro maximální přehlednost
+        exs, data, note: ""
+      };
+      previewIdx = null;
+      previewOpenExs = [];
+      save();
+      view = "session";
+      render();
+      window.scrollTo(0, 0);
+      toast("▶ Trénink odstartován! Jdeme na železo.");
+    }
+
+    function openStopModal() {
+      const a = S.active;
+      if (!a) return;
+      checkAutoStopGuard();
+      const totalSets = a.exs.reduce((acc, e) => acc + e.s, 0);
+      const doneSets = Object.values(a.data).filter(x => x && x.done).length;
+      const vol = sessionVolume(a);
+      const liveMin = Math.max(1, Math.round((Date.now() - a.start) / 60000));
+      const suggestedMin = a.autoPaused && a.frozenDurMin ? a.frozenDurMin : Math.min(liveMin, 180);
+
+      $("#smTag").textContent = a.editing ? "Úprava záznamu" : "STOP · Ukončení tréninku";
+      $("#smTitle").textContent = a.dayName;
+      $("#smSets").textContent = `${doneSets}/${totalSets}`;
+      $("#smVol").textContent = `${fmtNum(vol)} kg`;
+      $("#smDurInput").value = suggestedMin;
+
+      const warnEl = $("#smWarn");
+      if (a.autoPaused) {
+        warnEl.textContent = `⏱ Trénink zůstal běžet přes 3 hodiny, proto jsem dobu automaticky zkrátil podle poslední zapsané série na ${suggestedMin} min. Můžeš ji níže doladit.`;
+        warnEl.classList.remove("hidden");
+      } else if (doneSets === 0) {
+        warnEl.textContent = "⚠️ Nemáš odškrtnutou žádnou sérii. Pokud sis trénink jen prohlížel, můžeš ho dole zahodit.";
+        warnEl.classList.remove("hidden");
+      } else {
+        warnEl.classList.add("hidden");
+      }
+
+      const modal = $("#stopModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeStopModal() {
+      const modal = $("#stopModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    function editSavedSession(sessId) {
+      const proceed = () => {
+        const idx = S.sessions.findIndex(s => String(s.id) === String(sessId));
+        if (idx < 0) return;
+        const s = clone(S.sessions[idx]);
+        S.active = {
+          id: s.id, dayName: s.dayName, warm: "", date: s.date,
+          start: Date.now() - (s.dur || 45) * 60000, lastActivity: Date.now(),
+          autoPaused: false, frozenDurMin: null,
+          openExs: [], // Při opravě staršího tréninku sbal vše, ať hned najdeš cvik k opravě
+          exs: s.exs, data: s.data, note: s.note || "",
+          editing: true
+        };
+        save(); view = "session"; render(); window.scrollTo(0, 0);
+        toast("Režim úpravy tréninku");
+      };
+      if (S.active) {
+        askConfirm("Přepsat běžící trénink?", "Aktuálně máš rozdělaný trénink. Chceš jej zahodit a otevřít tento starší záznam k úpravě?", proceed, "Otevřít k úpravě");
+      } else {
+        proceed();
+      }
+    }
+
+    function finish(customDurMin = null) {
+      const a = S.active;
+      if (!a) return;
+      const fallbackDur = a.autoPaused && a.frozenDurMin
+        ? a.frozenDurMin
+        : Math.max(1, Math.min(300, Math.round((Date.now() - a.start) / 60000)));
+      const parsed = parseInt(customDurMin, 10);
+      const dur = (!isNaN(parsed) && parsed >= 1 && parsed <= 300) ? parsed : fallbackDur;
+
+      const record = { id: a.id, date: a.date, dayName: a.dayName, exs: a.exs, data: a.data, note: a.note, dur };
+      const existingIdx = S.sessions.findIndex(s => s.id === a.id);
+      if (existingIdx >= 0) S.sessions[existingIdx] = record;
+      else S.sessions.unshift(record);
+
+      S.active = null; closeTimer(); closeStopModal(); save();
+      if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+      view = "diary"; render(); window.scrollTo(0, 0);
+      toast(`Uloženo (${dur} min)! Nazvedáno ${fmtNum(sessionVolume(record))} kg ✓`);
+    }
+
+    function cancel() {
+      askConfirm("Zrušit trénink?", "Chceš opustit tento trénink bez uložení změn?", () => {
+        S.active = null; closeTimer(); closeStopModal(); save();
+        if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+        view = "home"; render();
+      }, "Zahodit");
+    }
+
+    $("#smSave").addEventListener("click", () => finish($("#smDurInput").value));
+    $("#smResume").addEventListener("click", closeStopModal);
+    $("#smDiscard").addEventListener("click", () => {
+      closeStopModal();
+      cancel();
     });
-  }
-  const newDays = Array.from(map.values());
-  if (!newDays.length) return toast("Nepodařilo se načíst žádné cviky z CSV");
-  S.days = newDays; save(); render();
-  toast(`Načteno ${newDays.length} tréninkových dnů z Excelu ✓`);
-}
 
-/* ---------- Kalkulačka kotoučů ---------- */
-function renderPlates(){
-  const target = parseFloat($("#ptTarget").value) || 20;
-  const bar = parseFloat($("#ptBar").value) || 20;
-  const box = $("#plateResult");
-  if (target <= bar){
-    box.innerHTML = `<p class="muted">Samotná prázdná osa (${bar} kg)</p>`;
-    return;
-  }
-  let rem = (target - bar) / 2;
-  const avail = [25, 20, 15, 10, 5, 2.5, 1.25];
-  const pColors = {25:"#ef4444", 20:"#3b82f6", 15:"#eab308", 10:"#22c55e", 5:"#f8fafc", 2.5:"#94a3b8", 1.25:"#64748b"};
-  const out = [];
-  avail.forEach(p => {
-    while (rem >= p - 0.01){ out.push(p); rem = Math.round((rem - p)*100)/100; }
-  });
-  box.innerHTML = `<div class="muted" style="margin-bottom:6px">Na <b>KAŽDOU STRANU</b> osy nalož (${((target-bar)/2).toFixed(2)} kg):</div>` +
-    (out.length ? out.map(p => `<span class="plate-pill" style="background:${pColors[p]};color:${p>=10&&p!==15?"#fff":"#0b0d12"}">${p} kg</span>`).join("") : `<p class="muted">Nelze složit ze standardních kotoučů</p>`) +
-    (rem > 0 ? `<div class="muted" style="margin-top:6px;color:var(--gold)">Zbytek mimo standardní kotouče: ${rem*2} kg</div>` : "");
-}
+    function saveWeight() {
+      const kg = parseFloat($("#wkg").value);
+      const cm = parseFloat($("#wcm").value) || null;
+      const date = $("#wdate").value || today();
+      if (!kg || kg < 30 || kg > 250) return toast("Zadej platnou váhu v kg (30–250)");
 
-/* ---------- Events ---------- */
-document.addEventListener("click", e => {
-  const t = e.target, A = s => t.closest(s);
-  let b;
-  if (b = A("[data-go]")){ view = b.dataset.go; render(); window.scrollTo(0,0); return; }
-  if (b = A("[data-start]")) return startSession(+b.dataset.start);
-  if (A("[data-wsave]")) return saveWeight();
-  if (b = A("[data-wedit]")){
-    editWeightId = b.dataset.wedit;
+      if (editWeightId) {
+        const item = S.weights.find(w => String(w.id) === String(editWeightId));
+        if (item) { item.kg = kg; item.cm = cm; item.date = date; }
+        editWeightId = null;
+        toast("Záznam úspěšně opraven ✓");
+      } else {
+        S.weights.push({ id: Date.now(), date, kg, cm });
+        toast("Metriky uloženy ✓");
+      }
+      S.weights.sort((a, b) => a.date.localeCompare(b.date));
+      save(); render();
+    }
+
+    /* =========================================================================
+       EXPORT / IMPORT CSV PRO MS EXCEL (UTF-8 BOM + STŘEDNÍK)
+       ========================================================================= */
+    function downloadCSV(filename, rows) {
+      const csvCell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+      const content = "\uFEFF" + rows.map(r => r.map(csvCell).join(";")).join("\r\n");
+      const blob = new Blob([content], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    function exportSessionsCSV() {
+      if (!S.sessions.length) return toast("Zatím nejsou žádné tréninky k exportu");
+      const rows = [["Datum", "Trénink", "Doba (min)", "Cvik", "Stroj / Vybavení", "Série č.", "Váha (kg)", "Opakování", "Objem série (kg)", "Odhad 1RM (kg)", "Odškrtnuto", "Poznámka"]];
+      S.sessions.forEach(s => {
+        s.exs.forEach((e, j) => {
+          for (let k = 0; k < e.s; k++) {
+            const d = s.data[`${j}|${k}`] || {};
+            if (!d.w && !d.r && !d.done) continue;
+            rows.push([
+              s.date, s.dayName, s.dur, e.n, e.m || "", k + 1,
+              String(d.w || 0).replace(".", ","), String(d.r || 0).replace(".", ","),
+              Math.round(setVolume(d)), e1RM(d), d.done ? "ANO" : "NE", s.note || ""
+            ]);
+          }
+        });
+      });
+      downloadCSV(`jarvis-treninky-${today()}.csv`, rows);
+      toast("CSV pro Excel staženo ✓");
+    }
+
+    function exportWeightsCSV() {
+      if (!S.weights.length) return toast("Zatím nejsou žádné zápisy váhy");
+      const rows = [["Datum", "Váha (kg)", "Obvod pasu (cm)", "Změna váhy od startu (kg)"]];
+      const startKg = S.weights[0].kg;
+      S.weights.forEach(w => {
+        rows.push([
+          w.date,
+          String(w.kg).replace(".", ","),
+          w.cm ? String(w.cm).replace(".", ",") : "",
+          String((w.kg - startKg).toFixed(1)).replace(".", ",")
+        ]);
+      });
+      downloadCSV(`jarvis-vaha-pas-${today()}.csv`, rows);
+      toast("CSV váhy a pasu staženo ✓");
+    }
+
+    function exportPlanCSV() {
+      const rows = [["Den", "Název modulu", "Zaměření", "Rozcvička", "Cvik", "Stroj / Vybavení", "Série", "Opakování", "Pauza (s)", "Technika", "Varování", "Obrázek"]];
+      S.days.forEach(d => {
+        d.ex.forEach(e => {
+          rows.push([d.name, d.title, d.focus, d.warm || "", e.n, e.m || "", e.s, e.r, e.rest, e.tip || "", e.warn || "", e.img || ""]);
+        });
+      });
+      downloadCSV(`jarvis-plan-${today()}.csv`, rows);
+      toast("Tréninkový plán vyexportován do CSV ✓");
+    }
+
+    function parseCSVLine(line) {
+      const res = []; let cur = "", inQ = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQ && line[i + 1] === '"') { cur += '"'; i++; }
+          else inQ = !inQ;
+        } else if ((ch === ";" || ch === ",") && !inQ) {
+          res.push(cur.trim()); cur = "";
+        } else cur += ch;
+      }
+      res.push(cur.trim());
+      return res;
+    }
+
+    function importPlanFromCSV(text) {
+      const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (lines.length < 2) return toast("Soubor CSV je prázdný");
+      const colors = ["#ff5a5f", "#4da3ff", "#34d399", "#fbbf24", "#a855f7", "#ec4899"];
+      const map = new Map();
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        if (cols.length < 8) continue;
+        const [dName, dTitle, dFocus, dWarm, exN, exM, exS, exR, exRest, exTip, exWarn, exImg] = cols;
+        if (!dName || !exN) continue;
+        if (!map.has(dName)) {
+          map.set(dName, {
+            name: dName, title: dTitle || "Trénink", focus: dFocus || "", warm: dWarm || "",
+            color: colors[map.size % colors.length], min: 55, ex: []
+          });
+        }
+        map.get(dName).ex.push({
+          n: exN, m: exM || "", s: parseInt(exS) || 3, r: exR || "8–10",
+          rest: parseInt(exRest) || 60, tip: exTip || "", warn: exWarn || "",
+          img: exImg || toImgKey(exN)
+        });
+      }
+      const newDays = Array.from(map.values());
+      if (!newDays.length) return toast("Nepodařilo se načíst žádné cviky z CSV");
+      S.days = newDays; save(); render();
+      toast(`Načteno ${newDays.length} tréninkových dnů z Excelu ✓`);
+    }
+
+    /* =========================================================================
+       MODÁLNÍ OKNO UKÁZKY CVIKU (MP4/WebM ANIMACE I OBRÁZKY ZE SLOŽKY img/)
+       ========================================================================= */
+    let currentExpectedFile = "";
+
+    function resetMediaElements() {
+      const photo = $("#imPhoto");
+      const video = $("#imVideo");
+      if (photo) {
+        photo.onload = null;
+        photo.onerror = null;
+        photo.classList.add("hidden");
+      }
+      if (video) {
+        video.onloadeddata = null;
+        video.onerror = null;
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+        video.classList.add("hidden");
+      }
+    }
+
+    function openImgModal(ex) {
+      if (!ex) return;
+      $("#imTitle").textContent = ex.n || "Cvik";
+      $("#imSub").textContent = `${ex.m || "Vlastní vybavení"} · ${ex.s} × ${ex.r} · Pauza ${ex.rest} s`;
+
+      const warnEl = $("#imWarn");
+      if (ex.warn) {
+        warnEl.textContent = `⚠️ ${ex.warn}`;
+        warnEl.classList.remove("hidden");
+      } else {
+        warnEl.classList.add("hidden");
+      }
+
+      const tipEl = $("#imTip");
+      if (ex.tip) {
+        tipEl.textContent = `💡 Technika: ${ex.tip}`;
+        tipEl.classList.remove("hidden");
+      } else {
+        tipEl.classList.add("hidden");
+      }
+
+      const key = getExImgKey(ex);
+      const candidates = getImgCandidates(key);
+      const hasExt = MEDIA_EXT_RE.test(key);
+      currentExpectedFile = hasExt ? key.replace(/^img\//i, "") : `${key}.mp4`;
+      $("#imExpected").textContent = `img/${currentExpectedFile}`;
+
+      const imgWrap = $("#imImgWrap");
+      const missingBox = $("#imMissing");
+      const photo = $("#imPhoto");
+      const video = $("#imVideo");
+      const loadedPath = $("#imLoadedPath");
+
+      resetMediaElements();
+      imgWrap.classList.add("hidden");
+      missingBox.classList.add("hidden");
+
+      // Postupné zkoušení podporovaných přípon (.mp4, .webm, .gif, .webp, .jpg, .png, .jpeg)
+      let idx = 0;
+      const tryNext = () => {
+        if (idx >= candidates.length) {
+          resetMediaElements();
+          imgWrap.classList.add("hidden");
+          missingBox.classList.remove("hidden");
+          return;
+        }
+        const url = candidates[idx++];
+        if (VIDEO_EXT_RE.test(url)) {
+          video.onloadeddata = () => {
+            loadedPath.textContent = url;
+            missingBox.classList.add("hidden");
+            photo.classList.add("hidden");
+            video.classList.remove("hidden");
+            imgWrap.classList.remove("hidden");
+            video.play().catch(() => {});
+          };
+          video.onerror = tryNext;
+          video.src = url;
+          video.load();
+        } else {
+          photo.onload = () => {
+            loadedPath.textContent = url;
+            missingBox.classList.add("hidden");
+            video.classList.add("hidden");
+            photo.classList.remove("hidden");
+            imgWrap.classList.remove("hidden");
+          };
+          photo.onerror = tryNext;
+          photo.src = url;
+        }
+      };
+      tryNext();
+
+      const modal = $("#imgModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeImgModal() {
+      const modal = $("#imgModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+      resetMediaElements();
+    }
+
+    $("#closeImgModal").addEventListener("click", closeImgModal);
+    $("#closeImgModalBtn").addEventListener("click", closeImgModal);
+    $("#imCopyBtn").addEventListener("click", () => copyText(currentExpectedFile));
+    $("#imgModal").addEventListener("click", e => {
+      if (e.target.id === "imgModal") closeImgModal();
+    });
+
+    /* =========================================================================
+       KALKULAČKA KOTOUČŮ NA OSU
+       ========================================================================= */
+    function renderPlates() {
+      const target = parseFloat($("#ptTarget").value) || 20;
+      const bar = parseFloat($("#ptBar").value) || 20;
+      const box = $("#plateResult");
+      if (target <= bar) {
+        box.innerHTML = `<p class="text-xs text-slate-400">Samotná prázdná osa (${bar} kg)</p>`;
+        return;
+      }
+      let rem = (target - bar) / 2;
+      const avail = [25, 20, 15, 10, 5, 2.5, 1.25];
+      const pStyles = {
+        25: "bg-red-500 text-white",
+        20: "bg-blue-500 text-white",
+        15: "bg-yellow-400 text-slate-950",
+        10: "bg-emerald-500 text-white",
+        5: "bg-slate-100 text-slate-950",
+        2.5: "bg-slate-400 text-slate-950",
+        1.25: "bg-slate-600 text-white"
+      };
+      const out = [];
+      avail.forEach(p => {
+        while (rem >= p - 0.01) { out.push(p); rem = Math.round((rem - p) * 100) / 100; }
+      });
+      box.innerHTML = `<div class="text-xs text-slate-400 mb-2">Na <b class="text-white">KAŽDOU STRANU</b> osy nalož (${((target - bar) / 2).toFixed(2)} kg):</div>` +
+        `<div class="flex flex-wrap justify-center gap-1.5">` +
+        (out.length ? out.map(p => `<span class="px-3 py-1.5 rounded-xl font-extrabold text-xs shadow ${pStyles[p]}">${p} kg</span>`).join("") : `<span class="text-xs text-slate-400">Nelze složit ze standardních kotoučů</span>`) +
+        `</div>` +
+        (rem > 0 ? `<div class="text-[11px] text-gold mt-2 font-semibold">Zbytek mimo standardní kotouče: ${rem * 2} kg</div>` : "");
+    }
+
+    /* =========================================================================
+       GLOBÁLNÍ POSLUCHAČE UDÁLOSTÍ (KLIKY, VSTUPY, SOUBORY)
+       ========================================================================= */
+    document.addEventListener("click", e => {
+      const t = e.target, A = s => t.closest(s);
+      let b;
+      if (b = A("[data-go]")) { view = b.dataset.go; render(); window.scrollTo(0, 0); return; }
+      if (b = A("[data-preview]")) return openPreview(+b.dataset.preview);
+      if (b = A("[data-begin]")) return beginWorkout(+b.dataset.begin);
+      if (A("[data-back-home]")) { previewIdx = null; view = "home"; render(); window.scrollTo(0, 0); return; }
+      if (A("[data-need-start]")) return toast("Nejdřív stiskni zelené tlačítko ▶ START TRÉNINKU");
+      if (A("[data-stop]")) return openStopModal();
+      if (A("[data-wsave]")) return saveWeight();
+      if (b = A("[data-wedit]")) {
+        editWeightId = b.dataset.wedit;
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      if (A("[data-wcancel]")) { editWeightId = null; render(); return; }
+      if (b = A("[data-wdel]")) {
+        const id = b.dataset.wdel;
+        askConfirm("Smazat měření?", "Opravdu chceš smazat tento zápis váhy a pasu?", () => {
+          S.weights = S.weights.filter(w => String(w.id) !== id);
+          if (String(editWeightId) === id) editWeightId = null;
+          save(); render();
+        }, "Smazat");
+        return;
+      }
+      if (b = A("[data-sedit]")) { e.stopPropagation(); editSavedSession(b.dataset.sedit); return; }
+      if (b = A("[data-sdel]")) {
+        e.stopPropagation();
+        const id = b.dataset.sdel;
+        askConfirm("Smazat trénink?", "Tento uložený trénink bude trvale odstraněn z historie.", () => {
+          S.sessions = S.sessions.filter(s => String(s.id) !== id);
+          save(); render();
+        }, "Smazat");
+        return;
+      }
+      if (b = A("[data-sopen]")) { exp = exp === String(b.dataset.sopen) ? null : String(b.dataset.sopen); render(); return; }
+      if (b = A("[data-toggle-ex]")) {
+        const exIdx = +b.dataset.toggleEx;
+        const isPrev = view === "preview";
+        const list = getOpenExs(isPrev);
+        const pos = list.indexOf(exIdx);
+        if (pos >= 0) list.splice(pos, 1);
+        else list.push(exIdx);
+        if (!isPrev && S.active) save();
+        render();
+        return;
+      }
+      if (A("[data-collapse-all]")) {
+        if (view === "preview") previewOpenExs = [];
+        else if (S.active) { S.active.openExs = []; save(); }
+        render();
+        return;
+      }
+      if (A("[data-expand-all]")) {
+        if (view === "preview" && previewIdx !== null && S.days[previewIdx]) {
+          previewOpenExs = S.days[previewIdx].ex.map((_, idx) => idx);
+        } else if (S.active) {
+          S.active.openExs = S.active.exs.map((_, idx) => idx);
+          save();
+        }
+        render();
+        return;
+      }
+      if (b = A("[data-done]")) {
+        const a = S.active, k = b.dataset.done;
+        const exIdx = parseInt(k.split("|")[0], 10);
+        a.data[k] ??= { w: "", r: "", done: false };
+        a.data[k].done = !a.data[k].done;
+        a.lastActivity = Date.now();
+        // Po dokončení všech sérií cviku ho automaticky sbal a rozbal další nedokončený cvik
+        if (a.data[k].done && isExComplete(a, exIdx)) {
+          const openList = getOpenExs(false);
+          const pos = openList.indexOf(exIdx);
+          if (pos >= 0) openList.splice(pos, 1);
+          const nextUndone = a.exs.findIndex((_, idx) => idx > exIdx && !isExComplete(a, idx));
+          const fallbackUndone = nextUndone >= 0 ? nextUndone : a.exs.findIndex((_, idx) => !isExComplete(a, idx));
+          if (fallbackUndone >= 0 && !openList.includes(fallbackUndone)) {
+            openList.push(fallbackUndone);
+          }
+        }
+        save(); render();
+        if (a.data[k].done) startTimer(+b.dataset.rest, b.dataset.exname);
+        return;
+      }
+      if (b = A("[data-addset]")) {
+        const a = S.active, i = +b.dataset.addset;
+        const k = a.exs[i].s; a.exs[i].s++;
+        a.data[`${i}|${k}`] = { w: a.data[`${i}|${k - 1}`]?.w || "", r: a.data[`${i}|${k - 1}`]?.r || "", done: false };
+        a.lastActivity = Date.now();
+        save(); render(); return;
+      }
+      if (A("[data-finish]")) return openStopModal();
+      if (A("[data-cancel]")) return cancel();
+      if (b = A("[data-addex]")) {
+        S.days[+b.dataset.addex].ex.push({ n: "Nový cvik", m: "", s: 3, r: "8–10", rest: 60, img: "", tip: "", warn: "" });
+        save(); render(); return;
+      }
+      if (A("[data-addday]")) {
+        const idx = S.days.length + 1;
+        S.days.push({ name: `Den ${idx}`, title: "Nový modul", focus: "Zaměření", color: "#a855f7", min: 50, warm: "", ex: [{ n: "Cvik 1", m: "", s: 3, r: "8–10", rest: 60, img: "", tip: "", warn: "" }] });
+        save(); render(); toast("Přidán nový tréninkový den"); return;
+      }
+      if (b = A("[data-dday]")) {
+        const d = +b.dataset.dday;
+        askConfirm("Smazat tréninkový den?", `Opravdu chceš odstranit celý modul „${S.days[d].name}“?`, () => {
+          S.days.splice(d, 1); save(); render();
+        }, "Smazat");
+        return;
+      }
+      if (b = A("[data-dex]")) {
+        const [d, j] = b.dataset.dex.split("|").map(Number);
+        askConfirm("Smazat cvik?", `Opravdu odstranit cvik „${S.days[d].ex[j].n}“?`, () => {
+          S.days[d].ex.splice(j, 1); save(); render();
+        }, "Smazat");
+        return;
+      }
+      if (A("[data-preset]")) {
+        askConfirm("Obnovit výchozí plán?", "Tvé úpravy tréninkového plánu se přepíšou na původní 4denní rozpis Jarvis. Historie odjetých tréninků zůstane zachována.", () => {
+          S.days = clone(DEF); save(); render(); toast("Výchozí program obnoven ✓");
+        }, "Obnovit");
+        return;
+      }
+      if (A("[data-csv-sessions]")) return exportSessionsCSV();
+      if (A("[data-csv-weights]")) return exportWeightsCSV();
+      if (A("[data-csv-plan-out]")) return exportPlanCSV();
+      if (A("[data-csv-plan-in]")) { $("#importPlanCsv").click(); return; }
+      if (A("[data-export]")) {
+        const blob = new Blob([JSON.stringify(S, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `jarvis-zaloha-${today()}.json`;
+        a.click();
+        return;
+      }
+      if (A("[data-import-btn]")) { $("#importFile").click(); return; }
+      if (b = A("[data-show-img]")) {
+        e.stopPropagation();
+        const exIdx = +b.dataset.showImg;
+        const exObj = view === "preview"
+          ? S.days[previewIdx]?.ex?.[exIdx]
+          : S.active?.exs?.[exIdx];
+        openImgModal(exObj);
+        return;
+      }
+      if (b = A("[data-show-plan-img]")) {
+        const [d, j] = b.dataset.showPlanImg.split("|").map(Number);
+        openImgModal(S.days[d]?.ex?.[j]);
+        return;
+      }
+      if (b = A("[data-copy-img]")) {
+        const [d, j] = b.dataset.copyImg.split("|").map(Number);
+        const ex = S.days[d]?.ex?.[j];
+        if (ex) {
+          const k = getExImgKey(ex);
+          const fileName = MEDIA_EXT_RE.test(k) ? k.replace(/^img\//i, "") : `${k}.mp4`;
+          copyText(fileName);
+        }
+        return;
+      }
+      if (t.id === "openPlateBtn") {
+        $("#plateModal").classList.remove("hidden");
+        $("#plateModal").classList.add("flex");
+        renderPlates(); return;
+      }
+      if (t.id === "closePlate" || t.id === "closePlateBtn") {
+        $("#plateModal").classList.add("hidden");
+        $("#plateModal").classList.remove("flex");
+        return;
+      }
+    });
+
+    document.addEventListener("change", e => {
+      if (e.target.id === "importFile" && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          try {
+            const parsed = JSON.parse(ev.target.result);
+            if (parsed && parsed.days) { S = parsed; save(); render(); toast("JSON záloha nahrána ✓"); }
+          } catch (err) { toast("Chybný soubor zálohy"); }
+        };
+        reader.readAsText(e.target.files[0]);
+      }
+      if (e.target.id === "importPlanCsv" && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = ev => importPlanFromCSV(ev.target.result);
+        reader.readAsText(e.target.files[0], "UTF-8");
+      }
+    });
+
+    document.addEventListener("input", e => {
+      const t = e.target;
+      if (t.id === "ptTarget" || t.id === "ptBar") return renderPlates();
+      if (t.dataset.sf) {
+        const a = S.active; if (!a) return;
+        a.data[t.dataset.key] ??= { w: "", r: "", done: false };
+        a.data[t.dataset.key][t.dataset.sf] = t.value;
+        a.lastActivity = Date.now();
+        save();
+        updateLiveSessionNumbers();
+      } else if (t.dataset.pf) {
+        const [d, j, f] = t.dataset.pf.split("|");
+        const ex = S.days[+d].ex[+j];
+        ex[f] = (f === "s" || f === "rest") ? (parseInt(t.value) || 0) : t.value;
+        save();
+      } else if (t.dataset.pday) {
+        const [d, f] = t.dataset.pday.split("|");
+        S.days[+d][f] = t.value;
+        save();
+      } else if (t.id === "note" && S.active) {
+        S.active.note = t.value; save();
+      }
+    });
+
+    /* =========================================================================
+       ČASOVAČ TRÉNINKU + VELKÉ VYSKAKOVACÍ OKNO PAUZY (ŘÍZENO Date.now())
+       ========================================================================= */
+    function startElapsed() {
+      clearInterval(elTimer);
+      const tick = () => {
+        const el = $("#elapsed");
+        if (!el || !S.active) { clearInterval(elTimer); return; }
+        checkAutoStopGuard();
+        el.textContent = mmss(getDisplayDurationSec());
+      };
+      tick();
+      elTimer = setInterval(tick, 1000);
+    }
+
+    const CIRC = 326.7; // 2 * PI * 52
+    function paintTimer() {
+      const str = mmss(left);
+      $("#tmVal").textContent = str;
+      $("#tbVal").textContent = str;
+      const frac = restTotal > 0 ? Math.max(0, Math.min(1, left / restTotal)) : 0;
+      $("#tmRing").style.strokeDashoffset = String(CIRC * (1 - frac));
+    }
+
+    function setTimerDoneStyle(isDone) {
+      const modal = $("#tmodal"), bar = $("#tbar"), ring = $("#tmRing");
+      const tag = $("#tmTag"), val = $("#tmVal"), btn = $("#tmClose"), bVal = $("#tbVal");
+      if (isDone) {
+        modal.classList.replace("border-accent", "border-ok");
+        bar.classList.replace("border-accent", "border-ok");
+        ring.setAttribute("stroke", "#34d399");
+        tag.classList.replace("text-accent", "text-ok");
+        val.classList.replace("text-white", "text-ok");
+        btn.classList.replace("bg-accent", "bg-ok");
+        bVal.classList.replace("text-accent", "text-ok");
+      } else {
+        modal.classList.replace("border-ok", "border-accent");
+        bar.classList.replace("border-ok", "border-accent");
+        ring.setAttribute("stroke", "#ff5a5f");
+        tag.classList.replace("text-ok", "text-accent");
+        val.classList.replace("text-ok", "text-white");
+        btn.classList.replace("bg-ok", "bg-accent");
+        bVal.classList.replace("text-ok", "text-accent");
+      }
+    }
+
+    function tickTimer() {
+      left = Math.max(0, Math.ceil((restEnd - Date.now()) / 1000));
+      paintTimer();
+      if (left <= 0) {
+        clearInterval(tid); tid = null; left = 0; paintTimer();
+        $("#tmTag").textContent = "Pauza skončila!";
+        $("#tmSub").textContent = "Jdeme na další sérii";
+        $("#tmClose").textContent = "Jdu na sérii ✓";
+        $("#tbLbl").textContent = "Hotovo – další série!";
+        setTimerDoneStyle(true);
+        if (navigator.vibrate) navigator.vibrate([350, 150, 350, 150, 500]);
+        playBeep();
+      }
+    }
+
+    function startTimer(sec, contextStr) {
+      clearInterval(tid);
+      restTotal = Math.max(5, sec);
+      left = restTotal;
+      restEnd = Date.now() + restTotal * 1000;
+      if (contextStr) timerContext = contextStr;
+
+      $("#tmEx").textContent = timerContext || "Odpočinek";
+      $("#tbEx").textContent = timerContext || "Odpočinek";
+      $("#tmTag").textContent = "Pauza mezi sériemi";
+      $("#tmSub").textContent = `Cílová pauza ${restTotal} s`;
+      $("#tmClose").textContent = "Přeskočit pauzu";
+      $("#tbLbl").textContent = "Pauza (klikni pro zvětšení)";
+
+      setTimerDoneStyle(false);
+      $("#tbar").classList.add("hidden");
+      $("#tbar").classList.remove("flex");
+      $("#tmodalBackdrop").classList.remove("hidden");
+      $("#tmodalBackdrop").classList.add("flex");
+
+      paintTimer();
+      tid = setInterval(tickTimer, 250);
+    }
+
+    function adjustTimer(deltaSec) {
+      const curLeft = Math.max(0, Math.ceil((restEnd - Date.now()) / 1000));
+      const nextLeft = Math.max(5, curLeft + deltaSec);
+      restTotal = Math.max(restTotal, nextLeft);
+      left = nextLeft;
+      restEnd = Date.now() + nextLeft * 1000;
+      setTimerDoneStyle(false);
+      $("#tmTag").textContent = "Pauza mezi sériemi";
+      $("#tmClose").textContent = "Přeskočit pauzu";
+      paintTimer();
+      if (!tid) tid = setInterval(tickTimer, 250);
+    }
+
+    function closeTimer() {
+      clearInterval(tid); tid = null;
+      $("#tmodalBackdrop").classList.add("hidden");
+      $("#tmodalBackdrop").classList.remove("flex");
+      $("#tbar").classList.add("hidden");
+      $("#tbar").classList.remove("flex");
+    }
+
+    function minimizeTimer() {
+      $("#tmodalBackdrop").classList.add("hidden");
+      $("#tmodalBackdrop").classList.remove("flex");
+      $("#tbar").classList.remove("hidden");
+      $("#tbar").classList.add("flex");
+    }
+
+    $("#tmMinus15").addEventListener("click", () => adjustTimer(-15));
+    $("#tmPlus30").addEventListener("click", () => adjustTimer(30));
+    $("#tmClose").addEventListener("click", closeTimer);
+    $("#tmMinimize").addEventListener("click", minimizeTimer);
+    $("#tbar").addEventListener("click", e => {
+      if (e.target.id === "tbClose") return closeTimer();
+      $("#tbar").classList.add("hidden");
+      $("#tbar").classList.remove("flex");
+      $("#tmodalBackdrop").classList.remove("hidden");
+      $("#tmodalBackdrop").classList.add("flex");
+    });
+
+    // Inicializace aplikace při načtení okna
     render();
-    window.scrollTo({top: 0, behavior: "smooth"});
-    return;
-  }
-  if (A("[data-wcancel]")){ editWeightId = null; render(); return; }
-  if (b = A("[data-wdel]")){
-    if (confirm("Smazat tento zápis váhy?")){ S.weights = S.weights.filter(w=>String(w.id)!==b.dataset.wdel); if(String(editWeightId)===b.dataset.wdel) editWeightId=null; save(); render(); }
-    return;
-  }
-  if (b = A("[data-sedit]")){
-    e.stopPropagation();
-    editSavedSession(b.dataset.sedit);
-    return;
-  }
-  if (b = A("[data-sdel]")){
-    e.stopPropagation();
-    if (confirm("Smazat tento trénink?")){ S.sessions = S.sessions.filter(s=>String(s.id)!==b.dataset.sdel); save(); render(); }
-    return;
-  }
-  if (b = A("[data-sopen]")){ exp = exp === String(b.dataset.sopen) ? null : String(b.dataset.sopen); render(); return; }
-  if (b = A("[data-done]")){
-    const a = S.active, k = b.dataset.done;
-    a.data[k] ??= {w:"", r:"", done:false};
-    a.data[k].done = !a.data[k].done;
-    save(); render();
-    if (a.data[k].done) startTimer(+b.dataset.rest, b.dataset.exname);
-    return;
-  }
-  if (b = A("[data-addset]")){
-    const a = S.active, i = +b.dataset.addset;
-    const k = a.exs[i].s; a.exs[i].s++;
-    a.data[`${i}|${k}`] = {w: a.data[`${i}|${k-1}`]?.w || "", r: a.data[`${i}|${k-1}`]?.r || "", done:false};
-    save(); render(); return;
-  }
-  if (A("[data-finish]")) return finish();
-  if (A("[data-cancel]")) return cancel();
-  if (b = A("[data-addex]")){
-    S.days[+b.dataset.addex].ex.push({n:"Nový cvik", m:"", s:3, r:"8–10", rest:60, tip:"", warn:""});
-    save(); render(); return;
-  }
-  if (A("[data-addday]")){
-    const idx = S.days.length + 1;
-    S.days.push({name:`Den ${idx}`, title:"Nový modul", focus:"Zaměření", color:"#a855f7", min:50, warm:"", ex:[{n:"Cvik 1", m:"", s:3, r:"8–10", rest:60, tip:"", warn:""}]});
-    save(); render(); toast("Přidán nový tréninkový den"); return;
-  }
-  if (b = A("[data-dday]")){
-    const d = +b.dataset.dday;
-    if (confirm(`Smazat celý den „${S.days[d].name}“?`)){ S.days.splice(d,1); save(); render(); }
-    return;
-  }
-  if (b = A("[data-dex]")){
-    const [d,j] = b.dataset.dex.split("|").map(Number);
-    if (confirm(`Smazat cvik „${S.days[d].ex[j].n}“?`)){ S.days[d].ex.splice(j,1); save(); render(); }
-    return;
-  }
-  if (A("[data-preset]")){
-    if (confirm("Obnovit výchozí program? Tvé úpravy programu se přepíšou (historie tréninků zůstane).")){ S.days = clone(DEF); save(); render(); }
-    return;
-  }
-  if (A("[data-csv-sessions]")) return exportSessionsCSV();
-  if (A("[data-csv-weights]")) return exportWeightsCSV();
-  if (A("[data-csv-plan-out]")) return exportPlanCSV();
-  if (A("[data-csv-plan-in]")){ $("#importPlanCsv").click(); return; }
-  if (A("[data-export]")){
-    const blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = `jarvis-zaloha-${today()}.json`;
-    a.click();
-    return;
-  }
-  if (A("[data-import-btn]")){ $("#importFile").click(); return; }
-  if (t.id === "openPlateBtn"){ $("#plateModal").classList.add("on"); renderPlates(); return; }
-  if (t.id === "closePlate" || t.id === "closePlateBtn"){ $("#plateModal").classList.remove("on"); return; }
-});
-
-document.addEventListener("change", e => {
-  if (e.target.id === "importFile" && e.target.files[0]){
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const parsed = JSON.parse(ev.target.result);
-        if (parsed && parsed.days){ S = parsed; save(); render(); toast("JSON záloha nahrána ✓"); }
-      } catch(err){ toast("Chybný soubor zálohy"); }
-    };
-    reader.readAsText(e.target.files[0]);
-  }
-  if (e.target.id === "importPlanCsv" && e.target.files[0]){
-    const reader = new FileReader();
-    reader.onload = ev => importPlanFromCSV(ev.target.result);
-    reader.readAsText(e.target.files[0], "UTF-8");
-  }
-});
-
-document.addEventListener("input", e => {
-  const t = e.target;
-  if (t.id === "ptTarget" || t.id === "ptBar") return renderPlates();
-  if (t.dataset.sf){
-    const a = S.active; if (!a) return;
-    a.data[t.dataset.key] ??= {w:"", r:"", done:false};
-    a.data[t.dataset.key][t.dataset.sf] = t.value;
-    save();
-    updateLiveSessionNumbers();
-  } else if (t.dataset.pf){
-    const [d,j,f] = t.dataset.pf.split("|");
-    const ex = S.days[+d].ex[+j];
-    ex[f] = (f === "s" || f === "rest") ? (parseInt(t.value) || 0) : t.value;
-    save();
-  } else if (t.dataset.pday){
-    const [d,f] = t.dataset.pday.split("|");
-    S.days[+d][f] = t.value;
-    save();
-  } else if (t.id === "note" && S.active){
-    S.active.note = t.value; save();
-  }
-});
-
-/* ---------- Elapsed + Velký vyskakovací časovač ---------- */
-function startElapsed(){
-  clearInterval(elTimer);
-  const tick = () => {
-    const el = $("#elapsed");
-    if (!el || !S.active){ clearInterval(elTimer); return; }
-    el.textContent = mmss(Math.floor((Date.now() - S.active.start)/1000));
-  };
-  tick(); elTimer = setInterval(tick, 1000);
-}
-
-const CIRC = 326.7;
-function paintTimer(){
-  const str = mmss(left);
-  $("#tmVal").textContent = str;
-  $("#tbVal").textContent = str;
-  const frac = restTotal > 0 ? Math.max(0, Math.min(1, left / restTotal)) : 0;
-  $("#tmRing").style.strokeDashoffset = String(CIRC * (1 - frac));
-}
-
-function tickTimer(){
-  left = Math.max(0, Math.ceil((restEnd - Date.now()) / 1000));
-  paintTimer();
-  if (left <= 0){
-    clearInterval(tid); tid = null; left = 0; paintTimer();
-    $("#tmTag").textContent = "Pauza skončila!";
-    $("#tmSub").textContent = "Jdeme na další sérii";
-    $("#tmClose").textContent = "Jdu na sérii ✓";
-    $("#tbLbl").textContent = "Hotovo – další série!";
-    $("#tmodal").classList.add("done");
-    $("#tbar").classList.add("done");
-    if (navigator.vibrate) navigator.vibrate([350, 150, 350, 150, 500]);
-    playBeep();
-  }
-}
-
-function startTimer(sec, contextStr){
-  clearInterval(tid);
-  restTotal = Math.max(5, sec);
-  left = restTotal;
-  restEnd = Date.now() + restTotal * 1000;
-  if (contextStr) timerContext = contextStr;
-
-  $("#tmEx").textContent = timerContext || "Odpočinek";
-  $("#tbEx").textContent = timerContext || "Odpočinek";
-  $("#tmTag").textContent = "Pauza mezi sériemi";
-  $("#tmSub").textContent = `Cílová pauza ${restTotal} s`;
-  $("#tmClose").textContent = "Přeskočit pauzu";
-  $("#tbLbl").textContent = "Pauza (klikni pro zvětšení)";
-
-  $("#tmodal").classList.remove("done");
-  $("#tbar").classList.remove("done", "on");
-  $("#tmodalBackdrop").classList.add("on");
-
-  paintTimer();
-  tid = setInterval(tickTimer, 250);
-}
-
-function adjustTimer(deltaSec){
-  const curLeft = Math.max(0, Math.ceil((restEnd - Date.now()) / 1000));
-  const nextLeft = Math.max(5, curLeft + deltaSec);
-  restTotal = Math.max(restTotal, nextLeft);
-  left = nextLeft;
-  restEnd = Date.now() + nextLeft * 1000;
-  $("#tmodal").classList.remove("done");
-  $("#tbar").classList.remove("done");
-  $("#tmTag").textContent = "Pauza mezi sériemi";
-  $("#tmClose").textContent = "Přeskočit pauzu";
-  paintTimer();
-  if (!tid) tid = setInterval(tickTimer, 250);
-}
-
-function closeTimer(){
-  clearInterval(tid); tid = null;
-  $("#tmodalBackdrop").classList.remove("on");
-  $("#tbar").classList.remove("on", "done");
-}
-
-function minimizeTimer(){
-  $("#tmodalBackdrop").classList.remove("on");
-  $("#tbar").classList.add("on");
-}
-
-$("#tmMinus15").addEventListener("click", () => adjustTimer(-15));
-$("#tmPlus30").addEventListener("click", () => adjustTimer(30));
-$("#tmClose").addEventListener("click", closeTimer);
-$("#tmMinimize").addEventListener("click", minimizeTimer);
-$("#tbar").addEventListener("click", e => {
-  if (e.target.id === "tbClose") return closeTimer();
-  $("#tbar").classList.remove("on");
-  $("#tmodalBackdrop").classList.add("on");
-});
-
-render();
-</script>
+  </script>
 </body>
 </html>
