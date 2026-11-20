@@ -35,14 +35,21 @@
     };
   </script>
   <style>
-    /* Jemné doplňkové styly pro animace, tabular-nums a plynulé přechody */
-    * { -webkit-tap-highlight-color: transparent; }
-    body {
+    /* Jemné doplňkové styly + ochrana proti přetečení na mobilních displejích (Android Chrome) */
+    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
       background-color: #0b0d12;
       color: #eef1f7;
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
+    input, textarea, select {
+      min-width: 0;
+      max-width: 100%;
+    }
     .tabular-nums { font-variant-numeric: tabular-nums; }
+    details summary { list-style: none; }
     details summary::-webkit-details-marker { display: none; }
     @keyframes popIn {
       from { opacity: 0; transform: scale(0.95); }
@@ -54,21 +61,21 @@
 <body class="min-h-screen bg-bg text-[#eef1f7] pb-28 antialiased selection:bg-accent selection:text-bg">
 
   <!-- Hlavní kontejner pro dynamické pohledy (Domů, Trénink, Deník, Program) -->
-  <main id="view" class="max-w-2xl mx-auto px-4 pt-4"></main>
+  <main id="view" class="w-full max-w-2xl mx-auto px-3 sm:px-4 pt-4"></main>
 
   <!-- Spodní navigační lišta -->
-  <nav class="fixed bottom-0 left-0 right-0 z-20 flex bg-bg/95 backdrop-blur-md border-t border-line px-2 py-2 shadow-2xl">
-    <button data-go="home" class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
+  <nav class="fixed bottom-0 left-0 right-0 w-full z-20 flex bg-bg/95 backdrop-blur-md border-t border-line px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))] shadow-2xl">
+    <button data-go="home" class="nav-btn flex-1 min-w-0 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
       <span class="text-xl leading-none">🏠</span>
-      <span class="text-[11px] font-semibold">Domů</span>
+      <span class="text-[11px] font-semibold truncate">Domů</span>
     </button>
-    <button data-go="diary" class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
+    <button data-go="diary" class="nav-btn flex-1 min-w-0 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
       <span class="text-xl leading-none">📊</span>
-      <span class="text-[11px] font-semibold">Deník & Grafy</span>
+      <span class="text-[11px] font-semibold truncate">Deník & Grafy</span>
     </button>
-    <button data-go="program" class="nav-btn flex-1 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
+    <button data-go="program" class="nav-btn flex-1 min-w-0 flex flex-col items-center gap-0.5 py-1.5 rounded-xl text-slate-400 hover:text-white transition">
       <span class="text-xl leading-none">⚙️</span>
-      <span class="text-[11px] font-semibold">Plán & Excel</span>
+      <span class="text-[11px] font-semibold truncate">Plán & Excel</span>
     </button>
   </nav>
 
@@ -130,12 +137,12 @@
         <div>
           <label class="block text-xs text-slate-400 mb-1">Cílová váha (kg)</label>
           <input type="number" id="ptTarget" value="60" step="2.5" inputmode="decimal"
-                 class="w-full bg-surface2 border border-line rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-cyanpro">
+                 class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-cyanpro">
         </div>
         <div>
           <label class="block text-xs text-slate-400 mb-1">Váha osy (kg)</label>
           <input type="number" id="ptBar" value="20" step="2" inputmode="decimal"
-                 class="w-full bg-surface2 border border-line rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-cyanpro">
+                 class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-cyanpro">
         </div>
       </div>
       <div id="plateResult" class="bg-surface2 border border-line rounded-2xl p-4 mb-4 text-center"></div>
@@ -180,7 +187,7 @@
       <div class="mb-4">
         <label for="smDurInput" class="block text-xs font-semibold text-slate-400 mb-1">Doba tréninku v minutách (můžeš upravit):</label>
         <input id="smDurInput" type="number" min="1" max="300" inputmode="numeric"
-               class="w-full bg-surface2 border border-line rounded-xl px-3 py-2.5 text-center text-lg font-extrabold text-white tabular-nums focus:outline-none focus:border-ok">
+               class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2.5 text-center text-lg font-extrabold text-white tabular-nums focus:outline-none focus:border-ok">
       </div>
 
       <button id="smSave" class="w-full py-3.5 rounded-2xl bg-ok text-bg font-extrabold text-base hover:brightness-110 active:scale-95 transition mb-2.5">Uložit trénink ✓</button>
@@ -232,7 +239,7 @@
   </div>
 
   <!-- Notifikační lišta (Toast) -->
-  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 -translate-y-24 opacity-0 pointer-events-none z-50 bg-ok text-bg font-extrabold text-sm px-5 py-2.5 rounded-2xl shadow-xl transition-all duration-300"></div>
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 -translate-y-24 opacity-0 pointer-events-none z-50 bg-ok text-bg font-extrabold text-sm px-5 py-2.5 rounded-2xl shadow-xl transition-all duration-300 max-w-[90vw] text-center"></div>
 
   <script>
     /* =========================================================================
@@ -366,8 +373,8 @@
     // Stav aplikace
     let S = load();
     let view = "home";
-    let previewIdx = null; // Index prohlíženého tréninku před kliknutím na START
-    let previewOpenExs = []; // Rozbalené cviky v režimu náhledu
+    let previewIdx = null;
+    let previewOpenExs = [];
     let exp = null;
     let elTimer = null;
     let editWeightId = null;
@@ -387,7 +394,6 @@
             "Den 4|3D Speciál": "RAMENA - TRAPÉZY A PAŽE"
           };
           let migrated = false;
-          // Mapa výchozích názvů obrázků z DEF pro zpětnou kompatibilitu uložených plánů
           const defImgByName = {};
           DEF.forEach(dd => dd.ex.forEach(ee => { defImgByName[ee.n] = ee.img; }));
           x.days.forEach(d => {
@@ -429,7 +435,7 @@
       }, 2400);
     }
 
-    // Vlastní potvrzovací modální okno (bez použití nativního confirm())
+    // Vlastní potvrzovací modální okno
     function askConfirm(title, message, onYes, okLabel = "Potvrdit") {
       $("#cmTitle").textContent = title;
       $("#cmMsg").textContent = message;
@@ -512,7 +518,6 @@
       return [];
     }
 
-    // Zjištění, zda jsou všechny série daného cviku odškrtnuté
     function isExComplete(sess, exIdx) {
       const e = sess?.exs?.[exIdx];
       if (!e || e.s <= 0) return false;
@@ -522,7 +527,6 @@
       return true;
     }
 
-    // Počet odškrtnutých sérií u konkrétního cviku
     function countExDone(sess, exIdx) {
       const e = sess?.exs?.[exIdx];
       if (!e) return 0;
@@ -533,7 +537,6 @@
       return done;
     }
 
-    // Vrátí pole indexů aktuálně rozbalených cviků (uloženo i po odchodu z aplikace)
     function getOpenExs(isPreview) {
       if (isPreview) return previewOpenExs;
       if (!S.active) return [];
@@ -591,7 +594,6 @@
       if (!a || a.editing) return false;
       const elapsedMin = Math.floor((Date.now() - a.start) / 60000);
       if (elapsedMin >= MAX_AUTO_MIN && !a.autoPaused) {
-        // Odhad reálné doby tréninku podle poslední aktivity (+ 5 min rezerva), omezeno na 15–150 min
         const lastAct = a.lastActivity || a.start;
         const rawRealMin = Math.round((lastAct - a.start) / 60000) + 5;
         a.frozenDurMin = Math.max(15, Math.min(150, rawRealMin));
@@ -647,7 +649,7 @@
       const ew = editWeightId ? S.weights.find(w => String(w.id) === String(editWeightId)) : null;
 
       let h = `
-        <section class="rounded-3xl p-5 mb-5 border border-[#3a2530] bg-gradient-to-br from-[#2a1a22] via-surface to-surface shadow-lg">
+        <section class="rounded-3xl p-4 sm:p-5 mb-5 border border-[#3a2530] bg-gradient-to-br from-[#2a1a22] via-surface to-surface shadow-lg">
           <span class="block text-sm font-black uppercase tracking-wider text-accent">Systém Jarvis v3.0 PRO - Gym APP</span>
           <p class="text-base font-semibold text-slate-200 mt-1">${fmtTodayFull()}</p>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
@@ -696,12 +698,12 @@
           ` : ""}
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew ? ew.kg : ""}"
-                   class="bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-accent">
+                   class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-accent">
             <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew && ew.cm ? ew.cm : ""}"
-                   class="bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-cyanpro">
+                   class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-cyanpro">
             <input id="wdate" type="date" value="${ew ? ew.date : today()}"
-                   class="bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
-            <button data-wsave class="py-2.5 px-4 rounded-xl font-extrabold text-sm ${ew ? "bg-ok text-bg" : "bg-accent text-bg"} active:scale-95 transition">
+                   class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-accent">
+            <button data-wsave class="w-full py-2.5 px-4 rounded-xl font-extrabold text-sm ${ew ? "bg-ok text-bg" : "bg-accent text-bg"} active:scale-95 transition">
               ${ew ? "Uložit změnu" : "Zapsat"}
             </button>
           </div>
@@ -750,12 +752,12 @@
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <input id="wkg" type="number" step="0.1" inputmode="decimal" placeholder="Váha (kg)" value="${ew.kg}"
-                     class="bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white font-bold">
+                     class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white font-bold">
               <input id="wcm" type="number" step="0.5" inputmode="decimal" placeholder="Pas (cm)" value="${ew.cm || ""}"
-                     class="bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white font-bold">
+                     class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white font-bold">
               <input id="wdate" type="date" value="${ew.date}"
-                     class="bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
-              <button data-wsave class="py-2 px-3 rounded-xl bg-ok text-bg font-extrabold text-sm">Uložit opravu</button>
+                     class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+              <button data-wsave class="w-full py-2 px-3 rounded-xl bg-ok text-bg font-extrabold text-sm">Uložit opravu</button>
             </div>
           </div>
         `;
@@ -772,9 +774,9 @@
           ${ws.length ? `
             <div class="max-h-56 overflow-y-auto mt-3 divide-y divide-line">
               ${ws.map(w => `
-                <div class="flex justify-between items-center py-2.5 text-sm">
+                <div class="flex justify-between items-center py-2.5 text-sm gap-2">
                   <span class="font-semibold text-slate-200">${fmt(w.date)}</span>
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-1.5 sm:gap-2">
                     <b class="text-accent tabular-nums">${w.kg} kg</b>
                     ${w.cm ? `<span class="text-slate-500">·</span><b class="text-cyanpro tabular-nums">${w.cm} cm</b>` : ""}
                     <button data-wedit="${w.id}" title="Upravit" class="px-2 py-1 text-xs rounded-lg bg-surface2 text-slate-300 hover:text-white">✎</button>
@@ -811,13 +813,13 @@
           return `
             <div data-sopen="${s.id}" class="bg-surface border border-line rounded-2xl p-4 mb-3 cursor-pointer hover:border-slate-600 transition">
               <div class="flex justify-between items-start gap-2">
-                <div>
-                  <b class="text-base font-extrabold text-white">${esc(s.dayName)}</b>
+                <div class="min-w-0">
+                  <b class="text-base font-extrabold text-white block truncate">${esc(s.dayName)}</b>
                   <div class="text-xs text-slate-400 mt-0.5">
                     ${fmt(s.date)} · ${s.dur} min · ${done} sérií · <b class="text-cyanpro">⚡ ${fmtNum(vol)} kg</b>
                   </div>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-1.5 shrink-0">
                   <button data-sedit="${s.id}" class="px-2.5 py-1 text-xs font-semibold rounded-lg bg-surface2 text-slate-200 hover:text-white">✎ Upravit</button>
                   <button data-sdel="${s.id}" class="px-2 py-1 text-xs font-semibold rounded-lg bg-surface2 text-red-400 hover:text-red-300">✕</button>
                 </div>
@@ -830,9 +832,9 @@
                       const d = s.data[`${j}|${k}`];
                       const sv = setVolume(d);
                       return d && (d.w || d.r) ? `
-                        <div class="flex justify-between text-xs py-1 border-b border-white/5 last:border-0">
-                          <span class="text-slate-400">Série ${k + 1}</span>
-                          <span>
+                        <div class="flex justify-between gap-2 text-xs py-1 border-b border-white/5 last:border-0">
+                          <span class="text-slate-400 shrink-0">Série ${k + 1}</span>
+                          <span class="text-right">
                             <b class="text-white">${esc(d.w || "0")} kg × ${esc(d.r || "0")}</b>
                             <span class="text-slate-400 ml-1">(${fmtNum(sv)} kg · e1RM ${e1RM(d)} kg)</span>
                             ${d.done ? "" : `<span class="text-amber-400 ml-1">(neodškrtnuto)</span>`}
@@ -842,9 +844,9 @@
                     }).join("");
                     return `
                       <div>
-                        <div class="flex justify-between text-sm mb-1">
+                        <div class="flex justify-between gap-2 text-sm mb-1">
                           <b class="text-white">${esc(e.n)}</b>
-                          <span class="text-cyanpro font-bold text-xs">${fmtNum(exVol)} kg</span>
+                          <span class="text-cyanpro font-bold text-xs shrink-0">${fmtNum(exVol)} kg</span>
                         </div>
                         ${lines || `<div class="text-xs text-slate-500">Bez zápisu</div>`}
                       </div>
@@ -974,59 +976,59 @@
         h += `
           <section style="border-left-color:${d.color}" class="border-l-4 pl-3 mb-7">
             <div class="space-y-2 mb-3">
-              <div class="flex justify-between items-center">
-                <b style="color:${d.color}" class="text-base font-extrabold">${esc(d.name)}${d.title ? ` · ${esc(d.title)}` : ""}</b>
-                ${S.days.length > 1 ? `<button data-dday="${i}" class="text-xs font-semibold text-red-400 hover:text-red-300">Smazat den</button>` : ""}
+              <div class="flex justify-between items-center gap-2">
+                <b style="color:${d.color}" class="text-base font-extrabold truncate">${esc(d.name)}${d.title ? ` · ${esc(d.title)}` : ""}</b>
+                ${S.days.length > 1 ? `<button data-dday="${i}" class="text-xs font-semibold text-red-400 hover:text-red-300 shrink-0">Smazat den</button>` : ""}
               </div>
               <div class="grid grid-cols-2 gap-2">
-                <div>
+                <div class="min-w-0">
                   <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Název tréninku (dlaždice)</label>
-                  <input data-pday="${i}|name" value="${esc(d.name)}" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+                  <input data-pday="${i}|name" value="${esc(d.name)}" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
                 </div>
-                <div>
+                <div class="min-w-0">
                   <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Podtitulek (volitelné)</label>
-                  <input data-pday="${i}|title" value="${esc(d.title)}" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+                  <input data-pday="${i}|title" value="${esc(d.title)}" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
                 </div>
               </div>
               <div>
                 <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Zaměření</label>
-                <input data-pday="${i}|focus" value="${esc(d.focus)}" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
+                <input data-pday="${i}|focus" value="${esc(d.focus)}" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">
               </div>
               <div>
                 <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Rozcvička</label>
-                <textarea data-pday="${i}|warm" rows="2" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">${esc(d.warm)}</textarea>
+                <textarea data-pday="${i}|warm" rows="2" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm text-white">${esc(d.warm)}</textarea>
               </div>
             </div>
             <div class="space-y-2.5 mb-3">
               ${d.ex.map((e, j) => `
                 <div class="bg-surface border border-line rounded-2xl p-3 space-y-2">
                   <div class="flex gap-2 items-center">
-                    <input data-pf="${i}|${j}|n" value="${esc(e.n)}" placeholder="Název cviku" class="flex-1 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm font-bold text-white">
-                    <button data-dex="${i}|${j}" title="Smazat cvik" class="px-2.5 py-2 rounded-xl bg-surface2 text-red-400 hover:text-red-300 text-xs font-bold">✕</button>
+                    <input data-pf="${i}|${j}|n" value="${esc(e.n)}" placeholder="Název cviku" class="flex-1 min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-sm font-bold text-white">
+                    <button data-dex="${i}|${j}" title="Smazat cvik" class="px-2.5 py-2 rounded-xl bg-surface2 text-red-400 hover:text-red-300 text-xs font-bold shrink-0">✕</button>
                   </div>
-                  <input data-pf="${i}|${j}|m" value="${esc(e.m)}" placeholder="Stroj / vybavení" class="w-full bg-surface2 border border-line rounded-xl px-3 py-2 text-xs text-slate-200">
+                  <input data-pf="${i}|${j}|m" value="${esc(e.m)}" placeholder="Stroj / vybavení" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-2 text-xs text-slate-200">
                   <div class="grid grid-cols-3 gap-2">
-                    <div>
+                    <div class="min-w-0">
                       <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Série</label>
-                      <input type="number" min="1" data-pf="${i}|${j}|s" value="${e.s}" class="w-full bg-surface2 border border-line rounded-xl px-2.5 py-1.5 text-sm text-center font-bold text-white">
+                      <input type="number" min="1" data-pf="${i}|${j}|s" value="${e.s}" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-2 py-1.5 text-sm text-center font-bold text-white">
                     </div>
-                    <div>
+                    <div class="min-w-0">
                       <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Opak.</label>
-                      <input data-pf="${i}|${j}|r" value="${esc(e.r)}" class="w-full bg-surface2 border border-line rounded-xl px-2.5 py-1.5 text-sm text-center font-bold text-white">
+                      <input data-pf="${i}|${j}|r" value="${esc(e.r)}" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-2 py-1.5 text-sm text-center font-bold text-white">
                     </div>
-                    <div>
+                    <div class="min-w-0">
                       <label class="block text-[10px] uppercase tracking-wider text-slate-400 mb-0.5">Pauza (s)</label>
-                      <input type="number" min="0" data-pf="${i}|${j}|rest" value="${e.rest}" class="w-full bg-surface2 border border-line rounded-xl px-2.5 py-1.5 text-sm text-center font-bold text-white">
+                      <input type="number" min="0" data-pf="${i}|${j}|rest" value="${e.rest}" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-2 py-1.5 text-sm text-center font-bold text-white">
                     </div>
                   </div>
-                  <input data-pf="${i}|${j}|warn" value="${esc(e.warn)}" placeholder="Varování (nepovinné)" class="w-full bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs text-amber-200">
-                  <textarea data-pf="${i}|${j}|tip" rows="2" placeholder="Technika a provedení" class="w-full bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs text-slate-200">${esc(e.tip)}</textarea>
+                  <input data-pf="${i}|${j}|warn" value="${esc(e.warn)}" placeholder="Varování (nepovinné)" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs text-amber-200">
+                  <textarea data-pf="${i}|${j}|tip" rows="2" placeholder="Technika a provedení" class="w-full min-w-0 bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs text-slate-200">${esc(e.tip)}</textarea>
                   <div class="pt-1 border-t border-line/60">
                     <label class="block text-[10px] uppercase tracking-wider text-cyanpro mb-1">🎬 Soubor animace / obrázku (.mp4, .gif, .jpg) ve složce img/</label>
                     <div class="flex gap-1.5 items-center">
-                      <input data-pf="${i}|${j}|img" value="${esc(e.img ?? "")}" placeholder="${esc(toImgKey(e.n))}" class="flex-1 bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs font-mono text-cyanpro">
-                      <button type="button" data-copy-img="${i}|${j}" title="Kopírovat název souboru" class="px-2.5 py-1.5 rounded-xl bg-surface2 border border-line text-xs font-bold text-slate-200 hover:text-white">📋</button>
-                      <button type="button" data-show-plan-img="${i}|${j}" title="Náhled ukázky" class="px-2.5 py-1.5 rounded-xl bg-cyanpro/15 border border-cyanpro/40 text-xs font-bold text-cyanpro hover:bg-cyanpro/25">🎬</button>
+                      <input data-pf="${i}|${j}|img" value="${esc(e.img ?? "")}" placeholder="${esc(toImgKey(e.n))}" class="flex-1 min-w-0 bg-surface2 border border-line rounded-xl px-3 py-1.5 text-xs font-mono text-cyanpro">
+                      <button type="button" data-copy-img="${i}|${j}" title="Kopírovat název souboru" class="px-2.5 py-1.5 rounded-xl bg-surface2 border border-line text-xs font-bold text-slate-200 hover:text-white shrink-0">📋</button>
+                      <button type="button" data-show-plan-img="${i}|${j}" title="Náhled ukázky" class="px-2.5 py-1.5 rounded-xl bg-cyanpro/15 border border-cyanpro/40 text-xs font-bold text-cyanpro hover:bg-cyanpro/25 shrink-0">🎬</button>
                     </div>
                   </div>
                 </div>
@@ -1083,13 +1085,13 @@
             ${!isPreview ? `<span class="block text-[11px] font-bold uppercase tracking-widest ${a.editing ? "text-gold" : (a.autoPaused ? "text-amber-400" : "text-ok")}">
               ${a.editing ? "✎ Úprava uloženého tréninku" : (a.autoPaused ? "⚠️ Pozastaveno (ochrana proti 24h)" : "● Trénink probíhá")}
             </span>` : ""}
-            <h2 class="text-xl sm:text-2xl font-extrabold text-white leading-tight">${esc(a.dayName)}</h2>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white leading-tight break-words">${esc(a.dayName)}</h2>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
-            <button id="openPlateBtn" class="px-3 py-2 rounded-xl bg-surface2 border border-line text-cyanpro font-bold text-xs hover:bg-slate-800 transition">🧮 Kotouče</button>
+            <button id="openPlateBtn" class="px-2.5 sm:px-3 py-2 rounded-xl bg-surface2 border border-line text-cyanpro font-bold text-xs hover:bg-slate-800 transition">🧮 Kotouče</button>
             ${isPreview
-              ? `<button data-back-home class="px-3 py-2 rounded-xl bg-surface2 border border-line text-slate-200 font-bold text-xs hover:bg-slate-800 transition">← Zpět</button>`
-              : `<button data-cancel class="px-3 py-2 rounded-xl bg-surface2 border border-line text-red-400 font-bold text-xs hover:bg-red-500/10 transition">Zrušit</button>`
+              ? `<button data-back-home class="px-2.5 sm:px-3 py-2 rounded-xl bg-surface2 border border-line text-slate-200 font-bold text-xs hover:bg-slate-800 transition">← Zpět</button>`
+              : `<button data-cancel class="px-2.5 sm:px-3 py-2 rounded-xl bg-surface2 border border-line text-red-400 font-bold text-xs hover:bg-red-500/10 transition">Zrušit</button>`
             }
           </div>
         </div>
@@ -1123,17 +1125,17 @@
 
         <!-- Živé KPI během tréninku -->
         <div class="grid grid-cols-3 gap-2 mb-3">
-          <div class="bg-surface border border-line rounded-2xl p-2.5">
+          <div class="bg-surface border border-line rounded-2xl p-2.5 min-w-0">
             <span class="block text-[10px] font-bold uppercase text-slate-400">Čas</span>
             <div id="elapsed" class="text-base font-extrabold tabular-nums ${isPreview ? "text-slate-500" : (a.autoPaused ? "text-amber-300" : "text-white")} mt-0.5">${isPreview ? "0:00" : mmss(getDisplayDurationSec())}</div>
           </div>
-          <div class="bg-surface border border-line rounded-2xl p-2.5">
+          <div class="bg-surface border border-line rounded-2xl p-2.5 min-w-0">
             <span class="block text-[10px] font-bold uppercase text-slate-400">Série</span>
             <div id="sessSets" class="text-base font-extrabold tabular-nums text-white mt-0.5">${doneSets}/${totalSets}</div>
           </div>
-          <div class="bg-surface border border-line rounded-2xl p-2.5">
+          <div class="bg-surface border border-line rounded-2xl p-2.5 min-w-0">
             <span class="block text-[10px] font-bold uppercase text-slate-400">Nazvedáno</span>
-            <div id="sessVol" class="text-base font-extrabold tabular-nums text-cyanpro mt-0.5">${fmtNum(curVol)} kg</div>
+            <div id="sessVol" class="text-base font-extrabold tabular-nums text-cyanpro mt-0.5 truncate">${fmtNum(curVol)} kg</div>
           </div>
         </div>
       `;
@@ -1162,26 +1164,27 @@
         const isOpen = openList.includes(i);
         const exDone = isPreview ? 0 : countExDone(a, i);
         const allDone = !isPreview && isExComplete(a, i);
-        // Sbalený (kompaktní) stav – zobrazuje jen číslo/fajfku, název cviku, ikonku obrázku a stručný stav
+
+        // Sbalený (kompaktní) stav – čistý jeden řádek bez přetečení
         if (!isOpen) {
           return `
-            <article class="rounded-2xl border transition mb-2 flex items-center ${allDone ? "bg-ok/5 border-ok/40" : "bg-surface border-line hover:border-slate-600"}">
-              <button type="button" data-toggle-ex="${i}" class="flex-1 min-w-0 text-left pl-3.5 pr-2 py-3.5 flex items-center gap-2.5 select-none active:scale-[0.99] transition">
+            <article class="w-full overflow-hidden rounded-2xl border transition mb-2 flex items-center ${allDone ? "bg-ok/5 border-ok/40" : "bg-surface border-line hover:border-slate-600"}">
+              <button type="button" data-toggle-ex="${i}" class="flex-1 min-w-0 text-left pl-3 pr-1.5 py-3 flex items-center gap-2 select-none active:scale-[0.99] transition">
                 <span class="w-7 h-7 rounded-lg font-extrabold text-xs grid place-items-center shrink-0 ${allDone ? "bg-ok text-bg" : "bg-surface2 text-accent"}">
                   ${allDone ? "✓" : i + 1}
                 </span>
-                <h3 class="flex-1 min-w-0 text-[15px] font-extrabold leading-snug truncate ${allDone ? "text-ok" : "text-white"}">${esc(e.n)}</h3>
+                <h3 class="flex-1 min-w-0 text-sm sm:text-[15px] font-extrabold leading-snug truncate ${allDone ? "text-ok" : "text-white"}">${esc(e.n)}</h3>
                 <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg tabular-nums shrink-0 ${allDone ? "bg-ok/20 text-ok" : (exDone > 0 ? "bg-gold/15 text-gold" : "bg-surface2 text-slate-400")}">
                   ${isPreview ? `${e.s} × ${esc(e.r)}` : `${exDone}/${e.s}`}
                 </span>
-                <span class="text-slate-400 text-sm font-bold shrink-0">▸</span>
+                <span class="text-slate-400 text-xs font-bold shrink-0">▸</span>
               </button>
-              <button type="button" data-show-img="${i}" title="Ukázka cviku" class="mr-2.5 p-2 rounded-xl bg-surface2 border border-line text-sm hover:border-cyanpro active:scale-90 transition shrink-0">🖼️</button>
+              <button type="button" data-show-img="${i}" title="Ukázka cviku" class="mr-2 p-2 rounded-xl bg-surface2 border border-line text-sm hover:border-cyanpro active:scale-90 transition shrink-0">🖼️</button>
             </article>
           `;
         }
 
-        // Rozbalený stav – plný detail cviku se sériemi, váhami a technikou
+        // Rozbalený stav – responzivní grid s minmax(0,1fr) a w-full min-w-0 na vstupech
         const prev = lastExerciseHistory(e.n, a.id);
         const prevVol = prev.reduce((acc, p) => acc + numVal(p.w) * numVal(p.r), 0);
         const curExVol = isPreview ? 0 : exVolume(a, i);
@@ -1197,41 +1200,50 @@
           const isPR = rm > 0 && prevMaxRM > 0 && rm > prevMaxRM;
 
           return `
-            <div class="grid grid-cols-[26px_1fr_1fr_62px_46px] gap-1.5 items-center mb-2 ${isPreview ? "opacity-60" : ""}">
+            <div class="grid grid-cols-[20px_minmax(0,1fr)_minmax(0,1fr)_52px_42px] gap-1.5 items-center mb-2 w-full ${isPreview ? "opacity-65" : ""}">
               <span class="text-xs font-bold text-slate-400 text-center">${k + 1}</span>
               <input inputmode="decimal" placeholder="kg" value="${esc(d.w)}" ${isPreview ? "disabled" : `data-sf="w" data-key="${key}"`}
-                     class="bg-surface2 border border-line rounded-xl py-2.5 px-1 text-center text-sm font-bold text-white focus:outline-none focus:border-accent disabled:cursor-not-allowed">
+                     class="w-full min-w-0 bg-surface2 border border-line rounded-xl py-2.5 px-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-accent disabled:cursor-not-allowed">
               <input inputmode="numeric" placeholder="${esc(prevRep)}" value="${esc(d.r)}" ${isPreview ? "disabled" : `data-sf="r" data-key="${key}"`}
-                     class="bg-surface2 border border-line rounded-xl py-2.5 px-1 text-center text-sm font-bold text-white focus:outline-none focus:border-accent disabled:cursor-not-allowed">
-              <div id="svol-${i}-${k}" class="text-[11px] text-right text-slate-400 tabular-nums leading-tight">
-                ${sv > 0 ? `<b class="text-slate-200">${fmtNum(sv)}</b> kg${isPR ? `<br><span class="inline-block px-1.5 py-0.5 rounded bg-gold text-bg font-black text-[10px] mt-0.5">🏆 PR</span>` : ""}` : "–"}
+                     class="w-full min-w-0 bg-surface2 border border-line rounded-xl py-2.5 px-1.5 text-center text-sm font-bold text-white focus:outline-none focus:border-accent disabled:cursor-not-allowed">
+              <div id="svol-${i}-${k}" class="text-[11px] text-right text-slate-400 tabular-nums leading-tight truncate">
+                ${sv > 0 ? `<b class="text-slate-200">${fmtNum(sv)}</b> kg${isPR ? `<br><span class="inline-block px-1 py-0.5 rounded bg-gold text-bg font-black text-[9px] mt-0.5">🏆 PR</span>` : ""}` : "–"}
               </div>
               <button ${isPreview ? `data-need-start` : `data-done="${key}" data-rest="${e.rest}" data-exname="${esc(e.n)} · Série ${k + 1}/${e.s}"`}
-                      class="w-11 h-11 rounded-xl font-black text-lg transition active:scale-90 ${d.done ? "bg-ok text-bg border border-ok" : "bg-surface2 text-slate-300 border border-line hover:border-slate-500"}">✓</button>
+                      class="w-[42px] h-[42px] rounded-xl font-black text-base transition active:scale-90 grid place-items-center shrink-0 ${d.done ? "bg-ok text-bg border border-ok" : "bg-surface2 text-slate-300 border border-line hover:border-slate-500"}">✓</button>
             </div>
           `;
         }).join("");
 
         return `
-          <article class="bg-surface border-2 ${allDone ? "border-ok/60" : "border-accent/60"} rounded-2xl p-4 mb-3 shadow-lg">
+          <article class="w-full overflow-hidden bg-surface border-2 ${allDone ? "border-ok/60" : "border-accent/60"} rounded-2xl p-3.5 sm:p-4 mb-3 shadow-lg">
             <div class="flex items-start gap-2 mb-2.5">
-              <button type="button" data-toggle-ex="${i}" class="flex-1 min-w-0 text-left flex items-start gap-2.5 select-none">
+              <button type="button" data-toggle-ex="${i}" class="flex-1 min-w-0 text-left flex items-start gap-2 select-none">
                 <span class="w-7 h-7 rounded-lg font-extrabold text-xs grid place-items-center shrink-0 ${allDone ? "bg-ok text-bg" : "bg-accent text-bg"}">${allDone ? "✓" : i + 1}</span>
                 <div class="flex-1 min-w-0">
-                  <h3 class="text-base font-extrabold text-white leading-tight">${esc(e.n)}</h3>
-                  <p class="text-xs text-slate-400 mt-0.5">${esc(e.m)} · Pauza ${e.rest} s</p>
+                  <h3 class="text-[15px] sm:text-base font-extrabold text-white leading-tight break-words">${esc(e.n)}</h3>
+                  <p class="text-xs text-slate-400 mt-0.5 break-words">${esc(e.m)} · Pauza ${e.rest} s</p>
                 </div>
-                <span class="text-xs font-extrabold px-2.5 py-1 rounded-lg bg-accent/15 text-accent whitespace-nowrap shrink-0">${e.s} × ${esc(e.r)}</span>
-                <span class="text-slate-300 text-sm font-bold pt-0.5 shrink-0">▾</span>
+                <span class="text-[11px] font-extrabold px-2 py-1 rounded-lg bg-accent/15 text-accent whitespace-nowrap shrink-0">${e.s} × ${esc(e.r)}</span>
+                <span class="text-slate-300 text-xs font-bold pt-1 shrink-0">▾</span>
               </button>
-              <button type="button" data-show-img="${i}" title="Ukázka cviku" class="px-2.5 py-1.5 rounded-xl bg-cyanpro/15 border border-cyanpro/40 text-cyanpro text-xs font-bold hover:bg-cyanpro/25 active:scale-90 transition shrink-0">🖼️</button>
+              <button type="button" data-show-img="${i}" title="Ukázka cviku" class="px-2 py-1.5 rounded-xl bg-cyanpro/15 border border-cyanpro/40 text-cyanpro text-xs font-bold hover:bg-cyanpro/25 active:scale-90 transition shrink-0">🖼️</button>
             </div>
 
             <div class="flex flex-wrap gap-1.5 mb-3">
-              ${!isPreview ? `<span id="exvol-${i}" class="text-[11px] font-bold text-cyanpro bg-cyanpro/10 border border-cyanpro/25 rounded-lg px-2 py-1">
+              ${!isPreview ? `<span id="exvol-${i}" class="text-[11px] font-bold text-cyanpro bg-cyanpro/10 border border-cyanpro/25 rounded-lg px-2 py-1 max-w-full break-words">
                 ⚡ Objem: ${fmtNum(curExVol)} kg ${deltaVol !== null ? `(${deltaVol >= 0 ? "+" : ""}${fmtNum(deltaVol)} kg)` : ""}
               </span>` : ""}
-              ${prevSummary ? `<span class="text-[11px] font-medium text-gold bg-gold/10 border border-gold/25 rounded-lg px-2 py-1">📊 ${esc(prevSummary)}</span>` : ""}
+              ${prevSummary ? `<span class="text-[11px] font-medium text-gold bg-gold/10 border border-gold/25 rounded-lg px-2 py-1 max-w-full break-words">📊 ${esc(prevSummary)}</span>` : ""}
+            </div>
+
+            <!-- Hlavička sloupců pro přehledný zápis sérií -->
+            <div class="grid grid-cols-[20px_minmax(0,1fr)_minmax(0,1fr)_52px_42px] gap-1.5 items-center mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              <span class="text-center">#</span>
+              <span class="text-center">Váha (kg)</span>
+              <span class="text-center">Opakování</span>
+              <span class="text-right">Objem</span>
+              <span class="text-center">OK</span>
             </div>
 
             ${rows}
@@ -1240,7 +1252,7 @@
             ${e.warn ? `<div class="mt-2.5 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs font-medium">⚠️ ${esc(e.warn)}</div>` : ""}
             ${e.tip ? `
               <details class="mt-2.5 pt-2 border-t border-line">
-                <summary class="cursor-pointer text-xs font-bold text-accent">Technika a provedení ▾</summary>
+                <summary class="cursor-pointer text-xs font-bold text-accent select-none">Technika a provedení ▾</summary>
                 <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">${esc(e.tip)}</p>
               </details>
             ` : ""}
@@ -1257,7 +1269,7 @@
       } else {
         h += `
           <textarea id="note" rows="2" placeholder="Poznámka k tréninku (spánek, energie, rezervy ve váze…)"
-                    class="w-full mt-2 bg-surface border border-line rounded-2xl p-3 text-sm text-white focus:outline-none focus:border-accent">${esc(a.note)}</textarea>
+                    class="w-full min-w-0 mt-2 bg-surface border border-line rounded-2xl p-3 text-sm text-white focus:outline-none focus:border-accent">${esc(a.note)}</textarea>
           <button data-stop class="w-full mt-3 py-4 rounded-2xl bg-accent text-bg font-black text-base shadow-lg hover:brightness-110 active:scale-[0.98] transition">
             ⏹ ${a.editing ? "ULOŽIT UPRAVENÝ TRÉNINK ✓" : "STOP · UKONČIT A ULOŽIT TRÉNINK"}
           </button>
@@ -1290,7 +1302,7 @@
           const cell = document.getElementById(`svol-${i}-${k}`);
           if (cell) {
             cell.innerHTML = sv > 0
-              ? `<b class="text-slate-200">${fmtNum(sv)}</b> kg${isPR ? `<br><span class="inline-block px-1.5 py-0.5 rounded bg-gold text-bg font-black text-[10px] mt-0.5">🏆 PR</span>` : ""}`
+              ? `<b class="text-slate-200">${fmtNum(sv)}</b> kg${isPR ? `<br><span class="inline-block px-1 py-0.5 rounded bg-gold text-bg font-black text-[9px] mt-0.5">🏆 PR</span>` : ""}`
               : "–";
           }
         }
@@ -1302,7 +1314,7 @@
        ========================================================================= */
     function openPreview(i) {
       previewIdx = i;
-      previewOpenExs = []; // V náhledu začni přehledně se sbaleným seznamem cviků
+      previewOpenExs = [];
       view = "preview";
       render();
       window.scrollTo(0, 0);
@@ -1331,7 +1343,7 @@
         lastActivity: now,
         autoPaused: false,
         frozenDurMin: null,
-        openExs: [0], // Automaticky otevři pouze 1. cvik pro maximální přehlednost
+        openExs: [0],
         exs, data, note: ""
       };
       previewIdx = null;
@@ -1390,7 +1402,7 @@
           id: s.id, dayName: s.dayName, warm: "", date: s.date,
           start: Date.now() - (s.dur || 45) * 60000, lastActivity: Date.now(),
           autoPaused: false, frozenDurMin: null,
-          openExs: [], // Při opravě staršího tréninku sbal vše, ať hned najdeš cvik k opravě
+          openExs: [],
           exs: s.exs, data: s.data, note: s.note || "",
           editing: true
         };
@@ -1622,7 +1634,6 @@
       imgWrap.classList.add("hidden");
       missingBox.classList.add("hidden");
 
-      // Postupné zkoušení podporovaných přípon (.mp4, .webm, .gif, .webp, .jpg, .png, .jpeg)
       let idx = 0;
       const tryNext = () => {
         if (idx >= candidates.length) {
@@ -1783,7 +1794,6 @@
         a.data[k] ??= { w: "", r: "", done: false };
         a.data[k].done = !a.data[k].done;
         a.lastActivity = Date.now();
-        // Po dokončení všech sérií cviku ho automaticky sbal a rozbal další nedokončený cvik
         if (a.data[k].done && isExComplete(a, exIdx)) {
           const openList = getOpenExs(false);
           const pos = openList.indexOf(exIdx);
